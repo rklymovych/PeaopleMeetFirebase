@@ -13,7 +13,8 @@ import {
   makeStyles
 } from '@material-ui/core';
 import {useAuth} from "../context/AuthContext";
-
+import {db} from "../firebase";
+import TextareaAutosize from '@material-ui/core/TextareaAutosize';
 const states = [
   {
     value: 'alabama',
@@ -34,23 +35,31 @@ const useStyles = makeStyles(() => ({
 }));
 
 const ProfileDetails = ({ className, ...rest }) => {
-  const {currentUser, logout} = useAuth()
+  const {currentUser, getUid} = useAuth()
   const classes = useStyles();
+
   const [values, setValues] = useState({
-    firstName: '',
-    lastName: '',
-    email: currentUser.email,
-    phone: '',
-    state: '',
-    country: ''
+    name: '',
+    text: '',
+    email: currentUser.email
   });
 
   const handleChange = (event) => {
+    console.log(event.target.value)
     setValues({
       ...values,
       [event.target.name]: event.target.value
     });
   };
+  console.log(values.name)
+  const updateDateHandler =()=>{
+    let age = db.collection('users').doc(getUid())
+    age.set(values, { merge: true })
+  }
+
+
+
+
 
   return (
     <form
@@ -78,11 +87,11 @@ const ProfileDetails = ({ className, ...rest }) => {
               <TextField
                 fullWidth
                 helperText="Please specify the first name"
-                label="First name"
-                name="firstName"
+                label="Name"
+                name="name"
                 onChange={handleChange}
                 required
-                value={values.firstName}
+                value={values.name}
                 variant="outlined"
               />
             </Grid>
@@ -92,86 +101,87 @@ const ProfileDetails = ({ className, ...rest }) => {
               xs={12}
             >
               <TextField
-                fullWidth
-                label="Last name"
-                name="lastName"
-                onChange={handleChange}
-                required
-                value={values.lastName}
-                variant="outlined"
+                  fullWidth
+                  label="Email Address"
+                  name="email"
+                  onChange={handleChange}
+                  required
+                  value={values.email}
+                  variant="outlined"
               />
+
             </Grid>
             <Grid
               item
-              md={6}
+              md={12}
               xs={12}
             >
-              <TextField
-                fullWidth
-                label="Email Address"
-                name="email"
-                onChange={handleChange}
-                required
-                value={values.email}
-                variant="outlined"
+              <TextareaAutosize
+                  name="text"
+                  // fullWidth
+                  aria-label="minimum height"
+                  rowsMin={2}
+                  rowsMax={12}
+                  onChange={handleChange}
+                  placeholder="Minimum 3 rows"
               />
             </Grid>
-            <Grid
-              item
-              md={6}
-              xs={12}
-            >
-              <TextField
-                fullWidth
-                label="Phone Number"
-                name="phone"
-                onChange={handleChange}
-                type="number"
-                value={values.phone}
-                variant="outlined"
-              />
-            </Grid>
-            <Grid
-              item
-              md={6}
-              xs={12}
-            >
-              <TextField
-                fullWidth
-                label="Country"
-                name="country"
-                onChange={handleChange}
-                required
-                value={values.country}
-                variant="outlined"
-              />
-            </Grid>
-            <Grid
-              item
-              md={6}
-              xs={12}
-            >
-              <TextField
-                fullWidth
-                label="Select State"
-                name="state"
-                onChange={handleChange}
-                required
-                select
-                SelectProps={{ native: true }}
-                value={values.state}
-                variant="outlined"
-              >
-                {states.map((option) => (
-                  <option
-                    key={option.value}
-                    value={option.value}
-                  >
-                    {option.label}
-                  </option>
-                ))}
-              </TextField>
-            </Grid>
+            {/*<Grid*/}
+            {/*  item*/}
+            {/*  md={6}*/}
+            {/*  xs={12}*/}
+            {/*>*/}
+            {/*  <TextField*/}
+            {/*    fullWidth*/}
+            {/*    label="Phone Number"*/}
+            {/*    name="phone"*/}
+            {/*    onChange={handleChange}*/}
+            {/*    type="number"*/}
+            {/*    value={values.phone}*/}
+            {/*    variant="outlined"*/}
+            {/*  />*/}
+            {/*</Grid>*/}
+            {/*<Grid*/}
+            {/*  item*/}
+            {/*  md={6}*/}
+            {/*  xs={12}*/}
+            {/*>*/}
+            {/*  <TextField*/}
+            {/*    fullWidth*/}
+            {/*    label="Country"*/}
+            {/*    name="country"*/}
+            {/*    onChange={handleChange}*/}
+            {/*    required*/}
+            {/*    value={values.country}*/}
+            {/*    variant="outlined"*/}
+            {/*  />*/}
+            {/*</Grid>*/}
+            {/*<Grid*/}
+            {/*  item*/}
+            {/*  md={6}*/}
+            {/*  xs={12}*/}
+            {/*>*/}
+            {/*  <TextField*/}
+            {/*    fullWidth*/}
+            {/*    label="Select State"*/}
+            {/*    name="state"*/}
+            {/*    onChange={handleChange}*/}
+            {/*    required*/}
+            {/*    select*/}
+            {/*    SelectProps={{ native: true }}*/}
+            {/*    value={values.state}*/}
+            {/*    variant="outlined"*/}
+            {/*  >*/}
+            {/*    {states.map((option) => (*/}
+            {/*      <option*/}
+            {/*        key={option.value}*/}
+            {/*        value={option.value}*/}
+            {/*      >*/}
+            {/*        {option.label}*/}
+            {/*      </option>*/}
+            {/*    ))}*/}
+            {/*  </TextField>*/}
+            {/*</Grid>*/}
           </Grid>
         </CardContent>
         <Divider />
@@ -183,6 +193,7 @@ const ProfileDetails = ({ className, ...rest }) => {
           <Button
             color="primary"
             variant="contained"
+            onClick={updateDateHandler}
           >
             Save details
           </Button>

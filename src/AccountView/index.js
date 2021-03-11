@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   Container,
   Grid,
@@ -7,6 +7,9 @@ import {
 // import Page from '../../../components/Page';
 import Profile from './Profile';
 import ProfileDetails from './ProfileDetails';
+import {db} from "../firebase";
+import {useAuth} from "../context/AuthContext";
+
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -27,30 +30,30 @@ const Account = () => {
         {/*    className={classes.root}*/}
         {/*    title="Account"*/}
         {/*>*/}
-          <Container maxWidth="lg">
+        <Container maxWidth="lg">
+          <Grid
+              container
+              spacing={3}
+              className={classes.root}
+          >
             <Grid
-                container
-                spacing={3}
-                className={classes.root}
+                item
+                lg={4}
+                md={6}
+                xs={12}
             >
-              <Grid
-                  item
-                  lg={4}
-                  md={6}
-                  xs={12}
-              >
-                <Profile/>
-              </Grid>
-              <Grid
-                  item
-                  lg={8}
-                  md={6}
-                  xs={12}
-              >
-                <ProfileDetails/>
-              </Grid>
+              <Profile/>
             </Grid>
-          </Container>
+            <Grid
+                item
+                lg={8}
+                md={6}
+                xs={12}
+            >
+              <ProfileDetails/>
+            </Grid>
+          </Grid>
+        </Container>
         {/*</Page>*/}
       </div>
   );

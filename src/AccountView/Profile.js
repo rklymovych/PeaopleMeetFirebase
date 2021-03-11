@@ -1,7 +1,7 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import PropTypes from 'prop-types';
 import clsx from 'clsx';
-// import moment from 'moment';
+
 import {
   Avatar,
   Box,
@@ -13,15 +13,8 @@ import {
   Typography,
   makeStyles
 } from '@material-ui/core';
-
-const user = {
-  avatar: '/static/images/avatars/avatar_6.png',
-  city: 'City',
-  country: 'Country',
-  jobTitle: 'Job',
-  name: 'Name',
-  timezone: 'TimeZone'
-};
+import {useAuth} from "../context/AuthContext";
+import {db} from "../firebase";
 
 const useStyles = makeStyles(() => ({
   root: {},
@@ -34,58 +27,74 @@ const useStyles = makeStyles(() => ({
   }
 }));
 
-const Profile = ({ className, ...rest }) => {
+const Profile = ({className, ...rest}) => {
   const classes = useStyles();
+  const {getUid, currentUser} = useAuth()
+  const [name, setName] = useState('')
+  const [loading, setLoading] = useState(false)
+
+  useEffect(() => {
+    const unsubscribe = db.collection('users').doc(getUid())
+        .onSnapshot((doc) => {
+          doc?.exists && setName(doc.data().name)
+        });
+    return unsubscribe;
+  }, []);
+
+
 
   return (
-    <Card
-      className={clsx(classes.root, className)}
-      {...rest}
-    >
-      <CardContent>
-        <Box
-          alignItems="center"
-          display="flex"
-          flexDirection="column"
-        >
-          <Avatar
-            className={classes.avatar}
-            src={user.avatar}
-          />
-          <Typography
-            color="textPrimary"
-            gutterBottom
-            variant="h3"
-            className={classes.center}
+
+      <Card
+          className={clsx(classes.root, className)}
+          {...rest}
+      >
+        <CardContent>
+          <Box
+              alignItems="center"
+              display="flex"
+              flexDirection="column"
           >
-            {user.name}
-          </Typography>
-          <Typography
-            color="textSecondary"
-            variant="body1"
+            <Avatar
+                className={classes.avatar}
+                // src={user.avatar}
+            />
+            <Typography
+                color="textPrimary"
+                gutterBottom
+                variant="h3"
+                className={classes.center}
+            >
+              {name}
+            </Typography>
+            <Typography
+                color="textSecondary"
+                variant="body1"
+            >
+              {/*{`${user.city} ${user.country}`}*/}
+            </Typography>
+            <Typography
+                className={classes.dateText}
+                color="textSecondary"
+                variant="body1"
+            >
+              {/*{`${moment().format('hh:mm A')} ${user.timezone}`}*/}
+            </Typography>
+          </Box>
+        </CardContent>
+        <Divider/>
+        <CardActions>
+          <Button
+              color="primary"
+              fullWidth
+              variant="text"
           >
-            {`${user.city} ${user.country}`}
-          </Typography>
-          <Typography
-            className={classes.dateText}
-            color="textSecondary"
-            variant="body1"
-          >
-            {/*{`${moment().format('hh:mm A')} ${user.timezone}`}*/}
-          </Typography>
-        </Box>
-      </CardContent>
-      <Divider />
-      <CardActions>
-        <Button
-          color="primary"
-          fullWidth
-          variant="text"
-        >
-          Upload picture
-        </Button>
-      </CardActions>
-    </Card>
+            Upload picture
+          </Button>
+        </CardActions>
+      </Card>
+
+
   );
 };
 

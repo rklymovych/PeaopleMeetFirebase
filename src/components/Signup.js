@@ -5,7 +5,8 @@ import {BrowserRouter as Router, Link, useHistory} from "react-router-dom";
 import {RouteComponent} from "./RouteComponent";
 import firebase from "firebase/app"
 import 'firebase/auth'
-import 'firebase/database'
+import 'firebase/app'
+
 function Signup() {
   const emailRef = useRef()
   const nameRef = useRef()
@@ -16,17 +17,16 @@ function Signup() {
   const [loading, setLoading] = useState(false)
   const history = useHistory()
 
-  const data = {
-    name: 'nameRef.current.value',
-    age: 22
+  const [userDate, setUserDate] = useState({
+    name: ''
+  })
+
+  const handleChangeName = (e) => {
+    setUserDate({name: e.target.value})
   }
-
-
 
   async function handleSubmit(e) {
     e.preventDefault()
-
-
 
     if (passwordRef.current.value !== passwordConfirmRef.current.value) {
       return setError('Passwords do not match')
@@ -35,9 +35,11 @@ function Signup() {
     try {
       setError('')
       setLoading(true)
-      await signup(emailRef.current.value, passwordRef.current.value, data)
+      await signup(emailRef.current.value, passwordRef.current.value, {
+        name: userDate.name
+      })
 
-      // console.log(nameRef.current.value)
+      console.log(nameRef.current.value)
       history.push('/')
     } catch (e) {
       setError('Failed to create an account')
@@ -64,7 +66,12 @@ function Signup() {
 
                 <Form.Group id="name">
                   <Form.Label>Name</Form.Label>
-                  <Form.Control type="text" ref={nameRef} required/>
+                  <Form.Control
+                      type="text"
+                      ref={nameRef}
+                      required
+                      onChange={handleChangeName}
+                  />
                 </Form.Group>
 
                 <Form.Group id="password">
