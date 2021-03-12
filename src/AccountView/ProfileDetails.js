@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import clsx from 'clsx';
 import PropTypes from 'prop-types';
 import {
@@ -10,196 +10,181 @@ import {
   Divider,
   Grid,
   TextField,
-  makeStyles
+  makeStyles, Tooltip, Modal
 } from '@material-ui/core';
 import {useAuth} from "../context/AuthContext";
 import {db} from "../firebase";
-import TextareaAutosize from '@material-ui/core/TextareaAutosize';
-const states = [
-  {
-    value: 'alabama',
-    label: 'Alabama'
-  },
-  {
-    value: 'new-york',
-    label: 'New York'
-  },
-  {
-    value: 'san-francisco',
-    label: 'San Francisco'
-  }
-];
+import {UpdateProfile} from "../components/UpdateProfile";
+
 
 const useStyles = makeStyles(() => ({
-  root: {}
+  root: {},
+  changeEmail: {},
+  paper: {
+    position: 'absolute',
+    width: 400,
+    backgroundColor: 'white',
+    border: '2px solid #000',
+    // boxShadow: theme.shadows[5],
+    paddingBottom: '10px',
+    borderRadius: '5px',
+    top: '50%',
+    left: `50%`,
+    transform: 'translate(-50%, -50%)',
+  },
 }));
 
-const ProfileDetails = ({ className, ...rest }) => {
-  const {currentUser, getUid} = useAuth()
+const ProfileDetails = ({className, ...rest}) => {
+  const {currentUser, getUid, updateEmail} = useAuth()
   const classes = useStyles();
+  const [open, setOpen] = useState(false);
 
   const [values, setValues] = useState({
     name: '',
-    text: '',
+    description: '',
     email: currentUser.email
   });
 
+  const handleOpen = () => {
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
+
+
+  useEffect(() => {
+    const unsubscribe = db.collection('users').doc(getUid())
+        .onSnapshot((doc) => {
+          doc?.exists && setValues({...values, name: doc.data().name, description: doc.data().description})
+        })
+    return unsubscribe;
+  }, []);
+
   const handleChange = (event) => {
-    console.log(event.target.value)
     setValues({
       ...values,
       [event.target.name]: event.target.value
     });
   };
-  console.log(values.name)
-  const updateDateHandler =()=>{
+
+  const updateDateHandler = () => {
+    // if(values.email === currentUser.email){
+    //   updateEmail()
+    // }
     let age = db.collection('users').doc(getUid())
-    age.set(values, { merge: true })
+    age.set(values, {merge: true})
   }
 
-
-
-
-
   return (
-    <form
-      autoComplete="off"
-      noValidate
-      className={clsx(classes.root, className)}
-      {...rest}
-    >
-      <Card>
-        <CardHeader
-          subheader="The information can be edited"
-          title="Profile"
-        />
-        <Divider />
-        <CardContent>
-          <Grid
-            container
-            spacing={3}
-          >
-            <Grid
-              item
-              md={6}
-              xs={12}
-            >
-              <TextField
-                fullWidth
-                helperText="Please specify the first name"
-                label="Name"
-                name="name"
-                onChange={handleChange}
-                required
-                value={values.name}
-                variant="outlined"
-              />
-            </Grid>
-            <Grid
-              item
-              md={6}
-              xs={12}
-            >
-              <TextField
-                  fullWidth
-                  label="Email Address"
-                  name="email"
-                  onChange={handleChange}
-                  required
-                  value={values.email}
-                  variant="outlined"
-              />
+      <div style={{position: 'relative', zIndex: 123}}>
 
-            </Grid>
-            <Grid
-              item
-              md={12}
-              xs={12}
-            >
-              <TextareaAutosize
-                  name="text"
-                  // fullWidth
-                  aria-label="minimum height"
-                  rowsMin={2}
-                  rowsMax={12}
-                  onChange={handleChange}
-                  placeholder="Minimum 3 rows"
-              />
-            </Grid>
-            {/*<Grid*/}
-            {/*  item*/}
-            {/*  md={6}*/}
-            {/*  xs={12}*/}
-            {/*>*/}
-            {/*  <TextField*/}
-            {/*    fullWidth*/}
-            {/*    label="Phone Number"*/}
-            {/*    name="phone"*/}
-            {/*    onChange={handleChange}*/}
-            {/*    type="number"*/}
-            {/*    value={values.phone}*/}
-            {/*    variant="outlined"*/}
-            {/*  />*/}
-            {/*</Grid>*/}
-            {/*<Grid*/}
-            {/*  item*/}
-            {/*  md={6}*/}
-            {/*  xs={12}*/}
-            {/*>*/}
-            {/*  <TextField*/}
-            {/*    fullWidth*/}
-            {/*    label="Country"*/}
-            {/*    name="country"*/}
-            {/*    onChange={handleChange}*/}
-            {/*    required*/}
-            {/*    value={values.country}*/}
-            {/*    variant="outlined"*/}
-            {/*  />*/}
-            {/*</Grid>*/}
-            {/*<Grid*/}
-            {/*  item*/}
-            {/*  md={6}*/}
-            {/*  xs={12}*/}
-            {/*>*/}
-            {/*  <TextField*/}
-            {/*    fullWidth*/}
-            {/*    label="Select State"*/}
-            {/*    name="state"*/}
-            {/*    onChange={handleChange}*/}
-            {/*    required*/}
-            {/*    select*/}
-            {/*    SelectProps={{ native: true }}*/}
-            {/*    value={values.state}*/}
-            {/*    variant="outlined"*/}
-            {/*  >*/}
-            {/*    {states.map((option) => (*/}
-            {/*      <option*/}
-            {/*        key={option.value}*/}
-            {/*        value={option.value}*/}
-            {/*      >*/}
-            {/*        {option.label}*/}
-            {/*      </option>*/}
-            {/*    ))}*/}
-            {/*  </TextField>*/}
-            {/*</Grid>*/}
-          </Grid>
-        </CardContent>
-        <Divider />
-        <Box
-          display="flex"
-          justifyContent="flex-end"
-          p={2}
+        <form
+            autoComplete="off"
+            noValidate
+            className={clsx(classes.root, className)}
+            {...rest}
         >
-          <Button
-            color="primary"
-            variant="contained"
-            onClick={updateDateHandler}
-          >
-            Save details
-          </Button>
-        </Box>
-      </Card>
-    </form>
+          <Card>
+            <CardHeader
+                subheader="The information can be edited"
+                title="Profile"
+            />
+            <Divider/>
+            <CardContent>
+              <Grid
+                  container
+                  spacing={3}
+              >
+                {/*<Grid container spacing={3} style={{display: 'flex'}}>*/}
+                <Grid
+                    item
+                    md={6}
+                    xs={12}
+                >
+                  <TextField
+                      fullWidth
+                      label="Name"
+                      name="name"
+                      onChange={handleChange}
+                      required
+                      value={values.name}
+                      variant="outlined"
+                  />
+                </Grid>
+
+                <Grid
+                    item
+                    md={6}
+                    xs={12}
+                >
+                  <Tooltip title='Click on change email?'>
+                    <TextField
+                        className={classes.changeEmail}
+                        fullWidth
+                        label="Email Address"
+                        name="email"
+                        onChange={handleChange}
+                        required
+                        value={values.email}
+                        variant="outlined"
+                        disabled
+                        onClick={handleOpen}
+                    />
+                  </Tooltip>
+
+                </Grid>
+                <Grid
+                    item
+                    md={12}
+                    xs={12}
+                >
+
+                  <TextField
+                      fullWidth
+                      name="description"
+                      id="outlined-multiline-static"
+                      label="Type something about you"
+                      multiline
+                      rows={4}
+                      value={values.description}
+                      variant="outlined"
+                      onChange={handleChange}
+                  />
+                </Grid>
+
+
+              </Grid>
+            </CardContent>
+            <Divider/>
+            <Box
+                display="flex"
+                justifyContent="flex-end"
+                p={2}
+            >
+              <Button
+                  color="primary"
+                  variant="contained"
+                  onClick={updateDateHandler}
+              >
+                Save details
+              </Button>
+            </Box>
+          </Card>
+
+        </form>
+        <Modal
+            open={open}
+            onClose={handleClose}
+            aria-labelledby="simple-modal-title"
+            aria-describedby="simple-modal-description"
+        >
+          <div className={classes.paper}>
+            <UpdateProfile/>
+          </div>
+        </Modal>
+      </div>
   );
 };
 

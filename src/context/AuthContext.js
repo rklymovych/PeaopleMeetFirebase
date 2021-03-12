@@ -24,15 +24,13 @@ export function AuthProvider({children}) {
     return auth.createUserWithEmailAndPassword(email, password)
         .then(cred => {
           return db.collection('users').doc(cred?.user?.uid).set({
-            name: userDate.name
+            name: userDate.name,
+            isOnline: false,
+            description: ''
           })
         })
         .then(() => console.log('success'))
         .catch(error => console.log('error', error.message))
-    // const uid = getUid()
-    // console.log(uid)
-    // const database = firebase.database().ref(`/user/${uid}/info`).set(dataUser)
-    // return {sign, database}
   }
 
 
@@ -63,6 +61,7 @@ export function AuthProvider({children}) {
       setCurrentUser(user)
       setLoading(false)
     })
+
     return unsubscribe
   }, [])
 

@@ -14,7 +14,7 @@ import {
   makeStyles
 } from '@material-ui/core';
 import {useAuth} from "../context/AuthContext";
-import {db} from "../firebase";
+import {db, storage} from "../firebase";
 
 const useStyles = makeStyles(() => ({
   root: {},
@@ -31,7 +31,8 @@ const Profile = ({className, ...rest}) => {
   const classes = useStyles();
   const {getUid, currentUser} = useAuth()
   const [name, setName] = useState('')
-  const [loading, setLoading] = useState(false)
+  const [avatar, setAvatar] = useState(null)
+  const [users, setUsers] = useState(null)
 
   useEffect(() => {
     const unsubscribe = db.collection('users').doc(getUid())
@@ -41,8 +42,39 @@ const Profile = ({className, ...rest}) => {
     return unsubscribe;
   }, []);
 
+  const uploadPhotoHandler = async (e) => {
+    const file = e.target.files[0]
+
+    const storageRef = storage.ref(`users/${getUid()}/`)
+    const fileRef = storageRef.child(file.name)
+    await fileRef.put(file)
+    // setAvatar(await fileRef.getDownloadURL())
+    const fileUrl = await fileRef.getDownloadURL()
+    db.collection('users').doc(getUid())
+        .set({avatar: fileUrl}, {merge: true})
+    setAvatar(fileUrl)
+  }
+
+  console.log(currentUser)
+  useEffect(() => {
+    console.log(getUid())
+    const fetchUsers = async () => {
+      db.collection("users").doc(getUid())
+          .get()
+          .then((doc) => {
+            console.log(doc.data().avatar);
+          })
+    }
+    fetchUsers()
+    // storage.ref(`users/${getUid}/`).getDownloadURL()
+    //     .then((imgUrl)=>{
+    //       setAvatar(imgUrl)
+    //     })
 
 
+  }, [])
+
+  console.log(users)
   return (
 
       <Card
@@ -57,7 +89,7 @@ const Profile = ({className, ...rest}) => {
           >
             <Avatar
                 className={classes.avatar}
-                // src={user.avatar}
+                src={avatar}
             />
             <Typography
                 color="textPrimary"
@@ -84,12 +116,25 @@ const Profile = ({className, ...rest}) => {
         </CardContent>
         <Divider/>
         <CardActions>
+          {/*<Button*/}
+          {/*    color="primary"*/}
+          {/*    fullWidth*/}
+          {/*    variant="text"*/}
+          {/*>*/}
+          {/*  Upload picture*/}
+          {/*</Button>*/}
           <Button
+              variant="contained"
+              component="label"
               color="primary"
               fullWidth
-              variant="text"
+              onChange={uploadPhotoHandler}
           >
-            Upload picture
+            Upload Photo
+            <input
+                type="file"
+                hidden
+            />
           </Button>
         </CardActions>
       </Card>
