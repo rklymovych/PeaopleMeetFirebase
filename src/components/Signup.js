@@ -1,9 +1,7 @@
 import React, {useRef, useState} from 'react'
 import {Card, Button, Form, Alert, Container} from "react-bootstrap";
 import {useAuth} from "../context/AuthContext";
-import {BrowserRouter as Router, Link, useHistory} from "react-router-dom";
-import {RouteComponent} from "./RouteComponent";
-import firebase from "firebase/app"
+import { Link, useHistory} from "react-router-dom";
 import 'firebase/auth'
 import 'firebase/app'
 
@@ -12,7 +10,7 @@ function Signup() {
   const nameRef = useRef()
   const passwordRef = useRef()
   const passwordConfirmRef = useRef()
-  const {signup, getUid} = useAuth()
+  const {signup} = useAuth()
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
   const history = useHistory()
