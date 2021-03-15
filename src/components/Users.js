@@ -31,7 +31,7 @@ export const Users = () => {
   const getUsers = () => {
     return db.collection("users").get()
         .then((querySnapshot) => {
-          const arr = querySnapshot.docs.map((doc) => {
+          const arr = querySnapshot.docs.filter((user=> getUid() !== user.id)).map((doc) => {
             // doc.data() is never undefined for query doc snapshots
             console.log(doc.data())
             return doc.data()
