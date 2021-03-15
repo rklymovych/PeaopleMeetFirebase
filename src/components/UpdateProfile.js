@@ -32,8 +32,9 @@ export function UpdateProfile() {
 
     Promise.all(promises).then(() => {
       history.push('/')
-    }).catch(() => {
-      setError('Failed to update account')
+    }).catch((e) => {
+      // setError('Failed to update account')
+      setError(e.message)
     }).finally(() => {
       setLoading(false)
     })
@@ -84,9 +85,9 @@ export function UpdateProfile() {
             </Form>
           </Card.Body>
         </Card>
-        <div className="w-100 text-center mt-2">
-          <Link to='/'>Cancel</Link>
-        </div>
+        {/*<div className="w-100 text-center mt-2">*/}
+        {/*  <Link to='/'>Cancel</Link>*/}
+        {/*</div>*/}
 
       </>
   );
