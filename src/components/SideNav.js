@@ -1,6 +1,6 @@
 import React, {useEffect} from 'react';
 import clsx from 'clsx';
-import {makeStyles, useTheme} from '@material-ui/core/styles';
+import {makeStyles} from '@material-ui/core/styles';
 import Drawer from '@material-ui/core/Drawer';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import AppBar from '@material-ui/core/AppBar';
@@ -11,24 +11,18 @@ import Divider from '@material-ui/core/Divider';
 import IconButton from '@material-ui/core/IconButton';
 import MenuIcon from '@material-ui/icons/Menu';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
-import ChevronRightIcon from '@material-ui/icons/ChevronRight';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import InboxIcon from '@material-ui/icons/MoveToInbox';
 import MailIcon from '@material-ui/icons/Mail';
-import Profile from "../AccountView/Profile";
-import Account from "../AccountView";
-import PrivateRoute from "./PrivateRoute";
-import {Test} from "./Test";
 import SupervisorAccountRoundedIcon from '@material-ui/icons/SupervisorAccountRounded';
 import AccountCircleRoundedIcon from '@material-ui/icons/AccountCircleRounded';
-import {Switch, useHistory} from "react-router-dom";
+import { useHistory} from "react-router-dom";
 import InputIcon from "@material-ui/icons/Input";
-import {Hidden} from "@material-ui/core";
 import {db} from "../firebase";
 import {useAuth} from "../context/AuthContext";
-import {getAvatar, isOnline} from "../services/firestoreFunctions";
+import { isOnline} from "../services/firestoreFunctions";
 
 const drawerWidth = 230;
 
@@ -64,7 +58,7 @@ const useStyles = makeStyles((theme) => ({
     width: drawerWidth,
   },
   drawerHeader: {
-    height: '150px!important',
+    height: '200px!important',
     display: 'flex',
     alignItems: 'flex-start',
     padding: '10px 0',
@@ -95,7 +89,7 @@ const useStyles = makeStyles((theme) => ({
 export const SideNav = ({children}) => {
   const history = useHistory()
   const classes = useStyles();
-  const theme = useTheme();
+  // const theme = useTheme();
   const [open, setOpen] = React.useState(false);
   const {logout, getUid} = useAuth()
   const [avatar, setAvatar] = React.useState(null)
@@ -167,7 +161,7 @@ export const SideNav = ({children}) => {
                style={{
                  backgroundImage: `url(${avatar})`,
                  backgroundRepeat: 'no-repeat',
-                 backgroundPosition: 'center',
+                 backgroundPosition: 'center center',
                  backgroundSize: 'cover'
                }}
 
