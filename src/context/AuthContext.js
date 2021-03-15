@@ -11,6 +11,7 @@ export function useAuth() {
 export function AuthProvider({children}) {
   const [currentUser, setCurrentUser] = useState()
   const [loading, setLoading] = useState(true)
+  const [error, setError] = useState('')
 
   // const [snapshot, setSnapshot] = useState(true)
 
@@ -30,7 +31,7 @@ export function AuthProvider({children}) {
           })
         })
         .then(() => console.log('success'))
-        .catch(error => console.log('error', error.message))
+        .catch(error => setError(error.message))
   }
 
 
@@ -48,7 +49,12 @@ export function AuthProvider({children}) {
   }
 
   function updateEmail(email) {
-    return currentUser.updateEmail(email)
+    try{
+      return currentUser.updateEmail(email)
+    }catch (e) {
+      setError(e.message)
+    }
+
   }
 
   function updatePassword(password) {
@@ -74,7 +80,8 @@ export function AuthProvider({children}) {
     resetPassword,
     updateEmail,
     updatePassword,
-    getUid
+    getUid,
+    error
   }
   return (
       <AuthContext.Provider value={value}>
