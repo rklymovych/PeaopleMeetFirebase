@@ -1,5 +1,5 @@
-import React, {useContext, useState} from 'react';
-import {Link as RouterLink} from 'react-router-dom';
+import React, { useState } from 'react';
+import { Link as RouterLink } from 'react-router-dom';
 import clsx from 'clsx';
 import PropTypes from 'prop-types';
 import {
@@ -14,7 +14,8 @@ import {
 import MenuIcon from '@material-ui/icons/Menu';
 import NotificationsIcon from '@material-ui/icons/NotificationsOutlined';
 import InputIcon from '@material-ui/icons/Input';
-import {useAuth} from "../context/AuthContext";
+import { useAuth } from "../context/AuthContext";
+import { db } from '../firebase';
 
 const useStyles = makeStyles(() => ({
   root: {},
@@ -25,55 +26,58 @@ const useStyles = makeStyles(() => ({
 }));
 
 const TopBar = ({
-                  className,
-                  onMobileNavOpen,
-                  ...rest
-                }) => {
+  className,
+  onMobileNavOpen,
+  ...rest
+}) => {
   const classes = useStyles();
-  const {logout} = useAuth()
+  const { logout, getUid } = useAuth()
   const [notifications] = useState([]);
 
   const logoutHandler = () => {
+    db.collection('users').doc(getUid()).set({
+      isOnline: false
+    }, {merge: true})
     logout()
   }
 
   return (
-      <AppBar
-          className={clsx(classes.root, className)}
-          elevation={0}
-          {...rest}
-      >
-        <Toolbar>
-          <RouterLink to="/">
-            {/*<Logo />*/}
-          </RouterLink>
-          <Box flexGrow={1}/>
-          <Hidden mdDown>
-            <IconButton color="inherit">
-              <Badge
-                  badgeContent={notifications.length}
-                  color="primary"
-                  variant="dot"
-              >
-                <NotificationsIcon/>
-              </Badge>
-            </IconButton>
-            <IconButton color="inherit"
-                        onClick={logoutHandler}
+    <AppBar
+      className={clsx(classes.root, className)}
+      elevation={0}
+      {...rest}
+    >
+      <Toolbar>
+        <RouterLink to="/">
+          {/*<Logo />*/}
+        </RouterLink>
+        <Box flexGrow={1} />
+        <Hidden mdDown>
+          <IconButton color="inherit">
+            <Badge
+              badgeContent={notifications.length}
+              color="primary"
+              variant="dot"
             >
-              <InputIcon/>
-            </IconButton>
-          </Hidden>
-          <Hidden lgUp>
-            <IconButton
-                color="inherit"
-                onClick={onMobileNavOpen}
-            >
-              <MenuIcon/>
-            </IconButton>
-          </Hidden>
-        </Toolbar>
-      </AppBar>
+              <NotificationsIcon />
+            </Badge>
+          </IconButton>
+          <IconButton color="inherit"
+            onClick={logoutHandler}
+          >
+            <InputIcon />
+          </IconButton>
+        </Hidden>
+        <Hidden lgUp>
+          <IconButton
+            color="inherit"
+            onClick={onMobileNavOpen}
+          >
+            <MenuIcon />
+          </IconButton>
+        </Hidden>
+      </Toolbar>
+    </AppBar>
   );
 };
 

@@ -1,14 +1,11 @@
-import React, {useEffect, useState} from 'react';
+import React from 'react';
 import {
   Container,
   Grid,
   makeStyles
 } from '@material-ui/core';
-// import Page from '../../../components/Page';
 import Profile from './Profile';
 import ProfileDetails from './ProfileDetails';
-import {db} from "../firebase";
-import {useAuth} from "../context/AuthContext";
 
 
 const useStyles = makeStyles((theme) => ({
