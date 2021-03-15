@@ -16,7 +16,8 @@ import NotificationsIcon from '@material-ui/icons/NotificationsOutlined';
 import InputIcon from '@material-ui/icons/Input';
 import { useAuth } from "../context/AuthContext";
 import { db } from '../firebase';
-
+import Menu from '@material-ui/core/Menu';
+import MenuItem from '@material-ui/core/MenuItem';
 const useStyles = makeStyles(() => ({
   root: {},
   avatar: {
@@ -40,6 +41,16 @@ const TopBar = ({
     }, {merge: true})
     logout()
   }
+
+  const [anchorEl, setAnchorEl] = React.useState(null);
+
+  const handleClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
 
   return (
     <AppBar
@@ -69,12 +80,24 @@ const TopBar = ({
           </IconButton>
         </Hidden>
         <Hidden lgUp>
-          <IconButton
-            color="inherit"
-            onClick={onMobileNavOpen}
-          >
-            <MenuIcon />
-          </IconButton>
+          {/*<IconButton*/}
+          {/*  color="inherit"*/}
+          {/*  // onClick={onMobileNavOpen}*/}
+
+          {/*>*/}
+            <MenuIcon style={{cursor: 'pointer'}} aria-controls="simple-menu"  onClick={handleClick}  />
+            <Menu
+                id="simple-menu"
+                anchorEl={anchorEl}
+                keepMounted
+                open={Boolean(anchorEl)}
+                onClose={handleClose}
+            >
+              <MenuItem onClick={handleClose}>Profile</MenuItem>
+              <MenuItem onClick={handleClose}>My account</MenuItem>
+              <MenuItem onClick={logoutHandler}>Logout</MenuItem>
+            </Menu>
+          {/*</IconButton>*/}
         </Hidden>
       </Toolbar>
     </AppBar>
@@ -83,7 +106,8 @@ const TopBar = ({
 
 TopBar.propTypes = {
   className: PropTypes.string,
-  onMobileNavOpen: PropTypes.func
+  // onMobileNavOpen: PropTypes.func,
+  // handleClick: PropTypes.func
 };
 
 export default TopBar;

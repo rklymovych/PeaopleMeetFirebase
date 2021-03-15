@@ -15,6 +15,7 @@ import {
 } from '@material-ui/core';
 import { useAuth } from "../context/AuthContext";
 import { db, storage } from "../firebase";
+import {getAvatar} from "../services/firestoreFunctions";
 
 const useStyles = makeStyles(() => ({
   root: {},
@@ -40,7 +41,7 @@ const Profile = ({ className, ...rest }) => {
       });
     return unsubscribe;
   }, []);
-
+  // getAvatar(getUid())
   const uploadPhotoHandler = async (e) => {
     const file = e.target.files[0]
     const storageRef = storage.ref(`users/${getUid()}/`)
