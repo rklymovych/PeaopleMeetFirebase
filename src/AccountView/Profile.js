@@ -62,7 +62,7 @@ const Profile = ({className, ...rest}) => {
       db.collection("users").doc(getUid())
           .get()
           .then((doc) => {
-            console.log(doc.data().avatar);
+            setAvatar(doc.data().avatar);
           })
     }
     fetchUsers()
