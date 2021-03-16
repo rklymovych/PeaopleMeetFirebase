@@ -19,7 +19,6 @@ import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Switch from '@material-ui/core/Switch';
 import Alert from '@material-ui/lab/Alert';
 import Snackbar from '@material-ui/core/Snackbar';
-import firebase from "firebase";
 import {useHistory} from "react-router-dom";
 
 
