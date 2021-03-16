@@ -18,11 +18,12 @@ import InboxIcon from '@material-ui/icons/MoveToInbox';
 import MailIcon from '@material-ui/icons/Mail';
 import SupervisorAccountRoundedIcon from '@material-ui/icons/SupervisorAccountRounded';
 import AccountCircleRoundedIcon from '@material-ui/icons/AccountCircleRounded';
-import { useHistory} from "react-router-dom";
+import {useHistory} from "react-router-dom";
 import InputIcon from "@material-ui/icons/Input";
 import {db} from "../firebase";
 import {useAuth} from "../context/AuthContext";
-import { isOnline} from "../services/firestoreFunctions";
+import {isOnline} from "../services/firestoreFunctions";
+import defaultAvatar from '../../src/assets/avatars/avatar.jpg'
 
 const drawerWidth = 230;
 
@@ -83,6 +84,13 @@ const useStyles = makeStyles((theme) => ({
   },
   padding: {
     marginTop: '60px'
+  },
+  userName: {
+    position: 'absolute',
+    bottom: 0,
+    left: '50%',
+    transform: 'translate(-50%)',
+    color: 'white'
   }
 }));
 
@@ -93,6 +101,7 @@ export const SideNav = ({children}) => {
   const [open, setOpen] = React.useState(false);
   const {logout, getUid} = useAuth()
   const [avatar, setAvatar] = React.useState(null)
+  const [userName, setUserName] = React.useState('')
   const handleDrawerOpen = () => {
     setOpen(true);
   };
@@ -107,16 +116,16 @@ export const SideNav = ({children}) => {
   }
 
   useEffect(() => {
-    const fetchUsers = async () => {
-      db.collection("users").doc(getUid())
-          .get()
-          .then((doc) => {
-            setAvatar(doc?.data()?.avatar ?? '');
-          }, error => {
-            console.log('Profile', error.message);
-          })
-    }
-    fetchUsers()
+    const avatar = db.collection("users").doc(getUid())
+        .onSnapshot(doc => {
+          if(doc?.exists) {
+            setAvatar(doc.data().avatar)
+            setUserName(doc.data().name)
+          }
+        }, error => {
+          console.log('sidenavPage', error.message)
+        })
+    return avatar
   }, [])
 
   return (
@@ -141,8 +150,9 @@ export const SideNav = ({children}) => {
             <Typography variant="h6" noWrap>
               People Meet
             </Typography>
-            <IconButton color="inherit"
-                        onClick={logoutHandler}
+            <IconButton
+                color="inherit"
+                onClick={logoutHandler}
             >
               <InputIcon/>
             </IconButton>
@@ -159,16 +169,21 @@ export const SideNav = ({children}) => {
         >
           <div className={classes.drawerHeader}
                style={{
-                 backgroundImage: `url(${avatar})`,
+                 position: 'relative',
+                 backgroundImage: `url(${avatar ? avatar : defaultAvatar})`,
                  backgroundRepeat: 'no-repeat',
                  backgroundPosition: 'center center',
                  backgroundSize: 'cover'
                }}
 
           >
+            <Typography variant="h4" align='center' className={classes.userName}>
+              {userName}
+            </Typography>
             <IconButton style={{color: 'white'}} onClick={handleDrawerClose}>
               <ChevronLeftIcon/>
             </IconButton>
+
           </div>
           <Divider/>
           <List>
