@@ -31,7 +31,7 @@ export const Users = () => {
   const classes = useStyles()
   const {getUid} = useAuth()
   const [users, setUsers] = useState([])
-  const [currentUser, setCurrentUser] = useState()
+  const [selectedUser, setSelectedUser] = useState()
   const [openModal, setOpenModal] = useState(false)
 
   const getUsers = () => {
@@ -49,7 +49,7 @@ export const Users = () => {
   }, [])
 
   const handleOpenUserModal = (user) => {
-    setCurrentUser(user)
+    setSelectedUser(user)
     setOpenModal(!openModal)
   }
 
@@ -99,7 +99,7 @@ export const Users = () => {
         <UserModal
             openModal={openModal}
             setOpenModal={setOpenModal}
-            currentUser={currentUser}/>
+            selectedUser={selectedUser}/>
       </>
 
   )

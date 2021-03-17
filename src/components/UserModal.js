@@ -8,8 +8,9 @@ import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import defaultAvatar from '../assets/avatars/avatar.jpg'
 import Typography from "@material-ui/core/Typography";
-import {Card, CardActionArea, CardContent, CardMedia, Grid, ListItem, ListItemText} from "@material-ui/core";
+import {Card, CardActionArea, Grid} from "@material-ui/core";
 import Divider from "@material-ui/core/Divider";
+import {useHistory} from "react-router-dom";
 
 const useStyles = makeStyles((theme) => {
   console.log(theme)
@@ -59,15 +60,16 @@ const useStyles = makeStyles((theme) => {
   }
 });
 
-export const UserModal = ({currentUser, openModal, setOpenModal}) => {
+export const UserModal = ({selectedUser, openModal, setOpenModal}) => {
   const classes = useStyles();
+  const history = useHistory()
 
   const handleClose = () => {
     setOpenModal(false);
   };
 
   const writeHandler = () => {
-    console.log('write handler')
+    history.push('/chat')
   }
 
   return (
@@ -81,31 +83,31 @@ export const UserModal = ({currentUser, openModal, setOpenModal}) => {
           <DialogTitle id="max-width-dialog-title"><b>Information about user</b></DialogTitle>
 
           <Grid container className={classes.dialogContent}>
-            <Grid item md={5} sm={12}>
+            <Grid item md={5} sm={12} style={{margin: 'auto'}}>
               <DialogContent>
                 <Card className={classes.root}>
                   <CardActionArea>
-                    <img className={classes.media} src={currentUser?.avatar ?? defaultAvatar}
-                         alt={currentUser?.avatar}/>
+                    <img className={classes.media} src={selectedUser?.avatar ?? defaultAvatar}
+                         alt={selectedUser?.avatar}/>
                   </CardActionArea>
                 </Card>
               </DialogContent>
             </Grid>
-            <Grid item md={7} sm={12}>
+            <Grid item md={7} sm={12} style={{width: '100%'}}>
               <DialogContent>
                 <Typography component={'span'} variant={'body2'} className={classes.padding}>
-                  <b>Name</b> - {currentUser?.name}
+                  <b>Name</b> - {selectedUser?.name}
                 </Typography>
                 <Divider/>
                 <Typography component={'span'} variant={'body2'} className={classes.padding}>
-                  <b>Age</b> - 26
+                  <b>Age</b> - {selectedUser?.age}
                 </Typography>
                 <Divider/>
                 <Typography component={'span'} variant={'body2'} className={classes.padding}>
-                  <b>Sex</b> - Male
+                  <b>Sex</b> - {selectedUser?.sex}
                 </Typography>
                 <Divider/>
-                {currentUser?.isOnline ? (
+                {selectedUser?.isOnline ? (
                     <>
                       <Typography
                           component={'span'}
@@ -131,7 +133,7 @@ export const UserModal = ({currentUser, openModal, setOpenModal}) => {
                 )
                 }
                 <Typography component={'span'} variant={'body2'} className={classes.padding}>
-                  <b>About</b> - {currentUser?.description}
+                  <b>About</b> - {selectedUser?.description}
                 </Typography>
                 <Divider/>
               </DialogContent>
@@ -139,7 +141,7 @@ export const UserModal = ({currentUser, openModal, setOpenModal}) => {
           </Grid>
           <DialogActions className={classes.dialogAction}>
             <Button onClick={writeHandler} color="secondary">
-              <b>Write to {currentUser?.name}</b>
+              <b>Write to {selectedUser?.name}</b>
             </Button>
             <Button onClick={handleClose} color="primary">
               <b>Close</b>

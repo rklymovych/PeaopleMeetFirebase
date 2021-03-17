@@ -2,9 +2,14 @@ import React, {useContext, useState, useEffect} from "react"
 import {auth, db} from "../firebase"
 
 const AuthContext = React.createContext()
+const UserContext = React.createContext()
 
 export function useAuth() {
   return useContext(AuthContext)
+}
+
+export function useUser() {
+  return useContext(UserContext)
 }
 
 
@@ -12,8 +17,20 @@ export function AuthProvider({children}) {
   const [currentUser, setCurrentUser] = useState()
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
+  const [currentUserWithId, serCurrentUserWithId] = useState([])
 
-  // const [snapshot, setSnapshot] = useState(true)
+  const getCurrentUserWithId = () => {
+    const getUsers = () => {
+      return db.collection("users").get() // надо ли ретурн???
+          .then((querySnapshot) => {
+            const users = querySnapshot.docs.filter((user => getUid() === user.id)).map((doc) => {
+              return {id: doc.id, ...doc.data()};
+            })
+            serCurrentUserWithId(users);
+          });
+    }
+    // getUsers()
+  }
 
 
   function getUid() {
@@ -25,6 +42,7 @@ export function AuthProvider({children}) {
     return auth.createUserWithEmailAndPassword(email, password)
         .then(cred => {
           return db.collection('users').doc(cred?.user?.uid).set({
+            id: cred?.user?.uid,
             name: userDate.name,
             isOnline: false,
             description: ''
@@ -49,9 +67,9 @@ export function AuthProvider({children}) {
   }
 
   function updateEmail(email) {
-    try{
+    try {
       return currentUser.updateEmail(email)
-    }catch (e) {
+    } catch (e) {
       setError(e.message)
     }
 
@@ -85,7 +103,10 @@ export function AuthProvider({children}) {
   }
   return (
       <AuthContext.Provider value={value}>
-        {!loading && children}
+        <UserContext.Provider value={getCurrentUserWithId()}>
+          {!loading && children}
+        </UserContext.Provider>
+
       </AuthContext.Provider>
   )
 }

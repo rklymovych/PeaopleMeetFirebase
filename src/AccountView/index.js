@@ -22,9 +22,7 @@ const Account = () => {
   const classes = useStyles();
 
   return (
-
       <SideNav>
-
         <div className="wrapper-profile">
           <Container maxWidth="lg">
             <Grid
@@ -52,8 +50,6 @@ const Account = () => {
           </Container>
         </div>
       </SideNav>
-
-
   );
 };
 
