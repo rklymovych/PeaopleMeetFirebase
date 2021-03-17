@@ -83,14 +83,15 @@ const useStyles = makeStyles((theme) => ({
     marginLeft: 0,
   },
   padding: {
-    marginTop: '60px'
+    marginTop: '60px',
+    background: 'red'
   },
   userName: {
     position: 'absolute',
     bottom: 0,
     left: '50%',
     transform: 'translate(-50%)',
-    color: 'white'
+    color: theme.palette.common.white
   }
 }));
 
@@ -118,7 +119,7 @@ export const SideNav = ({children}) => {
   useEffect(() => {
     const avatar = db.collection("users").doc(getUid())
         .onSnapshot(doc => {
-          if(doc?.exists) {
+          if (doc?.exists) {
             setAvatar(doc.data().avatar)
             setUserName(doc.data().name)
           }
@@ -219,5 +220,4 @@ export const SideNav = ({children}) => {
         </main>
       </div>
   )
-      ;
 }

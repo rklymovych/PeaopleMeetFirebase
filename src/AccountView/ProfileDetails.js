@@ -10,7 +10,7 @@ import {
   Divider,
   Grid,
   TextField,
-  makeStyles, Tooltip, Modal
+  makeStyles, Tooltip, Modal, MenuItem
 } from '@material-ui/core';
 import {useAuth} from "../context/AuthContext";
 import {db} from "../firebase";
@@ -46,11 +46,25 @@ const ProfileDetails = ({className, ...rest}) => {
   const [snackbar, setSnackbar] = useState(false)
   const [open, setOpen] = useState(false);
   const [online, setOnline] = useState(false)
+  const [userAge, setUserAge] = useState([])
   const [values, setValues] = useState({
     name: '',
     description: '',
-    email: currentUser.email
+    email: currentUser.email,
+    age: 18,
+    sex: ''
   });
+
+  useEffect(() => {
+
+    let age = []
+    for (let i = 18; i <= 90; i++) {
+      age.push(i)
+    }
+
+
+    setUserAge(age)
+  }, [])
 
   const handleOpen = () => {
     setOpen(true);
@@ -59,7 +73,6 @@ const ProfileDetails = ({className, ...rest}) => {
   const handleClose = () => {
     setOpen(false);
   };
-
 
 
   const handleCloseSnackbar = (event, reason) => {
@@ -71,11 +84,11 @@ const ProfileDetails = ({className, ...rest}) => {
     setSnackbar(false);
   };
 
-  useEffect(()=>{
+  useEffect(() => {
     if (error !== '') {
       setSnackbar(true)
     }
-  },[error])
+  }, [error])
 
   useEffect(() => {
     const unsubscribe = db.collection('users').doc(getUid())
@@ -94,8 +107,8 @@ const ProfileDetails = ({className, ...rest}) => {
   };
 
   const updateDateHandler = () => {
-    let age = db.collection('users').doc(getUid())
-    age.set(values, {merge: true})
+    let data = db.collection('users').doc(getUid())
+    data.set(values, {merge: true})
     history.push('/test')
   }
 
@@ -163,6 +176,57 @@ const ProfileDetails = ({className, ...rest}) => {
                     />
                   </Tooltip>
 
+                </Grid>
+                <Grid
+                    item
+                    md={6}
+                    xs={12}
+                >
+                  <TextField
+                      fullWidth
+                      label="Age"
+                      select
+                      name="age"
+                      onChange={handleChange}
+                      required
+                      value={values.age}
+                      variant="outlined"
+
+
+                  >
+                    {currentUser && userAge?.map(age => {
+                      return (
+                          <MenuItem key={age} value={age}>
+                            {age}
+                          </MenuItem>
+                      )
+                    })}
+                  </TextField>
+                </Grid>
+
+                <Grid
+                    item
+                    md={6}
+                    xs={12}
+                >
+                  <TextField
+                      className={classes.changeEmail}
+                      fullWidth
+                      select
+                      label="Sex"
+                      name="sex"
+                      onChange={handleChange}
+                      value={values.sex}
+                      variant="outlined"
+                  >
+                    {['female', 'male'].map(sex => {
+                      return (
+                          <MenuItem key={sex} value={sex}>
+                            {sex}
+                          </MenuItem>
+                      )
+                    })}
+                  </TextField>
                 </Grid>
                 <Grid
                     item

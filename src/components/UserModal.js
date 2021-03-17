@@ -81,7 +81,7 @@ export const UserModal = ({currentUser, openModal, setOpenModal}) => {
           <DialogTitle id="max-width-dialog-title"><b>Information about user</b></DialogTitle>
 
           <Grid container className={classes.dialogContent}>
-            <Grid item md={5} sm={12}>
+            <Grid item md={5} sm={12} style={{margin: 'auto'}}>
               <DialogContent>
                 <Card className={classes.root}>
                   <CardActionArea>
@@ -91,18 +91,18 @@ export const UserModal = ({currentUser, openModal, setOpenModal}) => {
                 </Card>
               </DialogContent>
             </Grid>
-            <Grid item md={7} sm={12}>
+            <Grid item md={7} sm={12} style={{width: '100%'}}>
               <DialogContent>
                 <Typography component={'span'} variant={'body2'} className={classes.padding}>
                   <b>Name</b> - {currentUser?.name}
                 </Typography>
                 <Divider/>
                 <Typography component={'span'} variant={'body2'} className={classes.padding}>
-                  <b>Age</b> - 26
+                  <b>Age</b> - {currentUser?.age}
                 </Typography>
                 <Divider/>
                 <Typography component={'span'} variant={'body2'} className={classes.padding}>
-                  <b>Sex</b> - Male
+                  <b>Sex</b> - {currentUser?.sex}
                 </Typography>
                 <Divider/>
                 {currentUser?.isOnline ? (
