@@ -18,6 +18,7 @@ import ListItemText from '@material-ui/core/ListItemText';
 import InboxIcon from '@material-ui/icons/MoveToInbox';
 import MailIcon from '@material-ui/icons/Mail';
 import {Avatar, Badge} from "@material-ui/core";
+import {useAuth, useUser} from "../../context/AuthContext";
 
 const drawerWidth = 240;
 
@@ -119,6 +120,8 @@ const SmallAvatar = withStyles((theme) => ({
 }))(Avatar)
 
 export const ChatPage = () => {
+  const test = useUser()
+  console.log(test)
   const classes = useStyles();
   const theme = useTheme();
   const [open, setOpen] = React.useState(false);
