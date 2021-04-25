@@ -15,7 +15,6 @@ import {
 } from '@material-ui/core';
 import { useAuth } from "../context/AuthContext";
 import { db, storage } from "../firebase";
-import {getAvatar} from "../services/firestoreFunctions";
 
 const useStyles = makeStyles(() => ({
   root: {},

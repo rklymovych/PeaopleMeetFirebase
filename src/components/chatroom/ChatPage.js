@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useContext} from 'react';
 import clsx from 'clsx';
 import {makeStyles, useTheme, withStyles} from '@material-ui/core/styles';
 import Drawer from '@material-ui/core/Drawer';
@@ -18,7 +18,8 @@ import ListItemText from '@material-ui/core/ListItemText';
 import InboxIcon from '@material-ui/icons/MoveToInbox';
 import MailIcon from '@material-ui/icons/Mail';
 import {Avatar, Badge} from "@material-ui/core";
-import {useAuth, useUser} from "../../context/AuthContext";
+import {useAuth} from "../../context/AuthContext";
+import {UserContext} from '../../context/UserContext'
 
 const drawerWidth = 240;
 
@@ -120,8 +121,7 @@ const SmallAvatar = withStyles((theme) => ({
 }))(Avatar)
 
 export const ChatPage = () => {
-  const test = useUser()
-  console.log(test)
+  const {getCurrentUserWithId} =  useContext(UserContext)
   const classes = useStyles();
   const theme = useTheme();
   const [open, setOpen] = React.useState(false);
@@ -129,6 +129,8 @@ export const ChatPage = () => {
   const handleDrawerOpen = () => {
     setOpen(true);
   };
+  const n = 34
+  console.log(getCurrentUserWithId(n));
 
   const handleDrawerClose = () => {
     setOpen(false);

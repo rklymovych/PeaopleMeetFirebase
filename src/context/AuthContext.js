@@ -1,36 +1,20 @@
-import React, {useContext, useState, useEffect} from "react"
-import {auth, db} from "../firebase"
+import React, { useContext, useState, useEffect } from "react"
+import { auth, db } from "../firebase"
 
 const AuthContext = React.createContext()
-const UserContext = React.createContext()
 
 export function useAuth() {
   return useContext(AuthContext)
 }
 
-export function useUser() {
-  return useContext(UserContext)
-}
 
-
-export function AuthProvider({children}) {
+export function AuthProvider({ children }) {
   const [currentUser, setCurrentUser] = useState()
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
-  const [currentUserWithId, serCurrentUserWithId] = useState([])
+  const [currentUserWithId, setCurrentUserWithId] = useState([])
 
-  const getCurrentUserWithId = () => {
-    const getUsers = () => {
-      return db.collection("users").get() // надо ли ретурн???
-          .then((querySnapshot) => {
-            const users = querySnapshot.docs.filter((user => getUid() === user.id)).map((doc) => {
-              return {id: doc.id, ...doc.data()};
-            })
-            serCurrentUserWithId(users);
-          });
-    }
-    // getUsers()
-  }
+
 
 
   function getUid() {
@@ -40,16 +24,19 @@ export function AuthProvider({children}) {
 
   async function signup(email, password, userDate = {}) {
     return auth.createUserWithEmailAndPassword(email, password)
-        .then(cred => {
-          return db.collection('users').doc(cred?.user?.uid).set({
-            id: cred?.user?.uid,
-            name: userDate.name,
-            isOnline: false,
-            description: ''
-          })
+      .then(cred => {
+        return db.collection('users').doc(cred?.user?.uid).set({
+          id: cred?.user?.uid,
+          name: userDate.name,
+          isOnline: false,
+          description: '',
+          sex:'',
+          avatar:'',
+          email: ''
         })
-        .then(() => console.log('success'))
-        .catch(error => setError(error.message))
+      })
+      .then(() => console.log('success'))
+      .catch(error => setError(error.message))
   }
 
 
@@ -102,11 +89,8 @@ export function AuthProvider({children}) {
     error
   }
   return (
-      <AuthContext.Provider value={value}>
-        <UserContext.Provider value={getCurrentUserWithId()}>
-          {!loading && children}
-        </UserContext.Provider>
-
-      </AuthContext.Provider>
+    <AuthContext.Provider value={value}>
+        {!loading && children}
+    </AuthContext.Provider>
   )
 }
