@@ -13,5 +13,8 @@ export const theme = unstable_createMuiStrictModeTheme({
     error: {
       main: '#f71324',
     },
+    white: {
+      main: '#fff',
+    }
   },
 });

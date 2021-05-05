@@ -1,13 +1,12 @@
-import React, { useEffect, useState, useContext } from 'react'
-import { SideNav } from "./SideNav";
-import { db } from "../firebase";
-import { useAuth } from "../context/AuthContext";
-import { Avatar, ListItem, ListItemAvatar, ListItemText, makeStyles } from "@material-ui/core";
+import React, {useEffect, useState, useContext} from 'react'
+import {SideNav} from "./SideNav";
+import {db} from "../firebase";
+import {useAuth} from "../context/AuthContext";
+import {Avatar, ListItem, ListItemAvatar, ListItemText, makeStyles} from "@material-ui/core";
 import Typography from "@material-ui/core/Typography";
 import List from "@material-ui/core/List";
-import { UserModal } from "./UserModal";
-// import {getCurrentUserWithId} from '../index'
-import { UserContext } from '../context/UserContext'
+import {UserModal} from "./UserModal";
+import {UserContext} from '../context/UserContext'
 
 
 const useStyles = makeStyles((theme) => ({
@@ -32,90 +31,80 @@ const useStyles = makeStyles((theme) => ({
 
 export const Users = () => {
   const classes = useStyles()
-  const { getUid } = useAuth()
+  const {getUid} = useAuth()
   const [selectedUser, setSelectedUser] = useState('')
-  // const { getCurrentUserWithId } = useContext(selectedUser)
+  const {setUsers1} = useContext(UserContext)
   const [users, setUsers] = useState([])
   const [openModal, setOpenModal] = useState(false)
 
-
-
-  // console.log(getCurrentUserWithId(222));
-
-
-
   const getUsers = () => {
     return db.collection("users").get() // надо ли ретурн???
-      .then((querySnapshot) => {
-        const users = querySnapshot.docs.filter((user => getUid() !== user.id)).map((doc) => {
-          return { id: doc.id, ...doc.data() };
-        })
-        setUsers(users);
-      });
-  }
+        .then((querySnapshot) => {
+          const users = querySnapshot.docs.filter((user => getUid() !== user.id)).map((doc) => {
+            return {id: doc.id, ...doc.data()};
+          })
+          setUsers(users);
+          setUsers1(users);
+        });
+  };
 
   useEffect(() => {
     getUsers()
   }, [])
 
   const handleOpenUserModal = (user) => {
-    console.log(user);
-    console.log(users);
-    
-    // getCurrentUserWithId(user)
     setSelectedUser(user)
     setOpenModal(!openModal)
   }
-  // console.log(user);
 
   return (
-    <>
-      <SideNav>
-        <List
-          className={classes.root}
-        >
-          {users.length && users.map(user => {
-            // if(user.isOnline){    // flag isOnline
-            return (
-              <ListItem
-                key={user.id}
-                alignItems="flex-start"
-                className={classes.listItem}
-                onClick={() => handleOpenUserModal(user)}
-              >
-                <ListItemAvatar>
-                  <Avatar
-                    alt={user.avatar}
-                    src={user.avatar}
-                  />
-                </ListItemAvatar>
-                <ListItemText
-                  primary={user.name}
-                  secondary={
-                    <React.Fragment>
-                      <Typography
-                        component="span"
-                        variant="body2"
-                        className={classes.inline}
-                        color="textPrimary"
-                      >
-                      </Typography>
-                      {user.description}
-                      {user.id}
-                    </React.Fragment>
-                  }
-                />
-              </ListItem>
-            )
-            // }
-          })}
-        </List>
-      </SideNav>
-      <UserModal
-        openModal={openModal}
-        setOpenModal={setOpenModal}
-        selectedUser={selectedUser} />
-    </>
+      <>
+        <SideNav>
+          <List
+              className={classes.root}
+          >
+            {users.length && users.map(user => {
+              // if(user.isOnline){    // flag isOnline
+              return (
+                  <ListItem
+                      key={user.id}
+                      alignItems="flex-start"
+                      className={classes.listItem}
+                      onClick={() => handleOpenUserModal(user)}
+                  >
+                    <ListItemAvatar>
+                      <Avatar
+                          alt={user.avatar}
+                          src={user.avatar}
+                      />
+                    </ListItemAvatar>
+                    <ListItemText
+                        primary={user.name}
+                        secondary={
+                          <React.Fragment>
+                            <Typography
+                                component="span"
+                                variant="body2"
+                                className={classes.inline}
+                                color="textPrimary"
+                            >
+                            </Typography>
+                            {user.description}
+                            {user.id}
+                          </React.Fragment>
+                        }
+                    />
+                  </ListItem>
+              )
+              // }
+            })}
+          </List>
+        </SideNav>
+        <UserModal
+            openModal={openModal}
+            setOpenModal={setOpenModal}
+            selectedUser={selectedUser}/>
+      </>
 
   )
 }

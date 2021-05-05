@@ -21,7 +21,7 @@ export function RouteComponent() {
             <PrivateRoute exact path="/test" component={Test}/>
             <PrivateRoute exact path="/users" component={Users}/>
             <PrivateRoute exact path="/update-profile" component={UpdateProfile}/>
-            <PrivateRoute exact path="/chat" component={ChatPage}/>
+            <PrivateRoute exact path='/chat/:id' component={ChatPage}/>
             <Redirect to="/"/>
           </Switch>
         </>

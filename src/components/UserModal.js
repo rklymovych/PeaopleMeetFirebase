@@ -13,7 +13,6 @@ import Divider from "@material-ui/core/Divider";
 import {useHistory} from "react-router-dom";
 
 const useStyles = makeStyles((theme) => {
-  console.log(theme)
   return {
     form: {
       display: 'flex',
@@ -69,7 +68,7 @@ export const UserModal = ({selectedUser, openModal, setOpenModal}) => {
   };
 
   const writeHandler = () => {
-    history.push('/chat')
+    history.push(`/chat/${selectedUser.id}`)
   }
 
   return (
