@@ -64,7 +64,6 @@ const ProfileDetails = ({className, ...rest}) => {
     isOnline: false,
   });
   const [online, setOnline] = useState(values.isOnline)
-  console.log(values);
 
   useEffect(() => {
     let age = []
@@ -114,7 +113,6 @@ const ProfileDetails = ({className, ...rest}) => {
   }, []);
 
   const handleChange = (event) => {
-    console.log(event.target.value)
     setValues({
       ...values,
       [event.target.name]: event.target.value
@@ -123,16 +121,9 @@ const ProfileDetails = ({className, ...rest}) => {
 
   const _updateDateHandler = () => {
     let data = db.collection('users').doc(getUid())
-    console.log(values);
-    if (!values.age || !values.description || !values.sex || !values.name || !values.email) {
-      console.log(false)
-      return
-    }
-    console.log('done')
-    // data.set(values,
-    //    { merge: true }
-    //    )
-    // history.push('/test')
+    if (!values.age || !values.description || !values.sex || !values.name || !values.email) return
+    data.set(values,{ merge: true })
+    history.push('/test')
   }
 
   const formik = useFormik({
@@ -155,9 +146,6 @@ const ProfileDetails = ({className, ...rest}) => {
           isOnline: !values.isOnline
         }, {merge: true})
   }
-  useEffect(() => {
-    console.log(!!formik.errors.name)
-  }, [values.name])
 
   return (
       <div style={{position: 'relative', zIndex: 123}}>
@@ -187,18 +175,13 @@ const ProfileDetails = ({className, ...rest}) => {
 
                 >
                   <TextField
-                      // className={clsx({
-                      //   [classes.error]: !!formik.errors.name,
-                      // })}
                       error={!!formik.errors.name && formik.touched.name}
                       fullWidth
                       label="Name"
                       name="name"
                       value={formik.values.name}
                       onChange={handleChange}
-                      // onChange={handleChange}
                       required
-                      // value={values.name}
                       variant="outlined"
 
                   />
@@ -290,7 +273,7 @@ const ProfileDetails = ({className, ...rest}) => {
                       multiline
                       rows={4}
                       required
-                      value={formik.values.description}
+                      value={formik.values.description ? formik.values.description : '' }
                       variant="outlined"
                       onChange={handleChange}
                   />
@@ -317,7 +300,6 @@ const ProfileDetails = ({className, ...rest}) => {
                   label="Online"
               />
               <Button
-                  // type="submit"
                   color="primary"
                   variant="contained"
                   onClick={formik.handleSubmit}
