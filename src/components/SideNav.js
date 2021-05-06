@@ -24,6 +24,8 @@ import {db} from "../firebase";
 import {useAuth} from "../context/AuthContext";
 import {isOnline} from "../services/firestoreFunctions";
 import defaultAvatar from '../../src/assets/avatars/avatar.jpg'
+import {useDispatch, useSelector} from "react-redux";
+import {logout} from "../actions";
 
 const drawerWidth = 230;
 
@@ -98,36 +100,40 @@ const useStyles = makeStyles((theme) => ({
 export const SideNav = ({children}) => {
   const history = useHistory()
   const classes = useStyles();
+
   // const theme = useTheme();
   const [open, setOpen] = React.useState(false);
-  const {logout, getUid} = useAuth()
+  const {getUid} = useAuth()
   const [avatar, setAvatar] = React.useState(null)
   const [userName, setUserName] = React.useState('')
   const handleDrawerOpen = () => {
     setOpen(true);
   };
+  const auth = useSelector(state => state.auth)
+  const dispatch = useDispatch()
 
   const handleDrawerClose = () => {
     setOpen(false);
   };
 
   const logoutHandler = () => {
-    isOnline(getUid())
-    logout()
+    // isOnline(getUid())
+    // logout()
+    dispatch(logout(auth.uid))
   }
 
-  useEffect(() => {
-    const avatar = db.collection("users").doc(getUid())
-        .onSnapshot(doc => {
-          if (doc?.exists) {
-            setAvatar(doc.data().avatar)
-            setUserName(doc.data().name)
-          }
-        }, error => {
-          console.log('sidenavPage', error.message)
-        })
-    return avatar
-  }, [])
+  // useEffect(() => {
+  //   const avatar = db.collection("users").doc(getUid())
+  //       .onSnapshot(doc => {
+  //         if (doc?.exists) {
+  //           setAvatar(doc.data().avatar)
+  //           setUserName(doc.data().name)
+  //         }
+  //       }, error => {
+  //         console.log('sidenavPage', error.message)
+  //       })
+  //   return avatar
+  // }, [])
 
   return (
       <div className={classes.root}>
@@ -153,7 +159,7 @@ export const SideNav = ({children}) => {
             </Typography>
             <IconButton
                 color="inherit"
-                onClick={logoutHandler}
+                onClick={() => dispatch(logout(auth.uid))}
             >
               <InputIcon/>
             </IconButton>
