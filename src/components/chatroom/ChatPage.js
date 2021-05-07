@@ -1,4 +1,5 @@
-import React, {useContext} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
+import {useHistory, useParams} from 'react-router-dom'
 import clsx from 'clsx';
 import {makeStyles, useTheme, withStyles} from '@material-ui/core/styles';
 import Drawer from '@material-ui/core/Drawer';
@@ -11,7 +12,6 @@ import Divider from '@material-ui/core/Divider';
 import IconButton from '@material-ui/core/IconButton';
 import MenuIcon from '@material-ui/icons/Menu';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
-import ChevronRightIcon from '@material-ui/icons/ChevronRight';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
@@ -20,6 +20,11 @@ import MailIcon from '@material-ui/icons/Mail';
 import {Avatar, Badge} from "@material-ui/core";
 import {useAuth} from "../../context/AuthContext";
 import {UserContext} from '../../context/UserContext'
+import {db} from "../../firebase";
+import {SideNav} from "../SideNav";
+
+import InputIcon from "@material-ui/icons/Input";
+import {isOnline} from "../../services/firestoreFunctions";
 
 const drawerWidth = 240;
 
@@ -83,6 +88,13 @@ const useStyles = makeStyles((theme) => ({
     flexGrow: 1,
     padding: theme.spacing(3),
   },
+  padding: {
+    paddingTop: '0!important',
+    paddingBottom: '0!important',
+  },
+  whiteColor: {
+    color: theme.palette.primary.contrastText
+  },
 }));
 const StyledBadge = withStyles((theme) => ({
   badge: {
@@ -121,22 +133,47 @@ const SmallAvatar = withStyles((theme) => ({
 }))(Avatar)
 
 export const ChatPage = () => {
-  const {getCurrentUserWithId} =  useContext(UserContext)
+  const history = useHistory()
+  const {currentUser, getUid, error, logout} = useAuth()
+  let {id} = useParams();
+  const {users1} = useContext(UserContext)
   const classes = useStyles();
   const theme = useTheme();
   const [open, setOpen] = React.useState(false);
-
+  const [chatWithUser, setChatWithUSer] = useState(users1)
   const handleDrawerOpen = () => {
     setOpen(true);
   };
-  const n = 34
-  console.log(getCurrentUserWithId(n));
+  const getUsers = () => {
+    return db.collection("users").get() // надо ли ретурн???
+        .then((querySnapshot) => {
+          const users = querySnapshot.docs.filter((user => id === user.id)).map((doc) => {
+            return {id: doc.id, ...doc.data()};
+          })
+          setChatWithUSer(users)
+        });
+  };
+
+  const getCurrentUSer = (id, users1) => {
+    setChatWithUSer(users1.filter(user => user.id === id))
+  }
+
+  useEffect(() => {
+    if (users1) {
+      getUsers()
+      getCurrentUSer(id, users1)
+    }
+  }, [])
 
   const handleDrawerClose = () => {
     setOpen(false);
   };
-
+  const logoutHandler = () => {
+    isOnline(getUid())
+    logout()
+  }
   return (
+      // <SideNav>
       <div className={classes.root}>
         <CssBaseline/>
         <AppBar
@@ -145,44 +182,59 @@ export const ChatPage = () => {
               [classes.appBarShift]: open,
             })}
         >
-          <Toolbar>
+          <Toolbar style={{display: 'flex', justifyContent: 'space-between'}}>
 
-           <IconButton
-               color="inherit"
-               aria-label="open drawer"
-               onClick={handleDrawerOpen}
-               edge="start"
-               className={clsx(classes.menuButton, {
-                 [classes.hide]: open,
-               })}
-           >
-             <MenuIcon/>
-           </IconButton>
-           <List>
+       <div style={{display: 'flex'}}>
+         <IconButton
+             color="inherit"
+             aria-label="open drawer"
+             onClick={handleDrawerOpen}
+             edge="start"
+             className={clsx(classes.menuButton, {
+               [classes.hide]: open,
+             })}
+         >
+           <MenuIcon/>
+         </IconButton>
+         <IconButton onClick={() => history.push('/users')}>
+           <ChevronLeftIcon
+               className={classes.whiteColor}
+           />
+         </IconButton>
+         <List className={classes.padding}>
+           <ListItem>
+             <ListItemIcon>
+               <StyledBadge
+                   overlap="circle"
+                   anchorOrigin={{
+                     vertical: 'bottom',
+                     horizontal: 'right',
+                   }}
+                   variant="dot"
+               >
+                 {chatWithUser && chatWithUser.map(el => {
+                   return <Avatar key={el.id} alt="Remy Sharp" src={el.avatar}/>
+                 })}
 
-             <ListItem >
-               <ListItemIcon>
-                 <StyledBadge
-                     overlap="circle"
-                     anchorOrigin={{
-                       vertical: 'bottom',
-                       horizontal: 'right',
-                     }}
-                     variant="dot"
-                 >
-                   <Avatar alt="Remy Sharp" src="/static/images/avatar/1.jpg" />
-                 </StyledBadge>
-               </ListItemIcon>
-               <ListItemText primary='прокинуть через контекст имя и аву'/>
-             </ListItem>
+               </StyledBadge>
+             </ListItemIcon>
+             {chatWithUser && chatWithUser.map(el => {
+               return <ListItemText key={el.id} primary={el.name}/>
+             })}
 
-           </List>
-           <Typography variant="h6" noWrap>
-             Короче в шапке поработать надо!!
-           </Typography>
-           <Typography>
-             Exit
-           </Typography>
+           </ListItem>
+
+         </List>
+       </div>
+            <Typography variant="h6" noWrap>
+              Chat
+            </Typography>
+            <IconButton
+                color="inherit"
+                onClick={logoutHandler}
+            >
+              <InputIcon/>
+            </IconButton>
 
           </Toolbar>
         </AppBar>
@@ -201,7 +253,7 @@ export const ChatPage = () => {
         >
           <div className={classes.toolbar}>
             <IconButton onClick={handleDrawerClose}>
-              {theme.direction === 'rtl' ? <ChevronRightIcon/> : <ChevronLeftIcon/>}
+              <ChevronLeftIcon/>
             </IconButton>
           </div>
           <Divider/>
@@ -227,28 +279,15 @@ export const ChatPage = () => {
           <div className={classes.toolbar}/>
           <Typography paragraph>
             Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt
-            ut labore et dolore magna aliqua. Rhoncus dolor purus non enim praesent elementum
-            facilisis leo vel. Risus at ultrices mi tempus imperdiet. Semper risus in hendrerit
-            gravida rutrum quisque non tellus. Convallis convallis tellus id interdum velit laoreet id
-            donec ultrices. Odio morbi quis commodo odio aenean sed adipiscing. Amet nisl suscipit
-            adipiscing bibendum est ultricies integer quis. Cursus euismod quis viverra nibh cras.
-            Metus vulputate eu scelerisque felis imperdiet proin fermentum leo. Mauris commodo quis
-            imperdiet massa tincidunt. Cras tincidunt lobortis feugiat vivamus at augue. At augue eget
-            arcu dictum varius duis at consectetur lorem. Velit sed ullamcorper morbi tincidunt. Lorem
-            donec massa sapien faucibus et molestie ac.
+
           </Typography>
           <Typography paragraph>
-            Consequat mauris nunc congue nisi vitae suscipit. Fringilla est ullamcorper eget nulla
-            facilisi etiam dignissim diam. Pulvinar elementum integer enim neque volutpat ac
-            tincidunt. Ornare suspendisse sed nisi lacus sed viverra tellus. Purus sit amet volutpat
-            consequat mauris. Elementum eu facilisis sed odio morbi. Euismod lacinia at quis risus sed
-            vulputate odio. Morbi tincidunt ornare massa eget egestas purus viverra accumsan in. In
-            hendrerit gravida rutrum quisque non tellus orci ac. Pellentesque nec nam aliquam sem et
-            tortor. Habitant morbi tristique senectus et. Adipiscing elit duis tristique sollicitudin
+
             nibh sit. Ornare aenean euismod elementum nisi quis eleifend. Commodo viverra maecenas
             accumsan lacus vel facilisis. Nulla posuere sollicitudin aliquam ultrices sagittis orci a.
           </Typography>
         </main>
       </div>
+      // </SideNav>
   );
 }

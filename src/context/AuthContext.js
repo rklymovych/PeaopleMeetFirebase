@@ -32,7 +32,8 @@ export function AuthProvider({ children }) {
           description: '',
           sex:'',
           avatar:'',
-          email: ''
+          email: '',
+          age:''
         })
       })
       .then(() => console.log('success'))
