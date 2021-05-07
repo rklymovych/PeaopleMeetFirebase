@@ -122,18 +122,18 @@ export const SideNav = ({children}) => {
     dispatch(logout(auth.uid))
   }
 
-  // useEffect(() => {
-  //   const avatar = db.collection("users").doc(getUid())
-  //       .onSnapshot(doc => {
-  //         if (doc?.exists) {
-  //           setAvatar(doc.data().avatar)
-  //           setUserName(doc.data().name)
-  //         }
-  //       }, error => {
-  //         console.log('sidenavPage', error.message)
-  //       })
-  //   return avatar
-  // }, [])
+  useEffect(() => {
+    const avatar = db.collection("users").doc(getUid())
+        .onSnapshot(doc => {
+          if (doc?.exists) {
+            setAvatar(doc.data().avatar)
+            setUserName(doc.data().name)
+          }
+        }, error => {
+          console.log('sidenavPage', error.message)
+        })
+    return avatar
+  }, [])
 
   return (
       <div className={classes.root}>

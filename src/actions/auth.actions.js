@@ -37,14 +37,14 @@ export const signup = (user) => {
           const currentUser = auth.currentUser
           const name = user.name
           currentUser.updateProfile({
-            displayName: name
+            displayName: name,
           })
               .then(() => {
                 db.collection('users')
                     .doc(data.user.uid)
                     .set({
                       uid: data.user.uid,
-                      name: user.name,
+                      name: currentUser.displayName,
                       isOnline: true,
                       description: '',
                       sex: '',

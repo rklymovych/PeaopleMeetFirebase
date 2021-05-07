@@ -139,13 +139,13 @@ const ProfileDetails = ({className, ...rest}) => {
   })
 
 
-  // const onlineHandler = () => {
-  //   setOnline(!online)
-  //   db.collection('users').doc(getUid())
-  //       .set({
-  //         isOnline: !values.isOnline
-  //       }, {merge: true})
-  // }
+  const onlineHandler = () => {
+    setOnline(!online)
+    db.collection('users').doc(getUid())
+        .set({
+          isOnline: !values.isOnline
+        }, {merge: true})
+  }
 
   return (
       <div style={{position: 'relative', zIndex: 123}}>
@@ -292,7 +292,7 @@ const ProfileDetails = ({className, ...rest}) => {
                   control={
                     <Switch
                         checked={values.isOnline}
-                        // onChange={onlineHandler}
+                        onChange={onlineHandler}
                         name="isonline"
                         color="primary"
                     />

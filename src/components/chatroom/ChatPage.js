@@ -20,7 +20,7 @@ import MailIcon from '@material-ui/icons/Mail';
 import {Avatar, Badge, TextField} from "@material-ui/core";
 import {useAuth} from "../../context/AuthContext";
 import {UserContext} from '../../context/UserContext'
-import {db} from "../../firebase";
+import {db, auth, messaging} from "../../firebase";
 import {SideNav} from "../SideNav";
 import {useAuthState} from "react-firebase-hooks/auth";
 import {useCollectionData} from 'react-firebase-hooks/firestore';
@@ -31,7 +31,7 @@ import {ChatMessage} from "./ChatMEssage";
 import 'firebase/firestore'
 import './styles.css';
 import {useDispatch, useSelector} from "react-redux";
-import {getRealtimeUsers} from "../../actions";
+import {getRealtimeConversations, getRealtimeUsers, updateMessage} from "../../actions";
 
 const drawerWidth = 240;
 
@@ -157,9 +157,10 @@ const User = (props) => {
       </div>
   );
 }
+
 export const ChatPage = () => {
   // const history = useHistory()
-  // const {currentUser, getUid, error, logout} = useAuth()
+  // const {currentUser, getUid, error, logout,} = useAuth()
   // let {id} = useParams();
   // const {users1} = useContext(UserContext)
   // const classes = useStyles();
@@ -170,10 +171,15 @@ export const ChatPage = () => {
   // const handleDrawerOpen = () => {
   //   setOpen(true);
   // };
+  // const [user1] = useAuthState(auth)
+  const dummy = useRef();
   const dispatch = useDispatch()
   const auth = useSelector(state => state.auth)
-  // const auth = JSON.parse(localStorage.getItem('user'))
   const user = useSelector(state => state.user)
+  const [chatStarted, setChatStarted] = useState(false)
+  const [chatUser, setChatUser] = useState('')
+  const [message, setMessage] = useState('')
+  const [userUid, setUserUid] = useState(null)
   let unsubscribe;
   // const getUsers = () => {
   //   return db.collection("users").get() // надо ли ретурн???
@@ -204,16 +210,15 @@ export const ChatPage = () => {
   //   logout()
   // }
 
-  // const dummy = useRef();
-  // const scrollToBottom = () => {
-  //   dummy.current.scrollIntoView({behavior: 'smooth'});
-  // }
+
+  const scrollToBottom = () => {
+    dummy.current.scrollIntoView({behavior: 'smooth'});
+  }
   // const messagesRef = db.collection('messages');
   // const query = messagesRef.orderBy('createdAt', 'asc').limitToLast(25);
   //
   // const [messages] = useCollectionData(query, {idField: 'id'});
-  // console.log('displayName',currentUser.displayName)
-  // console.log('db.FieldValue', db.FieldValue)
+
   // const sendMessage = async (e) => {
   //   e.preventDefault();
   //   // gets name, userID and pfp of logged in user
@@ -232,18 +237,22 @@ export const ChatPage = () => {
   //   setFormValue('');
   //   dummy.current.scrollIntoView({ behavior: 'smooth' });
   // }
-  // useEffect(scrollToBottom, [messages]);
+  // useEffect(() => {
+  //
+  //   scrollToBottom()
+  //   console.log('был диспач')
+  // }, [dispatch]);
 
   /////////////////////////////////////////////////////////
 
   useEffect(() => {
 
     unsubscribe = dispatch(getRealtimeUsers(auth.uid))
-
         .then(unsubscribe => {
           return unsubscribe;
         })
         .catch(error => console.log(error))
+
 
   }, [auth.uid])
 
@@ -254,6 +263,43 @@ export const ChatPage = () => {
       unsubscribe.then(f => f()).catch(error => console.log(error))
     }
   }, [])
+
+
+  const initChat = (user) => {
+    scrollToBottom()
+    setChatStarted(true)
+    setChatUser(user.name)
+    setUserUid(user.uid)
+    const uid_1 = auth.uid
+    const uid_2 = user.uid
+    dispatch(getRealtimeConversations({uid_1, uid_2}))
+  }
+
+
+  const submitMessage = (e) => {
+
+    const msgObj = {
+      user_uid_1: auth.uid,
+      user_uid_2: userUid,
+      message,
+      idx: new Date()
+    }
+    console.log(!!message)
+    if (message !== '') {
+      scrollToBottom()
+      dispatch(updateMessage(msgObj))
+          .then(() => {
+            setMessage('')
+          })
+    }
+
+  }
+  const _handleKeyDown = (e) => {
+    if (e.key === "Enter") {
+      submitMessage()
+
+    }
+  }
 
   return (
       // <SideNav>
@@ -403,7 +449,7 @@ export const ChatPage = () => {
                   user.users.map(user => {
                     return (
                         <User
-                            // onClick={initChat}
+                            onClick={initChat}
                             key={user.uid}
                             user={user}
                         />
@@ -417,37 +463,40 @@ export const ChatPage = () => {
           <div className="chatArea">
 
             <div className="chatHeader">
-              {/*{*/}
-              {/*  chatStarted ? chatUser : ''*/}
-              {/*}*/}
+              {
+                chatStarted ? chatUser : ''
+              }
             </div>
             <div className="messageSections">
-              {/*{*/}
-              {/*  chatStarted ?*/}
-              {/*      user.conversations.map(con =>*/}
-              {/*          <div style={{ textAlign: con.user_uid_1 == auth.uid ? 'right' : 'left' }}>*/}
-              {/*            <p className="messageStyle" >{con.message}</p>*/}
-              {/*          </div> )*/}
-              {/*      : null*/}
-              {/*}*/}
+              {
+                chatStarted ?
+                    user.conversations.map((con, idx) =>
+                        <div key={idx} style={{textAlign: con.user_uid_1 === auth.uid ? 'right' : 'left'}}>
+                          <p className="messageStyle">{con.message}</p>
+                        </div>
+                    )
+                    : null
+              }
 
-
+              <div ref={dummy}/>
             </div>
-            {/*{*/}
-            {/*  chatStarted ?*/}
-            <div className="chatControls">
+
+            {
+              chatStarted ?
+                  <div className="chatControls">
                 <textarea
-                    // value={message}
-                    // onChange={(e) => setMessage(e.target.value)}
+                    onKeyDown={_handleKeyDown}
+                    value={message}
+                    onChange={(e) => setMessage(e.target.value)}
                     placeholder="Write Message"
                 />
-              <button
-                  // onClick={submitMessage}
-              >Send
-              </button>
-            </div>
-            {/*: null/*/}
-            {/*}*/}
+                    <button
+                        onClick={submitMessage}
+                    >Send
+                    </button>
+                  </div>
+                  : null
+            }
 
           </div>
         </section>
