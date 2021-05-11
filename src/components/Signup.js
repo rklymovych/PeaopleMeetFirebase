@@ -1,29 +1,24 @@
 import React, {useRef, useState} from 'react'
 import {Card, Button, Form, Alert, Container} from "react-bootstrap";
 import {useAuth} from "../context/AuthContext";
-import { Link, useHistory} from "react-router-dom";
+import {Link, useHistory} from "react-router-dom";
 import 'firebase/auth'
 import 'firebase/app'
+import {useDispatch, useSelector} from "react-redux";
+import {signup} from "../actions";
 
 function Signup() {
   const emailRef = useRef()
   const nameRef = useRef()
   const passwordRef = useRef()
   const passwordConfirmRef = useRef()
-  const {signup} = useAuth()
+  // const {signup} = useAuth()
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
   const history = useHistory()
+  const dispatch = useDispatch()
 
-  const [userDate, setUserDate] = useState({
-    name: ''
-  })
-
-  const handleChangeName = (e) => {
-    setUserDate({name: e.target.value})
-  }
-
-  async function handleSubmit(e) {
+  const handleSubmit = (e) => {
     e.preventDefault()
 
     if (passwordRef.current.value !== passwordConfirmRef.current.value) {
@@ -33,11 +28,11 @@ function Signup() {
     try {
       setError('')
       setLoading(true)
-      await signup(emailRef.current.value, passwordRef.current.value, {
-        name: userDate.name
-      })
-
-      console.log(nameRef.current.value)
+      const email = emailRef.current.value // сделать локальный стейт к этому всему
+      const password = passwordRef.current.value
+      const name = nameRef.current.value
+      const user = {email, password, name}
+      dispatch(signup(user))
       history.push('/')
     } catch (e) {
       setError('Failed to create an account')
@@ -68,7 +63,6 @@ function Signup() {
                       type="text"
                       ref={nameRef}
                       required
-                      onChange={handleChangeName}
                   />
                 </Form.Group>
 
