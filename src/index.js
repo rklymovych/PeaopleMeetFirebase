@@ -13,7 +13,8 @@ if (typeof window !== 'undefined') {
 }
 
 ReactDOM.render(
-    <React.StrictMode>
+    // <React.StrictMode>
+      <React.Fragment>
       <UserContextProvider>
         <ThemeProvider theme={theme}>
           <AuthProvider>
@@ -21,7 +22,7 @@ ReactDOM.render(
           </AuthProvider>
         </ThemeProvider>
       </UserContextProvider>
-    </React.StrictMode>,
+    </React.Fragment>,
     document.getElementById('root')
 );
 

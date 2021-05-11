@@ -10,6 +10,7 @@ import Typography from '@material-ui/core/Typography';
 import Divider from '@material-ui/core/Divider';
 import IconButton from '@material-ui/core/IconButton';
 import MenuIcon from '@material-ui/icons/Menu';
+import RoomIcon from '@material-ui/icons/Room';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
@@ -189,12 +190,12 @@ export const SideNav = ({children}) => {
           <Divider/>
           <List>
             <ListItem button onClick={() => history.push('/test')}>
-              <ListItemIcon><InboxIcon/></ListItemIcon>
-              <ListItemText primary={'Test Page'}/>
+              <ListItemIcon><RoomIcon/></ListItemIcon>
+              <ListItemText primary={'Map'}/>
             </ListItem>
-            <ListItem button onClick={() => history.push('/')}>
-              <ListItemIcon><AccountCircleRoundedIcon/></ListItemIcon>
-              <ListItemText primary={'Account'}/>
+            <ListItem button>
+              <ListItemIcon><MailIcon/></ListItemIcon>
+              <ListItemText primary={'text'}/>
             </ListItem>
             <ListItem button onClick={() => history.push('/users')}>
               <ListItemIcon><SupervisorAccountRoundedIcon/></ListItemIcon>
@@ -203,11 +204,11 @@ export const SideNav = ({children}) => {
           </List>
           <Divider/>
           <List>
-
-            <ListItem button>
-              <ListItemIcon><MailIcon/></ListItemIcon>
-              <ListItemText primary={'text'}/>
+            <ListItem button onClick={() => history.push('/')}>
+              <ListItemIcon><AccountCircleRoundedIcon/></ListItemIcon>
+              <ListItemText primary={'Account'}/>
             </ListItem>
+
           </List>
         </Drawer>
         <main
