@@ -10,12 +10,12 @@ import Typography from '@material-ui/core/Typography';
 import Divider from '@material-ui/core/Divider';
 import IconButton from '@material-ui/core/IconButton';
 import MenuIcon from '@material-ui/icons/Menu';
-import RoomIcon from '@material-ui/icons/Room';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import InboxIcon from '@material-ui/icons/MoveToInbox';
+import RoomIcon from '@material-ui/icons/Room';
 import MailIcon from '@material-ui/icons/Mail';
 import SupervisorAccountRoundedIcon from '@material-ui/icons/SupervisorAccountRounded';
 import AccountCircleRoundedIcon from '@material-ui/icons/AccountCircleRounded';
@@ -25,6 +25,8 @@ import {db} from "../firebase";
 import {useAuth} from "../context/AuthContext";
 import {isOnline} from "../services/firestoreFunctions";
 import defaultAvatar from '../../src/assets/avatars/avatar.jpg'
+import {useDispatch, useSelector} from "react-redux";
+import {logout} from "../actions";
 
 const drawerWidth = 230;
 
@@ -99,22 +101,26 @@ const useStyles = makeStyles((theme) => ({
 export const SideNav = ({children}) => {
   const history = useHistory()
   const classes = useStyles();
+
   // const theme = useTheme();
   const [open, setOpen] = React.useState(false);
-  const {logout, getUid} = useAuth()
+  const {getUid} = useAuth()
   const [avatar, setAvatar] = React.useState(null)
   const [userName, setUserName] = React.useState('')
   const handleDrawerOpen = () => {
     setOpen(true);
   };
+  const auth = useSelector(state => state.auth)
+  const dispatch = useDispatch()
 
   const handleDrawerClose = () => {
     setOpen(false);
   };
 
   const logoutHandler = () => {
-    isOnline(getUid())
-    logout()
+    // isOnline(getUid())
+    // logout()
+    dispatch(logout(auth.uid))
   }
 
   useEffect(() => {
@@ -154,7 +160,7 @@ export const SideNav = ({children}) => {
             </Typography>
             <IconButton
                 color="inherit"
-                onClick={logoutHandler}
+                onClick={() => dispatch(logout(auth.uid))}
             >
               <InputIcon/>
             </IconButton>
@@ -206,7 +212,7 @@ export const SideNav = ({children}) => {
           <List>
             <ListItem button onClick={() => history.push('/')}>
               <ListItemIcon><AccountCircleRoundedIcon/></ListItemIcon>
-              <ListItemText primary={'Account'}/>
+              <ListItemText primary={'My account'}/>
             </ListItem>
 
           </List>

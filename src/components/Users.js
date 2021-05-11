@@ -1,6 +1,6 @@
 import React, {useEffect, useState, useContext} from 'react'
 import {SideNav} from "./SideNav";
-import {db} from "../firebase";
+import {auth, db} from "../firebase";
 import {useAuth} from "../context/AuthContext";
 import {Avatar, ListItem, ListItemAvatar, ListItemText, makeStyles} from "@material-ui/core";
 import Typography from "@material-ui/core/Typography";
@@ -56,6 +56,10 @@ export const Users = () => {
     setSelectedUser(user)
     setOpenModal(!openModal)
   }
+
+
+
+
 
   return (
       <>

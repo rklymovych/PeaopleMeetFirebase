@@ -1,4 +1,4 @@
-import React from 'react'
+import React,{useEffect} from 'react'
 import {Redirect, Route, Switch} from "react-router-dom";
 import {useAuth} from "../context/AuthContext";
 import PrivateRoute from "./PrivateRoute";
@@ -10,9 +10,26 @@ import Account from "../AccountView";
 import {Test} from "./Test";
 import {Users} from "./Users";
 import {ChatPage} from "./chatroom/ChatPage";
+import {isLoggedInUser} from "../actions";
+import {auth} from "../firebase";
+import {useDispatch, useSelector} from "react-redux";
 
 export function RouteComponent() {
   const {currentUser} = useAuth()
+
+
+  const auth = useSelector(state => state.auth);
+  const dispatch = useDispatch()
+
+
+
+  useEffect(() => {
+    if(!auth.authenticated){
+      dispatch(isLoggedInUser())
+    }
+  }, []);
+
+
   if (currentUser) {
     return (
         <>
@@ -21,7 +38,8 @@ export function RouteComponent() {
             <PrivateRoute exact path="/test" component={Test}/>
             <PrivateRoute exact path="/users" component={Users}/>
             <PrivateRoute exact path="/update-profile" component={UpdateProfile}/>
-            <PrivateRoute exact path='/chat/:id' component={ChatPage}/>
+            {/*<PrivateRoute exact path='/chat/:id' component={ChatPage}/>*/}
+            <PrivateRoute exact path='/chat' component={ChatPage}/>
             <Redirect to="/"/>
           </Switch>
         </>

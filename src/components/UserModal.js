@@ -68,7 +68,8 @@ export const UserModal = ({selectedUser, openModal, setOpenModal}) => {
   };
 
   const writeHandler = () => {
-    history.push(`/chat/${selectedUser.id}`)
+    // history.push(`/chat/${selectedUser.id}`)
+    history.push('/chat')
   }
 
   return (
