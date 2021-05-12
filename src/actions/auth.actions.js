@@ -45,12 +45,13 @@ export const signup = (user) => {
                     .set({
                       uid: data.user.uid,
                       name: currentUser.displayName,
-                      isOnline: true,
+                      isOnline: false,
                       description: '',
                       sex: '',
                       avatar: '',
                       email: '',
                       age: '',
+                      location: {lat: null, lng:null},
                       createdAt: new Date()
                     })
               })
@@ -141,7 +142,7 @@ export const logout = (uid) => {
 
     db.collection('users')
         .doc(uid)
-        .update({isOnline: false})
+        .update({isOnline: false, location: {lat: null, lng: null}})
         .then(() => {
           auth
               .signOut()

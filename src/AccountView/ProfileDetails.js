@@ -52,18 +52,18 @@ const ProfileDetails = ({className, ...rest}) => {
   const classes = useStyles();
   const [snackbar, setSnackbar] = useState(false)
   const [open, setOpen] = useState(false);
-
+  const [location, setLocation] = useState()
 
   const [userAge, setUserAge] = useState([])
   const [values, setValues] = useState({
     name: '',
     description: '',
-    email: currentUser.email,
     age: '',
     sex: '',
+    email: currentUser.email,
     isOnline: false,
+    // location: {lat: '', lng: ''}
   });
-  const [online, setOnline] = useState(values.isOnline)
 
   useEffect(() => {
     let age = []
@@ -105,6 +105,7 @@ const ProfileDetails = ({className, ...rest}) => {
             description: doc.data().description,
             age: doc.data().age,
             sex: doc.data().sex,
+            location: {lat: doc.data().location.lat, lng: doc.data().location.lng},
             isOnline: doc.data().isOnline
           })
         })
@@ -122,7 +123,7 @@ const ProfileDetails = ({className, ...rest}) => {
   const _updateDateHandler = () => {
     let data = db.collection('users').doc(getUid())
     if (!values.age || !values.description || !values.sex || !values.name || !values.email) return
-    data.set(values,{ merge: true })
+    data.set(values, {merge: true})
     history.push('/test')
   }
 
@@ -132,19 +133,45 @@ const ProfileDetails = ({className, ...rest}) => {
       sex: values.sex || '',
       name: values.name || '',
       description: values.description || '',
+      // location: {lat: values.location.lat, lng: values.location.lng} || {}
     },
     validationSchema,
     onSubmit: _updateDateHandler,
     enableReinitialize: true,
   })
 
+  const getCurrentPosition =  (successCb) => {
+    if ("geolocation" in navigator) {
+       navigator.geolocation.getCurrentPosition(function (position) {
+         if (typeof successCb === "function") {
+           successCb(position);
+         }
+      })
+    }
+  }
 
-  const onlineHandler = () => {
-    setOnline(!online)
-    db.collection('users').doc(getUid())
-        .set({
-          isOnline: !values.isOnline
-        }, {merge: true})
+  const onlineHandler = ({target: { checked }}) => {
+
+    if(checked){
+      getCurrentPosition((position) => {
+        db.collection('users').doc(getUid())
+            .update({
+          // ...values,
+          location: {
+            lat: position.coords.latitude,
+            lng: position.coords.longitude,
+          },
+          isOnline: checked
+        })
+      })
+    }
+    else {
+      db.collection('users').doc(getUid())
+          .update({
+        location: {lat: null, lng: null},
+        isOnline: checked
+      })
+    }
   }
 
   return (
@@ -273,7 +300,7 @@ const ProfileDetails = ({className, ...rest}) => {
                       multiline
                       rows={4}
                       required
-                      value={formik.values.description ? formik.values.description : '' }
+                      value={formik.values.description ? formik.values.description : ''}
                       variant="outlined"
                       onChange={handleChange}
                   />
