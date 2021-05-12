@@ -5,7 +5,10 @@ import mapStyles from "../components/maps/MapStyles";
 import skaters from '../components/maps/skateboarding.svg'
 import {formatRelative} from 'date-fns'
 import compass from '../assets/2277999_map-compass-compass-svg-hd-png-download.png'
-import {auth, db} from "../firebase";
+import {auth, db,} from "../firebase";
+import {getRealtimeUsers} from "../actions";
+import {useDispatch, useSelector} from 'react-redux'
+import defUser from '../assets/def-user.jpg'
 import usePlacesAutocomplete, {
   getGeocode,
   getLatLng,
@@ -18,6 +21,7 @@ import {
   ComboboxOption,
 } from "@reach/combobox";
 import '@reach/combobox/styles.css'
+import {userConstants} from "../actions/constants";
 
 const libraries = ["places"];
 const containerStyle = {
@@ -33,6 +37,7 @@ const options = {
 }
 
 export const Test = () => {
+  const dispatch = useDispatch()
   const {isLoaded, loadError} = useLoadScript({
     googleMapsApiKey: process.env.REACT_APP_GOOGLE_KEY,
     libraries
@@ -40,6 +45,44 @@ export const Test = () => {
   const [markers, setMarkers] = useState([])
   const [selected, setSelected] = useState(null)
   const [location, setLocation] = useState()
+  const [onlineUsers, setOnlineUsers] = useState([])
+  const auth = useSelector(state => state.auth)
+  // const allUsers = useSelector(state => state.user.users)
+  let unsubscribe;
+
+
+  useEffect(() => {
+    db.collection('users')
+        .where('isOnline', '==', true)
+        .onSnapshot((querySnapshot) => {
+          let users = []
+          querySnapshot.forEach((doc) => {
+            users.push(doc.data())
+          });
+
+          setOnlineUsers(users)
+        });
+
+  }, [])
+
+
+  useEffect(() => {
+
+    unsubscribe = dispatch(getRealtimeUsers(auth.uid))
+        .then(unsubscribe => {
+          return unsubscribe;
+        })
+        .catch(error => console.log(error))
+
+
+  }, [auth.uid])
+
+  useEffect(() => {
+    return () => {
+      //cleanup
+      unsubscribe.then(f => f()).catch(error => console.log(error))
+    }
+  }, [])
 
   useEffect(() => {
     getCurrentPosition()
@@ -86,15 +129,14 @@ export const Test = () => {
     )
   }
 
-  console.log('currentUser',auth.currentUser);
-
-  console.log(location)
+  const du = '../assets/def-user.jpg'
+  console.log(auth.uid)
   return (
       <SideNav>
         <h1>Bears <span role="img" aria-label="tent">😋</span></h1>
         {/*<Search panTo={panTo}/>*/}
         <Locate/>
-        {location ? (     <GoogleMap
+        {location ? (<GoogleMap
             mapContainerStyle={containerStyle}
             zoom={18}
             center={{lat: location.lat, lng: location.lng}}
@@ -104,7 +146,28 @@ export const Test = () => {
         >
           <Marker
               position={{lat: location.lat, lng: location.lng}}
-          ></Marker>
+              //  icon={{
+              //   anchor: new window.google.maps.Point(15, 15),
+              //   origin: new window.google.maps.Point(0, 0)
+              // }}
+          />
+
+          {onlineUsers.map(user => <Marker
+              key={user.uid}
+              position={{lat: user.location.lat, lng: user.location.lng}}
+              icon={{
+                url: defUser,
+                scaledSize: new window.google.maps.Size(30, 30),
+                anchor: new window.google.maps.Point(15, 15),
+                origin: new window.google.maps.Point(0, 0)
+              }}
+              onClick={() => {
+                setSelected(user)
+              }}
+          >
+
+          </Marker>)}
+
           {/*{markers.map(marker => <Marker*/}
           {/*        key={marker.time.toISOString()}*/}
           {/*        position={{lat: marker.lat, lng: marker.lng}}*/}
@@ -120,14 +183,14 @@ export const Test = () => {
           {/*    />*/}
           {/*)}*/}
           {selected ? (
-              <InfoWindow position={{lat: selected.lat, lng: selected.lng}} onCloseClick={() => setSelected(null)}>
+              <InfoWindow position={{lat: selected.location.lat, lng: selected.location.lng}} onCloseClick={() => setSelected(null)}>
                 <div>
-                  <h2>Bear Spotted</h2>
-                  <p>Spotted {formatRelative(selected.time, new Date())}</p>
+                  <h2>{selected.name}</h2>
+                  <p>{selected.description}</p>
                 </div>
 
               </InfoWindow>) : null}
-        </GoogleMap>): null}
+        </GoogleMap>) : null}
 
       </SideNav>
   )

@@ -181,69 +181,10 @@ export const ChatPage = () => {
   const [message, setMessage] = useState('')
   const [userUid, setUserUid] = useState(null)
   let unsubscribe;
-  // const getUsers = () => {
-  //   return db.collection("users").get() // надо ли ретурн???
-  //       .then((querySnapshot) => {
-  //         const users = querySnapshot.docs.filter((user => id === user.id)).map((doc) => {
-  //           return {id: doc.id, ...doc.data()};
-  //         })
-  //         setChatWithUSer(users)
-  //       });
-  // };
-
-  // const getCurrentUSer = (id, users1) => {
-  //   setChatWithUSer(users1.filter(user => user.id === id))
-  // }
-  //
-  // useEffect(() => {
-  //   if (users1) {
-  //     // getUsers()
-  //     getCurrentUSer(id, users1)
-  //   }
-  // }, [])
-
-  // const handleDrawerClose = () => {
-  //   setOpen(false);
-  // };
-  // const logoutHandler = () => {
-  //   isOnline(getUid())
-  //   logout()
-  // }
-
 
   const scrollToBottom = () => {
     dummy.current.scrollIntoView({behavior: 'smooth'});
   }
-  // const messagesRef = db.collection('messages');
-  // const query = messagesRef.orderBy('createdAt', 'asc').limitToLast(25);
-  //
-  // const [messages] = useCollectionData(query, {idField: 'id'});
-
-  // const sendMessage = async (e) => {
-  //   e.preventDefault();
-  //   // gets name, userID and pfp of logged in user
-  //
-  //   const { displayName, uid, photoURL } = currentUser;
-  //
-  //   await messagesRef.add({
-  //     user: displayName,
-  //     body: formValue,
-  //     // createdAt: db.FieldValue.serverTimestamp(),
-  //     uid: uid,
-  //     photoURL: photoURL
-  //   })
-  //
-  //   // resetting form value and scrolling to bottom
-  //   setFormValue('');
-  //   dummy.current.scrollIntoView({ behavior: 'smooth' });
-  // }
-  // useEffect(() => {
-  //
-  //   scrollToBottom()
-  //   console.log('был диспач')
-  // }, [dispatch]);
-
-  /////////////////////////////////////////////////////////
 
   useEffect(() => {
 
@@ -302,147 +243,10 @@ export const ChatPage = () => {
   }
 
   return (
-      // <SideNav>
-      // <div className={classes.root}>
-      //   <CssBaseline/>
-      //   <AppBar
-      //       position="fixed"
-      //       className={clsx(classes.appBar, {
-      //         [classes.appBarShift]: open,
-      //       })}
-      //   >
-      //     <Toolbar style={{display: 'flex', justifyContent: 'space-between'}}>
-      //
-      //       <div style={{display: 'flex'}}>
-      //         <IconButton
-      //             color="inherit"
-      //             aria-label="open drawer"
-      //             onClick={handleDrawerOpen}
-      //             edge="start"
-      //             className={clsx(classes.menuButton, {
-      //               [classes.hide]: open,
-      //             })}
-      //         >
-      //           <MenuIcon/>
-      //         </IconButton>
-      //         <IconButton onClick={() => history.push('/users')}>
-      //           <ChevronLeftIcon
-      //               className={classes.whiteColor}
-      //           />
-      //         </IconButton>
-      //         <List className={classes.padding}>
-      //           <ListItem>
-      //             <ListItemIcon>
-      //               <StyledBadge
-      //                   overlap="circle"
-      //                   anchorOrigin={{
-      //                     vertical: 'bottom',
-      //                     horizontal: 'right',
-      //                   }}
-      //                   variant="dot"
-      //               >
-      //                 {chatWithUser && chatWithUser.map(el => {
-      //                   return <Avatar key={el.id} alt="Remy Sharp" src={el.avatar}/>
-      //                 })}
-      //
-      //               </StyledBadge>
-      //             </ListItemIcon>
-      //             {chatWithUser && chatWithUser.map(el => {
-      //               return <ListItemText key={el.id} primary={el.name}/>
-      //             })}
-      //
-      //           </ListItem>
-      //
-      //         </List>
-      //       </div>
-      //       <Typography variant="h6" noWrap>
-      //         Chat
-      //       </Typography>
-      //       <IconButton
-      //           color="inherit"
-      //           onClick={logoutHandler}
-      //       >
-      //         <InputIcon/>
-      //       </IconButton>
-      //
-      //     </Toolbar>
-      //   </AppBar>
-      //   <Drawer
-      //       variant="permanent"
-      //       className={clsx(classes.drawer, {
-      //         [classes.drawerOpen]: open,
-      //         [classes.drawerClose]: !open,
-      //       })}
-      //       classes={{
-      //         paper: clsx({
-      //           [classes.drawerOpen]: open,
-      //           [classes.drawerClose]: !open,
-      //         }),
-      //       }}
-      //   >
-      //     <div className={classes.toolbar}>
-      //       <IconButton onClick={handleDrawerClose}>
-      //         <ChevronLeftIcon/>
-      //       </IconButton>
-      //     </div>
-      //     <Divider/>
-      //     <List>
-      //       {['Inbox', 'Starred', 'Send email', 'Drafts'].map((text, index) => (
-      //           <ListItem button key={text}>
-      //             <ListItemIcon>{index % 2 === 0 ? <InboxIcon/> : <MailIcon/>}</ListItemIcon>
-      //             <ListItemText primary={text}/>
-      //           </ListItem>
-      //       ))}
-      //     </List>
-      //     <Divider/>
-      //     <List>
-      //       {['All mail', 'Trash', 'Spam'].map((text, index) => (
-      //           <ListItem button key={text}>
-      //             <ListItemIcon>{index % 2 === 0 ? <InboxIcon/> : <MailIcon/>}</ListItemIcon>
-      //             <ListItemText primary={text}/>
-      //           </ListItem>
-      //       ))}
-      //     </List>
-      //   </Drawer>
-      //   <main className={classes.content}>
-      //     <div className={classes.toolbar}/>
-      //     <div>
-      //       {/* we will loop over the message and return a
-      //   ChatMessage component for each message */}
-      //       {messages && messages.map(msg => <ChatMessage key={msg.id} message={msg}/>)}
-      //       <span ref={dummy}></span>
-      //     </div>
-      //     <div style={{display: 'flex'}}>
-      //       <form  onSubmit={sendMessage}>
-      //         <TextField
-      //             id="outlined-multiline-static"
-      //             label="Text Here"
-      //             multiline
-      //             rows={2}
-      //             fullWidth
-      //             // placeholder="Text here"
-      //             variant="outlined"
-      //             value={formValue}
-      //             onChange={(e) => setFormValue(e.target.value)}
-      //         />
-      //         <Button
-      //             type="submit"
-      //             disabled={!formValue}
-      //             variant="contained"
-      //             color="primary"
-      //         >
-      //           Send
-      //         </Button>
-      //       </form>
-      //     </div>
-      //   </main>
-      // </div>
       <SideNav>
         <section className="wrap">
 
-
           <div className="listOfUsers">
-
 
             {
               user.users.length > 0 ?
@@ -456,7 +260,6 @@ export const ChatPage = () => {
                     );
                   }) : null
             }
-
 
           </div>
 

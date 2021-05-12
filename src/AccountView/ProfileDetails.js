@@ -23,6 +23,8 @@ import Alert from '@material-ui/lab/Alert';
 import Snackbar from '@material-ui/core/Snackbar';
 import {useHistory} from "react-router-dom";
 import {validationSchema} from "../validation";
+import {useDispatch} from "react-redux";
+import {getRealtimeUsers, updateCurrentUser} from "../actions";
 
 
 const useStyles = makeStyles(() => ({
@@ -47,6 +49,7 @@ const useStyles = makeStyles(() => ({
 }));
 
 const ProfileDetails = ({className, ...rest}) => {
+  const dispatch = useDispatch()
   const {currentUser, getUid, error} = useAuth()
   const history = useHistory()
   const classes = useStyles();
@@ -164,6 +167,8 @@ const ProfileDetails = ({className, ...rest}) => {
           isOnline: checked
         })
       })
+      console.log(getUid())
+      dispatch(updateCurrentUser(getUid(), location))
     }
     else {
       db.collection('users').doc(getUid())
