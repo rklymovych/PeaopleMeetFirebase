@@ -1,7 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import clsx from 'clsx';
-import {FormikHelpers, useFormik} from 'formik';
-import * as Yup from "yup";
+import {useFormik} from 'formik';
 import PropTypes from 'prop-types';
 import {
   Box,
@@ -24,7 +23,7 @@ import Snackbar from '@material-ui/core/Snackbar';
 import {useHistory} from "react-router-dom";
 import {validationSchema} from "../validation";
 import {useDispatch} from "react-redux";
-import {getRealtimeUsers, updateCurrentUser} from "../actions";
+import { updateCurrentUser} from "../actions";
 
 
 const useStyles = makeStyles(() => ({
@@ -55,7 +54,8 @@ const ProfileDetails = ({className, ...rest}) => {
   const classes = useStyles();
   const [snackbar, setSnackbar] = useState(false)
   const [open, setOpen] = useState(false);
-  const [location, setLocation] = useState()
+  // const [location, setLocation] = useState()
+  // console.log(location)
 
   const [userAge, setUserAge] = useState([])
   const [values, setValues] = useState({
@@ -64,8 +64,8 @@ const ProfileDetails = ({className, ...rest}) => {
     age: '',
     sex: '',
     email: currentUser.email,
+    location: {lat: null, lng: null},
     isOnline: false,
-    // location: {lat: '', lng: ''}
   });
 
   useEffect(() => {
@@ -167,8 +167,6 @@ const ProfileDetails = ({className, ...rest}) => {
           isOnline: checked
         })
       })
-      console.log(getUid())
-      dispatch(updateCurrentUser(getUid(), location))
     }
     else {
       db.collection('users').doc(getUid())

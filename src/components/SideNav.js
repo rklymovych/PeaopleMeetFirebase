@@ -14,7 +14,6 @@ import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
-import InboxIcon from '@material-ui/icons/MoveToInbox';
 import RoomIcon from '@material-ui/icons/Room';
 import MailIcon from '@material-ui/icons/Mail';
 import SupervisorAccountRoundedIcon from '@material-ui/icons/SupervisorAccountRounded';
@@ -23,7 +22,6 @@ import {useHistory} from "react-router-dom";
 import InputIcon from "@material-ui/icons/Input";
 import {db} from "../firebase";
 import {useAuth} from "../context/AuthContext";
-import {isOnline} from "../services/firestoreFunctions";
 import defaultAvatar from '../../src/assets/avatars/avatar.jpg'
 import {useDispatch, useSelector} from "react-redux";
 import {logout} from "../actions";
@@ -117,11 +115,6 @@ export const SideNav = ({children}) => {
     setOpen(false);
   };
 
-  const logoutHandler = () => {
-    // isOnline(getUid())
-    // logout()
-    dispatch(logout(auth.uid))
-  }
 
   useEffect(() => {
     const avatar = db.collection("users").doc(getUid())

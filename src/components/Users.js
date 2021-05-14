@@ -1,12 +1,12 @@
 import React, {useEffect, useState, useContext} from 'react'
-import {SideNav} from "./SideNav";
-import {auth, db} from "../firebase";
+import {db} from "../firebase";
 import {useAuth} from "../context/AuthContext";
 import {Avatar, ListItem, ListItemAvatar, ListItemText, makeStyles} from "@material-ui/core";
 import Typography from "@material-ui/core/Typography";
 import List from "@material-ui/core/List";
 import {UserModal} from "./UserModal";
 import {UserContext} from '../context/UserContext'
+import {SideNav} from "./SideNav";
 
 
 const useStyles = makeStyles((theme) => ({
@@ -57,59 +57,52 @@ export const Users = () => {
     setOpenModal(!openModal)
   }
 
-
-
-
-
   return (
-      <>
-        <SideNav>
-          <List
-              className={classes.root}
-          >
-            {users.length && users.map(user => {
-              // if(user.isOnline){    // flag isOnline
-              return (
-                  <ListItem
-                      key={user.id}
-                      alignItems="flex-start"
-                      className={classes.listItem}
-                      onClick={() => handleOpenUserModal(user)}
-                  >
-                    <ListItemAvatar>
-                      <Avatar
-                          alt={user.avatar}
-                          src={user.avatar}
-                      />
-                    </ListItemAvatar>
-                    <ListItemText
-                        primary={user.name}
-                        secondary={
-                          <React.Fragment>
-                            <Typography
-                                component="span"
-                                variant="body2"
-                                className={classes.inline}
-                                color="textPrimary"
-                            >
-                            </Typography>
-                            {user.description}
-                            {user.id}
-                          </React.Fragment>
-                        }
+      <SideNav>
+        <List
+            className={classes.root}
+        >
+          {users.length && users.map(user => {
+            // if(user.isOnline){    // flag isOnline
+            return (
+                <ListItem
+                    key={user.id}
+                    alignItems="flex-start"
+                    className={classes.listItem}
+                    onClick={() => handleOpenUserModal(user)}
+                >
+                  <ListItemAvatar>
+                    <Avatar
+                        alt={user.avatar}
+                        src={user.avatar}
                     />
-                  </ListItem>
-              )
-              // }
-            })}
-          </List>
-        </SideNav>
+                  </ListItemAvatar>
+                  <ListItemText
+                      primary={user.name}
+                      secondary={
+                        <React.Fragment>
+                          <Typography
+                              component="span"
+                              variant="body2"
+                              className={classes.inline}
+                              color="textPrimary"
+                          >
+                          </Typography>
+                          {user.description}
+                          {user.id}
+                        </React.Fragment>
+                      }
+                  />
+                </ListItem>
+            )
+            // }
+          })}
+        </List>
         <UserModal
             openModal={openModal}
             setOpenModal={setOpenModal}
             selectedUser={selectedUser}/>
-      </>
-
+      </SideNav>
   )
 }
 

@@ -6,9 +6,9 @@ export const updateCurrentUser =(uid, data) =>{
     const unsubscribe = db.collection('users')
         .doc(uid)
         .onSnapshot((querySnapshot)=>{
-          console.log(querySnapshot)
+          console.log('updateCurrentUser',querySnapshot)
         })
-    // return unsubscribe
+    return unsubscribe
   }
 }
 

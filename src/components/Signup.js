@@ -1,10 +1,9 @@
 import React, {useRef, useState} from 'react'
 import {Card, Button, Form, Alert, Container} from "react-bootstrap";
-import {useAuth} from "../context/AuthContext";
 import {Link, useHistory} from "react-router-dom";
 import 'firebase/auth'
 import 'firebase/app'
-import {useDispatch, useSelector} from "react-redux";
+import {useDispatch} from "react-redux";
 import {signup} from "../actions";
 
 function Signup() {
@@ -12,7 +11,6 @@ function Signup() {
   const nameRef = useRef()
   const passwordRef = useRef()
   const passwordConfirmRef = useRef()
-  // const {signup} = useAuth()
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
   const history = useHistory()

@@ -1,5 +1,6 @@
-import {auth, db} from '../firebase'
+import {auth, database, db} from '../firebase'
 import {authConstant} from "./constants";
+import firebase from "firebase";
 
 
 // export const signup =(user)=>{
@@ -51,10 +52,11 @@ export const signup = (user) => {
                       avatar: '',
                       email: '',
                       age: '',
-                      location: {lat: null, lng:null},
+                      location: {lat: null, lng: null},
                       createdAt: new Date()
                     })
               })
+
               .then(() => {
                 const loggedInUser = {
                   name: user.name,
@@ -67,6 +69,11 @@ export const signup = (user) => {
                   type: `${authConstant.USER_LOGIN}_SUCCESS`,
                   payload: {user: loggedInUser}
                 })
+                database.ref('status/' + data.user.uid)
+                    .set({
+                      state: 'online',
+                      last_changed: firebase.database.ServerValue.TIMESTAMP,
+                    })
               })
               .catch(error => {
                 console.log(error.message)
@@ -101,7 +108,11 @@ export const signin = (user) => {
             type: `${authConstant.USER_LOGIN}_SUCCESS`,
             payload: {user: loggedInUser}
           })
-
+          database.ref('status/' + data.user.uid)
+              .set({
+                state: 'online',
+                last_changed: firebase.database.ServerValue.TIMESTAMP,
+              })
 
         })
         .catch(error => {
@@ -144,11 +155,23 @@ export const logout = (uid) => {
         .doc(uid)
         .update({isOnline: false, location: {lat: null, lng: null}})
         .then(() => {
+          database.ref('status/' + uid)
+              .remove((err) => {
+                if (err) {
+                  console.error("could not establish onDisconnect event", err);
+                }
+              });
+              // .set({
+              //   state: 'offline',
+              //   last_changed: firebase.database.ServerValue.TIMESTAMP,
+              // })
           auth
               .signOut()
               .then(() => {
+                console.log('thhen', uid)
                 localStorage.clear()
                 dispatch({type: `${authConstant.USER_LOGOUT}_SUCCESS`})
+
               })
               .catch(error => {
                 console.log('error', error)
