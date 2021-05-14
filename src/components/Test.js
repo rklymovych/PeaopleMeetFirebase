@@ -9,6 +9,9 @@ import defUser from '../assets/def-user.jpg'
 
 import '@reach/combobox/styles.css'
 import {SideNav} from "./SideNav";
+import {Card, CardActionArea, CardActions, CardContent, CardMedia} from "@material-ui/core";
+import Typography from "@material-ui/core/Typography";
+import Button from "@material-ui/core/Button";
 
 const libraries = ["places"];
 const containerStyle = {
@@ -112,16 +115,17 @@ export const Test = () => {
   }, [])
 
 
-  // const onMapClick = useCallback((event) => {
-  //   new Date().toISOString()
-  //   setMarkers(current => [
-  //     ...current,
-  //     {
-  //       lat: event.latLng.lat(),
-  //       lng: event.latLng.lng(),
-  //       time: new Date()
-  //     }])
-  // }, [])
+  const onMapClick = useCallback((event) => {
+    setSelected(null)
+    // new Date().toISOString()
+    // setMarkers(current => [
+    //   ...current,
+    //   {
+    //     lat: event.latLng.lat(),
+    //     lng: event.latLng.lng(),
+    //     time: new Date()
+    //   }])
+  }, [])
 
   const mapRef = useRef()
   const onMapLoad = useCallback((map) => {
@@ -142,14 +146,14 @@ export const Test = () => {
 
   return (
       <SideNav>
-        <h1>Bears <span role="img" aria-label="tent">😋</span></h1>
+        <h1><span role="img" aria-label="tent">😋</span></h1>
         <Locate/>
         {location ? (<GoogleMap
             mapContainerStyle={containerStyle}
             zoom={18}
             center={{lat: location.lat, lng: location.lng}}
             options={options}
-            // onClick={onMapClick}
+            onClick={onMapClick}
             onLoad={onMapLoad}
         >
           {/* это маркер Я*/}
@@ -175,10 +179,44 @@ export const Test = () => {
           {selected ? (
               <InfoWindow position={{lat: selected.location.lat, lng: selected.location.lng}}
                           onCloseClick={() => setSelected(null)}>
-                <div>
-                  <h2>{selected.name}</h2>
-                  <p>{selected.description}</p>
-                </div>
+                {/*<div>*/}
+                {/*  <h2>{selected.name}</h2>*/}
+                {/*  <p>{selected.description}</p>*/}
+                {/*</div>*/}
+                <Card
+                    // className={classes.root}
+                >
+                  <CardActionArea>
+                    <CardMedia
+                        style={{height: '200px'}}
+                        // className={classes.media}
+                        image={selected.avatar}
+                        title="Contemplative Reptile"
+                    />
+                    <CardContent>
+                      <Typography gutterBottom variant="h5" component="h2">
+                        {selected.name}
+                      </Typography>
+                      <Typography variant="body2" color="textSecondary" component="p">
+                        {selected.age}
+                      </Typography>
+                      <Typography variant="body2" color="textSecondary" component="p">
+                        {selected.sex}
+                      </Typography>
+                      <Typography variant="body2" color="textSecondary" component="p">
+                        {selected.description}
+                      </Typography>
+
+                    </CardContent>
+                  </CardActionArea>
+                  <CardActions>
+                    <Button size="small" color="primary" disabled={selected.uid === auth.uid}>
+                      {selected.uid === auth.uid ? 'That\'s like people see your account' : 'Write'}
+                    </Button>
+
+
+                  </CardActions>
+                </Card>
 
               </InfoWindow>) : null}
         </GoogleMap>) : null}
