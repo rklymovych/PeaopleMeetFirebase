@@ -1,4 +1,4 @@
-import React,{useEffect} from 'react'
+import React, {useEffect} from 'react'
 import {Redirect, Route, Switch} from "react-router-dom";
 import {useAuth} from "../context/AuthContext";
 import PrivateRoute from "./PrivateRoute";
@@ -11,24 +11,49 @@ import {Test} from "./Test";
 import {Users} from "./Users";
 import {ChatPage} from "./chatroom/ChatPage";
 import {isLoggedInUser} from "../actions";
-import {auth} from "../firebase";
+import {database, db} from "../firebase";
 import {useDispatch, useSelector} from "react-redux";
+import firebase from "firebase/app"
+import {SideNav} from "./SideNav";
 
 export function RouteComponent() {
-  const {currentUser} = useAuth()
-
+  const {currentUser, getUid} = useAuth()
 
   const auth = useSelector(state => state.auth);
   const dispatch = useDispatch()
 
 
+  const userStatusDatabaseRef = database.ref('/status/' + getUid());
+  const isOfflineForDatabase = {
+    state: 'offline',
+    last_changed: firebase.database.ServerValue.TIMESTAMP,
+  };
+
+  const isOnlineForDatabase = {
+    state: 'online',
+    last_changed: firebase.database.ServerValue.TIMESTAMP,
+  };
+
 
   useEffect(() => {
-    if(!auth.authenticated){
+    database.ref('.info/connected').on('value', function (snapshot) {
+
+      if (snapshot.val() == false) {
+        return;
+      }
+      ;
+      userStatusDatabaseRef.onDisconnect().set(isOfflineForDatabase).then(function () {
+
+        userStatusDatabaseRef.set(isOnlineForDatabase);
+      });
+    });
+  }, [])
+
+  useEffect(() => {
+    if (!auth.authenticated) {
       dispatch(isLoggedInUser())
     }
   }, []);
-
 
   if (currentUser) {
     return (

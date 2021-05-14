@@ -1,6 +1,20 @@
 import {userConstants} from "./constants";
 import {db} from '../firebase'
 
+export const updateCurrentUser =(uid, data) =>{
+  return async dispatch =>{
+    const unsubscribe = db.collection('users')
+        .doc(uid)
+        .onSnapshot((querySnapshot)=>{
+          console.log('updateCurrentUser',querySnapshot)
+        })
+    return unsubscribe
+  }
+}
+
+
+
+
 export const getRealtimeUsers = (uid) => {
   return async dispatch => {
 
