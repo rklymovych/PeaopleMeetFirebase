@@ -1,4 +1,4 @@
-import {authConstant} from "../actions/constants";
+import {authConstant, userConstants} from "../actions/constants";
 
 const initialState = {
   name: '',
@@ -6,6 +6,7 @@ const initialState = {
   authenticating: false,
   authenticated: false,
   error: null,
+  isOnline: null
 }
 
 
@@ -46,6 +47,18 @@ export default (state = initialState, action) => {
       state ={
         ...state,
         error: action.payload.error
+      }
+      break;
+    case userConstants.GET_STATUS_CURRENT_USER:
+      state ={
+        ...state,
+        isOnline: action.payload.checked
+      }
+      break;
+    case userConstants.SET_DATA_CURRENT_USER:
+      state ={
+        ...state,
+        ...action.payload.values.name
       }
       break;
   }
