@@ -7,6 +7,8 @@ import List from "@material-ui/core/List";
 import {UserModal} from "./UserModal";
 import {UserContext} from '../context/UserContext'
 import {SideNav} from "./SideNav";
+import {useDispatch, useSelector} from "react-redux";
+import {getRealtimeUsers} from "../actions";
 
 
 const useStyles = makeStyles((theme) => ({
@@ -30,26 +32,50 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export const Users = () => {
+  const dispatch = useDispatch()
   const classes = useStyles()
   const {getUid} = useAuth()
+  const auth = useSelector(state => state.auth)
   const [selectedUser, setSelectedUser] = useState('')
   const {setUsers1} = useContext(UserContext)
-  const [users, setUsers] = useState([])
+  // const [users, setUsers] = useState([])
   const [openModal, setOpenModal] = useState(false)
-
-  const getUsers = () => {
-    return db.collection("users").get() // надо ли ретурн???
-        .then((querySnapshot) => {
-          const users = querySnapshot.docs.filter((user => getUid() !== user.id)).map((doc) => {
-            return {id: doc.id, ...doc.data()};
-          })
-          setUsers(users);
-          setUsers1(users);
-        });
-  };
+  const users = useSelector(state => state.user)
+  let unsubscribe;
+  // const getUsers = () => {
+  //   return db.collection("users").get() // надо ли ретурн???
+  //       .then((querySnapshot) => {
+  //         const users = querySnapshot.docs.filter((user => getUid() !== user.id)).map((doc) => {
+  //           return {id: doc.id, ...doc.data()};
+  //         })
+  //         console.log(users)
+  //         setUsers(users);
+  //         setUsers1(users);
+  //       });
+  // };
+  //
+  //
+  // useEffect(() => {
+  //   getUsers()
+  // }, [])
 
   useEffect(() => {
-    getUsers()
+
+    unsubscribe = dispatch(getRealtimeUsers(auth.uid))
+        .then(unsubscribe => {
+          return unsubscribe;
+        })
+        .catch(error => console.log(error))
+
+
+  }, [auth.uid])
+
+
+  useEffect(() => {
+    return () => {
+      //cleanup
+      unsubscribe.then(f => f()).catch(error => console.log(error))
+    }
   }, [])
 
   const handleOpenUserModal = (user) => {
@@ -62,40 +88,40 @@ export const Users = () => {
         <List
             className={classes.root}
         >
-          {users.length && users.map(user => {
-            // if(user.isOnline){    // flag isOnline
-            return (
-                <ListItem
-                    key={user.id}
-                    alignItems="flex-start"
-                    className={classes.listItem}
-                    onClick={() => handleOpenUserModal(user)}
-                >
-                  <ListItemAvatar>
-                    <Avatar
-                        alt={user.avatar}
-                        src={user.avatar}
+          {users.users.length && users.users.map(user => {
+            if (user.isOnline) {    // flag isOnline
+              return (
+                  <ListItem
+                      key={user.uid}
+                      alignItems="flex-start"
+                      className={classes.listItem}
+                      onClick={() => handleOpenUserModal(user)}
+                  >
+                    <ListItemAvatar>
+                      <Avatar
+                          alt={user.avatar}
+                          src={user.avatar}
+                      />
+                    </ListItemAvatar>
+                    <ListItemText
+                        primary={user.name}
+                        secondary={
+                          <React.Fragment>
+                            <Typography
+                                component="span"
+                                variant="body2"
+                                className={classes.inline}
+                                color="textPrimary"
+                            >
+                            </Typography>
+                            {user.description}
+                            {user.id}
+                          </React.Fragment>
+                        }
                     />
-                  </ListItemAvatar>
-                  <ListItemText
-                      primary={user.name}
-                      secondary={
-                        <React.Fragment>
-                          <Typography
-                              component="span"
-                              variant="body2"
-                              className={classes.inline}
-                              color="textPrimary"
-                          >
-                          </Typography>
-                          {user.description}
-                          {user.id}
-                        </React.Fragment>
-                      }
-                  />
-                </ListItem>
-            )
-            // }
+                  </ListItem>
+              )
+            }
           })}
         </List>
         <UserModal

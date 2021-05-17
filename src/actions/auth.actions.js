@@ -95,7 +95,6 @@ export const signin = (user) => {
     auth
         .signInWithEmailAndPassword(user.email, user.password)
         .then((data) => {
-
           const name = data.user.displayName;
           const loggedInUser = {
             name,
@@ -103,7 +102,6 @@ export const signin = (user) => {
             email: data.user.email
           }
           localStorage.setItem('user', JSON.stringify(loggedInUser))
-
           dispatch({
             type: `${authConstant.USER_LOGIN}_SUCCESS`,
             payload: {user: loggedInUser}
@@ -134,7 +132,6 @@ export const isLoggedInUser = () => {
         type: `${authConstant.USER_LOGIN}_SUCCESS`,
         payload: {user}
       })
-
     } else {
       dispatch({
         type: `${authConstant.USER_LOGIN}_FAILURE`,
@@ -161,14 +158,13 @@ export const logout = (uid) => {
                   console.error("could not establish onDisconnect event", err);
                 }
               });
-              // .set({
-              //   state: 'offline',
-              //   last_changed: firebase.database.ServerValue.TIMESTAMP,
-              // })
+          // .set({
+          //   state: 'offline',
+          //   last_changed: firebase.database.ServerValue.TIMESTAMP,
+          // })
           auth
               .signOut()
               .then(() => {
-                console.log('thhen', uid)
                 localStorage.clear()
                 dispatch({type: `${authConstant.USER_LOGOUT}_SUCCESS`})
 

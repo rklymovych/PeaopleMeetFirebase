@@ -2,8 +2,8 @@ import React, {useCallback, useEffect, useState, useRef} from 'react'
 import {GoogleMap, InfoWindow, Marker, useLoadScript} from '@react-google-maps/api';
 import mapStyles from "../components/maps/MapStyles";
 import compass from '../assets/2277999_map-compass-compass-svg-hd-png-download.png'
-import {db, database} from "../firebase";
-import {getRealtimeUsers, logout} from "../actions";
+import {db} from "../firebase";
+import {getRealtimeUsers} from "../actions";
 import {useDispatch, useSelector} from 'react-redux'
 import defUser from '../assets/def-user.jpg'
 
@@ -35,9 +35,10 @@ export const Test = () => {
   const [selected, setSelected] = useState(null)
   const [location, setLocation] = useState()
   const [onlineUsers, setOnlineUsers] = useState([])
+  const [onlineCurrentUser, setOnlineCurrentUSer] = useState(JSON.parse(localStorage.getItem('user' )))
   const [checkRealTimeUsers, setCheckRealTimeUsers] = useState()
 
-  const auth = useSelector(state => state.auth)
+  const authFromState = useSelector(state => state.auth)
   let unsubscribe;
 
   const getCurrentPosition = async () => {
@@ -47,7 +48,6 @@ export const Test = () => {
   }
 
   useEffect(() => {
-
     db.collection('users')
         .where('isOnline', '==', true)
         .onSnapshot((querySnapshot) => {
@@ -58,8 +58,6 @@ export const Test = () => {
           setOnlineUsers(users)
         });
   }, [])
-
-  console.log(onlineUsers)
   // db.collection('users')
   //     .where('isOnline', '==', true)
   //     .onSnapshot((querySnapshot) => {
@@ -94,14 +92,14 @@ export const Test = () => {
 
   useEffect(() => {
 
-    unsubscribe = dispatch(getRealtimeUsers(auth.uid))
+    unsubscribe = dispatch(getRealtimeUsers(authFromState.uid))
         .then(unsubscribe => {
           return unsubscribe;
         })
         .catch(error => console.log(error))
 
 
-  }, [auth.uid])
+  }, [authFromState.uid])
 
   useEffect(() => {
     return () => {
@@ -143,7 +141,6 @@ export const Test = () => {
     )
   }
 
-
   return (
       <SideNav>
         <h1><span role="img" aria-label="tent">😋</span></h1>
@@ -160,21 +157,25 @@ export const Test = () => {
           {/*<Marker position={{lat: location.lat, lng: location.lng}} icon={{url:  defUser, scaledSize: new window.google.maps.Size(30, 30),anchor: new window.google.maps.Point(15, 15), origin: new window.google.maps.Point(0, 0)}}/>*/}
 
 
-          {onlineUsers.map((user) => <Marker
-              key={user.uid}
-              position={{lat: user.location.lat, lng: user.location.lng}}
-              icon={{
-                url: user.avatar || defUser,
-                scaledSize: new window.google.maps.Size(30, 30),
-                anchor: new window.google.maps.Point(15, 15),
-                origin: new window.google.maps.Point(0, 0)
-              }}
-              onClick={() => {
-                setSelected(user)
-              }}
-          >
+          {onlineCurrentUser.isOnline === true && onlineUsers.map(user => {
+            return <Marker
+                key={user.uid}
+                position={{lat: user.location.lat, lng: user.location.lng}}
+                icon={{
+                  url: user.avatar || defUser,
+                  scaledSize: new window.google.maps.Size(30, 30),
+                  anchor: new window.google.maps.Point(15, 15),
+                  origin: new window.google.maps.Point(0, 0)
+                }}
+                onClick={() => {
+                  setSelected(user)
+                }}
+            >
 
-          </Marker>)}
+            </Marker>
+          })
+          }
+
 
           {selected ? (
               <InfoWindow position={{lat: selected.location.lat, lng: selected.location.lng}}
@@ -188,9 +189,9 @@ export const Test = () => {
                 >
                   <CardActionArea>
                     <CardMedia
-                        style={{height: '200px'}}
+                        style={{height: '200px', backgroundSize: 'contain'}}
                         // className={classes.media}
-                        image={selected.avatar}
+                        image={selected.avatar || defUser}
                         title="Contemplative Reptile"
                     />
                     <CardContent>
@@ -210,8 +211,8 @@ export const Test = () => {
                     </CardContent>
                   </CardActionArea>
                   <CardActions>
-                    <Button size="small" color="primary" disabled={selected.uid === auth.uid}>
-                      {selected.uid === auth.uid ? 'That\'s like people see your account' : 'Write'}
+                    <Button size="small" color="primary" disabled={selected.uid === authFromState.uid}>
+                      {selected.uid === authFromState.uid ? 'That\'s like people see your account' : 'Write'}
                     </Button>
 
 
