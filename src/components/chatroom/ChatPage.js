@@ -22,8 +22,7 @@ import {useAuth} from "../../context/AuthContext";
 import {UserContext} from '../../context/UserContext'
 import {db, auth, messaging} from "../../firebase";
 import {SideNav} from "../SideNav";
-import {useAuthState} from "react-firebase-hooks/auth";
-import {useCollectionData} from 'react-firebase-hooks/firestore';
+// import {useCollectionData} from 'react-firebase-hooks/firestore';
 import InputIcon from "@material-ui/icons/Input";
 import {isOnline} from "../../services/firestoreFunctions";
 import Button from "@material-ui/core/Button";
