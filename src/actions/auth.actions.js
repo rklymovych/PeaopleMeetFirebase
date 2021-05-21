@@ -111,7 +111,6 @@ export const signin = (user) => {
                 state: 'online',
                 last_changed: firebase.database.ServerValue.TIMESTAMP,
               })
-
         })
         .catch(error => {
           console.log(error)
@@ -144,15 +143,22 @@ export const isLoggedInUser = () => {
 
 
 export const logout = (uid) => {
+  console.log('uid', uid)
   return async dispatch => {
-
     dispatch({type: `${authConstant.USER_LOGOUT}_REQUEST`})
-
+    // await database.ref('status/' + uid)
+    //     // .onDisconnect()
+    //     .remove((err) => {
+    //       if (err) {
+    //         console.error("could not establish onDisconnect event", err);
+    //       }
+    //     });
     db.collection('users')
         .doc(uid)
         .update({isOnline: false, location: {lat: null, lng: null}})
         .then(() => {
-          database.ref('status/' + uid)
+          database.ref('/status/' + uid)
+              // .onDisconnect()
               .remove((err) => {
                 if (err) {
                   console.error("could not establish onDisconnect event", err);

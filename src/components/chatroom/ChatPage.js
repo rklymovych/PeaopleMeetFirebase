@@ -17,23 +17,19 @@ import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import InboxIcon from '@material-ui/icons/MoveToInbox';
 import MailIcon from '@material-ui/icons/Mail';
-import {Avatar, Badge, TextField} from "@material-ui/core";
+import {Avatar, Badge, Paper, TextField} from "@material-ui/core";
 import {useAuth} from "../../context/AuthContext";
 import {UserContext} from '../../context/UserContext'
 import {db, auth, messaging} from "../../firebase";
 import {SideNav} from "../SideNav";
-import {useAuthState} from "react-firebase-hooks/auth";
-import {useCollectionData} from 'react-firebase-hooks/firestore';
 import InputIcon from "@material-ui/icons/Input";
 import {isOnline} from "../../services/firestoreFunctions";
 import Button from "@material-ui/core/Button";
-import {ChatMessage} from "./ChatMEssage";
 import 'firebase/firestore'
-import './styles.css';
+// import './styles.css';
+// import clsx from 'clsx';
 import {useDispatch, useSelector} from "react-redux";
 import {getRealtimeConversations, getRealtimeUsers, updateMessage} from "../../actions";
-
-const drawerWidth = 240;
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -47,8 +43,8 @@ const useStyles = makeStyles((theme) => ({
     }),
   },
   appBarShift: {
-    marginLeft: drawerWidth,
-    width: `calc(100% - ${drawerWidth}px)`,
+    // marginLeft: drawerWidth,
+    // width: `calc(100% - ${drawerWidth}px)`,
     transition: theme.transitions.create(['width', 'margin'], {
       easing: theme.transitions.easing.sharp,
       duration: theme.transitions.duration.enteringScreen,
@@ -60,13 +56,8 @@ const useStyles = makeStyles((theme) => ({
   hide: {
     display: 'none',
   },
-  drawer: {
-    width: drawerWidth,
-    flexShrink: 0,
-    whiteSpace: 'nowrap',
-  },
   drawerOpen: {
-    width: drawerWidth,
+    // width: drawerWidth,
     transition: theme.transitions.create('width', {
       easing: theme.transitions.easing.sharp,
       duration: theme.transitions.duration.enteringScreen,
@@ -103,6 +94,49 @@ const useStyles = makeStyles((theme) => ({
   whiteColor: {
     color: theme.palette.primary.contrastText
   },
+  paperHeader: {
+    padding: '0.5rem',
+    // margin: 'auto',
+    alignItems: 'center',
+    display: 'flex',
+    justifyContent: 'center',
+    fontWeight: 600,
+
+  },
+  paperBody: {
+    height: '100%',
+    background: 'transparent',
+    marginTop: theme.spacing(1),
+    overflowX: 'auto'
+  },
+  paperFooter: {
+    // marginTop: theme.spacing(1),
+    display: 'flex',
+    padding: '0.5rem'
+  },
+  wrap: {
+    position: 'relative',
+    display: 'flex',
+    flexDirection: 'column',
+    width: '100%',
+    height: '100%',
+    overflow: 'hidden',
+    justifyContent: 'space-between'
+  },
+  textRight: {
+    textAlign: 'right',
+    background: '#b694dc'
+  },
+  textLeft: {
+    textAlign: 'left',
+    background: '#8fd7da'
+  },
+  messageStyle: {
+    display: 'inline-block',
+    padding: '5px 10px',
+    borderRadius: '10px',
+    margin: '5px',
+  }
 }));
 const StyledBadge = withStyles((theme) => ({
   badge: {
@@ -140,6 +174,7 @@ const SmallAvatar = withStyles((theme) => ({
   },
 }))(Avatar)
 
+
 const User = (props) => {
 
 
@@ -157,13 +192,12 @@ const User = (props) => {
       </div>
   );
 }
-
-export const ChatPage = () => {
+export const ChatPage = ({selected}) => {
   // const history = useHistory()
   // const {currentUser, getUid, error, logout,} = useAuth()
   // let {id} = useParams();
   // const {users1} = useContext(UserContext)
-  // const classes = useStyles();
+  const classes = useStyles();
   // const [formValue, setFormValue] = useState()
   // const theme = useTheme();
   // const [open, setOpen] = React.useState(false);
@@ -171,63 +205,64 @@ export const ChatPage = () => {
   // const handleDrawerOpen = () => {
   //   setOpen(true);
   // };
-  // const [user1] = useAuthState(auth)
+
   const dummy = useRef();
   const dispatch = useDispatch()
   const auth = useSelector(state => state.auth)
   const user = useSelector(state => state.user)
-  const [chatStarted, setChatStarted] = useState(false)
+
   const [chatUser, setChatUser] = useState('')
   const [message, setMessage] = useState('')
   const [userUid, setUserUid] = useState(null)
   let unsubscribe;
+  console.log('message')
 
-  const scrollToBottom = () => {
-    dummy.current.scrollIntoView({behavior: 'smooth'});
-  }
 
+  // useEffect(() => {
+  //
+  //   unsubscribe = dispatch(getRealtimeUsers(auth.uid))
+  //       .then(unsubscribe => {
+  //         return unsubscribe;
+  //       })
+  //       .catch(error => console.log(error))
+  //
+  //
+  // }, [auth.uid])
+
+
+  // useEffect(() => {
+  //   return () => {
+  //     //cleanup
+  //     unsubscribe.then(f => f()).catch(error => console.log(error))
+  //   }
+  // }, [])
+
+
+  // const initChat = () => {
+  //
+  //   setChatUser(user.name)
+  //   setUserUid(user.uid)
+  //   const uid_1 = auth.uid
+  //   const uid_2 = selected.uid
+  //   dispatch(getRealtimeConversations({uid_1, uid_2}))
+  // }
   useEffect(() => {
-
-    unsubscribe = dispatch(getRealtimeUsers(auth.uid))
-        .then(unsubscribe => {
-          return unsubscribe;
-        })
-        .catch(error => console.log(error))
-
-
-  }, [auth.uid])
-
-
-  useEffect(() => {
-    return () => {
-      //cleanup
-      unsubscribe.then(f => f()).catch(error => console.log(error))
-    }
+    const uid_1 = auth.uid
+    const uid_2 = selected.uid
+    dispatch(getRealtimeConversations({uid_1, uid_2}))
   }, [])
 
 
-  const initChat = (user) => {
-    scrollToBottom()
-    setChatStarted(true)
-    setChatUser(user.name)
-    setUserUid(user.uid)
-    const uid_1 = auth.uid
-    const uid_2 = user.uid
-    dispatch(getRealtimeConversations({uid_1, uid_2}))
-  }
-
-
   const submitMessage = (e) => {
-
+    // e.preventDefault()
     const msgObj = {
       user_uid_1: auth.uid,
-      user_uid_2: userUid,
+      user_uid_2: selected.uid,
       message,
       idx: new Date()
     }
-    console.log(!!message)
+
     if (message !== '') {
-      scrollToBottom()
       dispatch(updateMessage(msgObj))
           .then(() => {
             setMessage('')
@@ -236,74 +271,79 @@ export const ChatPage = () => {
 
   }
   const _handleKeyDown = (e) => {
+
     if (e.key === "Enter") {
       submitMessage()
-
+      e.preventDefault()
+      console.log(dummy.current)
+      dummy.current.scrollTo(0, 9999)
+      return
     }
+
   }
 
   return (
-      <SideNav>
-        <section className="wrap">
+      <div
+          className={classes.wrap}
+      >
+        <Paper elevation={3} className={classes.paperHeader}>
+          {selected.name}
+        </Paper>
+        <Paper
+            ref={dummy}
+            className={classes.paperBody}
+            elevation={0}
+        >
+          {user.conversations.map((con, idx) =>
+              <div
+                  key={idx}
 
-          <div className="listOfUsers">
+                  style={{textAlign: con.user_uid_1 == auth.uid ? 'right' : 'left'}}
+              >
+                <Paper
+                    className={clsx(classes.messageStyle, con.user_uid_1 == auth.uid ? [classes.textRight] : [classes.textLeft])}
+                    elevation={3}
+                >{con.message}</Paper>
+              </div>
+          )}
+          {/*  insert chat body*/}
 
-            {
-              user.users.length > 0 ?
-                  user.users.map(user => {
-                    return (
-                        <User
-                            onClick={initChat}
-                            key={user.uid}
-                            user={user}
-                        />
-                    );
-                  }) : null
-            }
+        </Paper>
 
-          </div>
+        <Paper
+            className={classes.paperFooter}
+            elevation={3}
+        >
 
-          <div className="chatArea">
+          <TextField
+              style={{width: '100%'}}
+              id="outlined-multiline-static"
+              label="Write the message"
+              multiline
+              // rows={1}
+              variant="outlined"
+              onKeyDown={_handleKeyDown}
+              value={message}
+              onChange={(e) => setMessage(e.target.value)}
+              placeholder="Write Message"
+          />
+          {/*<textarea*/}
+          {/*    onKeyDown={_handleKeyDown}*/}
+          {/*    value={message}*/}
+          {/*    onChange={(e) => setMessage(e.target.value)}*/}
+          {/*    placeholder="Write Message"*/}
+          {/*/>*/}
+          <Button variant="contained" color="primary" onClick={submitMessage}>
+            Send
+          </Button>
+          {/*<button*/}
+          {/*    onClick={submitMessage}*/}
+          {/*>Send*/}
+          {/*</button>*/}
+        </Paper>
 
-            <div className="chatHeader">
-              {
-                chatStarted ? chatUser : ''
-              }
-            </div>
-            <div className="messageSections">
-              {
-                chatStarted ?
-                    user.conversations.map((con, idx) =>
-                        <div key={idx} style={{textAlign: con.user_uid_1 === auth.uid ? 'right' : 'left'}}>
-                          <p className="messageStyle">{con.message}</p>
-                        </div>
-                    )
-                    : null
-              }
+      </div>
 
-              <div ref={dummy}/>
-            </div>
-
-            {
-              chatStarted ?
-                  <div className="chatControls">
-                <textarea
-                    onKeyDown={_handleKeyDown}
-                    value={message}
-                    onChange={(e) => setMessage(e.target.value)}
-                    placeholder="Write Message"
-                />
-                    <button
-                        onClick={submitMessage}
-                    >Send
-                    </button>
-                  </div>
-                  : null
-            }
-
-          </div>
-        </section>
-
-      </SideNav>
-  );
+  )
+      ;
 }

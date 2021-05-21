@@ -140,9 +140,9 @@ export const UserModal = ({selectedUser, openModal, setOpenModal}) => {
             </Grid>
           </Grid>
           <DialogActions className={classes.dialogAction}>
-            <Button onClick={writeHandler} color="secondary">
-              <b>Write to {selectedUser?.name}</b>
-            </Button>
+            {/*<Button onClick={writeHandler} color="secondary">*/}
+            {/*  <b>Write to {selectedUser?.name}</b>*/}
+            {/*</Button>*/}
             <Button onClick={handleClose} color="primary">
               <b>Close</b>
             </Button>

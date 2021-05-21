@@ -30,9 +30,9 @@
 }
 .chatControls{
     display: flex;
-    position: fixed;
-    width: 70%;
-    height: 50px;
+
+
+
     bottom: 0;
 }
 .chatControls textarea{
@@ -67,14 +67,13 @@
     object-fit: cover;
 }
 
-.messageStyle{
-    background: skyblue;
-    display: inline-block;
-    padding: 5px 10px;
-    border-radius: 10px;
-    margin: 5px;
-    display: inline-block;
-}
+/*.messageStyle{*/
+/*    background: skyblue;*/
+/*    display: inline-block;*/
+/*    padding: 5px 10px;*/
+/*    border-radius: 10px;*/
+/*    margin: 5px;*/
+/*}*/
 
 .messageSections{
     height: calc(100% - 90px);

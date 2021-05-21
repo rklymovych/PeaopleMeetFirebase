@@ -16,7 +16,7 @@ code {
     border: 1px solid red;
 }
 
-h1 {
+.headerMap {
     position: absolute;
     top: 70px;
     z-index: 10;
