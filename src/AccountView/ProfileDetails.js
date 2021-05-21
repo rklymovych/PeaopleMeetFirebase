@@ -134,7 +134,7 @@ const ProfileDetails = ({className, ...rest}) => {
           isOnline: values.isOnline
         }
         localStorage.setItem('user', JSON.stringify(loggedInUSer))
-        history.push('/test')
+        history.push('/map')
       }
 
       const formik = useFormik({

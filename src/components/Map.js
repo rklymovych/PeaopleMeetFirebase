@@ -6,12 +6,39 @@ import {db} from "../firebase";
 import {getRealtimeUsers} from "../actions";
 import {useDispatch, useSelector} from 'react-redux'
 import defUser from '../assets/def-user.jpg'
+import chatBackground from '../assets/chatBachground.jpg'
 
 import '@reach/combobox/styles.css'
 import {SideNav} from "./SideNav";
-import {Card, CardActionArea, CardActions, CardContent, CardMedia} from "@material-ui/core";
+import {Card, CardActionArea, CardActions, CardContent, CardMedia, Drawer, Grid} from "@material-ui/core";
 import Typography from "@material-ui/core/Typography";
 import Button from "@material-ui/core/Button";
+import {makeStyles} from "@material-ui/core/styles";
+import {ChatPage} from "./chatroom/ChatPage";
+
+const useStyles = makeStyles({
+  drawer: {
+    height: '50vh',
+    padding: '0.5rem',
+    position: 'relative',
+    '&::before': {
+      content: '""',
+      position: 'absolute',
+      opacity: '0.3',
+      left: 0,
+      top: 0,
+      bottom: 0,
+      right: 0,
+      backgroundImage: `url(${chatBackground})`,
+      backgroundSize: 'cover',
+      backgroundRepeat: 'no-repeat',
+    }
+  },
+  cardWidth: {
+    maxWidth: '400px'
+  }
+})
+
 
 const libraries = ["places"];
 const containerStyle = {
@@ -24,23 +51,24 @@ const options = {
   zoomControl: true
 }
 
-export const Test = () => {
+export const Map = () => {
+  const classes = useStyles();
   const dispatch = useDispatch()
   const {isLoaded, loadError} = useLoadScript({
     googleMapsApiKey: process.env.REACT_APP_GOOGLE_KEY,
     libraries
   })
-
+  const [chatStarted, setChatStarted] = useState(false)
   const [markers, setMarkers] = useState([])
   const [selected, setSelected] = useState(null)
   const [location, setLocation] = useState()
   const [onlineUsers, setOnlineUsers] = useState([])
-  const [onlineCurrentUser, setOnlineCurrentUSer] = useState(JSON.parse(localStorage.getItem('user' )))
+  const [onlineCurrentUser, setOnlineCurrentUSer] = useState(JSON.parse(localStorage.getItem('user')))
   const [checkRealTimeUsers, setCheckRealTimeUsers] = useState()
+  const [openDrawer, setOpenDrawer] = useState(false)
 
   const authFromState = useSelector(state => state.auth)
   let unsubscribe;
-
   const getCurrentPosition = async () => {
     await navigator.geolocation.getCurrentPosition((position) => {
       setLocation({lat: position.coords.latitude, lng: position.coords.longitude})
@@ -141,9 +169,13 @@ export const Test = () => {
     )
   }
 
+  const openDrawerHandler = () => {
+    setOpenDrawer(!openDrawer)
+    setChatStarted(!chatStarted)
+  }
   return (
       <SideNav>
-        <h1><span role="img" aria-label="tent">😋</span></h1>
+        <h1 className="headerMap"><span role="img" aria-label="tent">😋</span></h1>
         <Locate/>
         {location ? (<GoogleMap
             mapContainerStyle={containerStyle}
@@ -171,21 +203,24 @@ export const Test = () => {
                   setSelected(user)
                 }}
             >
-
             </Marker>
           })
           }
 
 
           {selected ? (
-              <InfoWindow position={{lat: selected.location.lat, lng: selected.location.lng}}
-                          onCloseClick={() => setSelected(null)}>
-                {/*<div>*/}
-                {/*  <h2>{selected.name}</h2>*/}
-                {/*  <p>{selected.description}</p>*/}
-                {/*</div>*/}
+              <InfoWindow
+                  position={
+                    {
+                      lat: selected.location.lat,
+                      lng: selected.location.lng
+                    }
+                  }
+                  onCloseClick={() => setSelected(null)}
+              >
+
                 <Card
-                    // className={classes.root}
+                    className={classes.cardWidth}
                 >
                   <CardActionArea>
                     <CardMedia
@@ -211,7 +246,12 @@ export const Test = () => {
                     </CardContent>
                   </CardActionArea>
                   <CardActions>
-                    <Button size="small" color="primary" disabled={selected.uid === authFromState.uid}>
+                    <Button
+                        onClick={openDrawerHandler}
+                        size="small"
+                        color="primary"
+                        disabled={selected.uid === authFromState.uid}
+                    >
                       {selected.uid === authFromState.uid ? 'That\'s like people see your account' : 'Write'}
                     </Button>
 
@@ -221,6 +261,19 @@ export const Test = () => {
 
               </InfoWindow>) : null}
         </GoogleMap>) : null}
+        <Drawer
+            anchor='bottom'
+            open={openDrawer}
+            onClose={() => setOpenDrawer(false)}
+        >
+          <Grid container>
+            <Grid item className={classes.drawer} xs={12}>
+              <ChatPage selected={selected}/>
+            </Grid>
+          </Grid>
+        </Drawer>
       </SideNav>
+
+
   )
 }

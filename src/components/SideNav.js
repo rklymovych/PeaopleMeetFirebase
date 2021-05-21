@@ -188,13 +188,13 @@ export const SideNav = ({children}) => {
           </div>
           <Divider/>
           <List>
-            <ListItem button onClick={() => history.push('/test')}>
+            <ListItem button onClick={() => history.push('/map')}>
               <ListItemIcon><RoomIcon/></ListItemIcon>
               <ListItemText primary={'Map'}/>
             </ListItem>
-            <ListItem button>
+            <ListItem button onClick={() => history.push('/join')}>
               <ListItemIcon><MailIcon/></ListItemIcon>
-              <ListItemText primary={'text'}/>
+              <ListItemText primary={'Join'}/>
             </ListItem>
             <ListItem button onClick={() => history.push('/users')}>
               <ListItemIcon><SupervisorAccountRoundedIcon/></ListItemIcon>

@@ -69,28 +69,28 @@ export const getRealtimeConversations = (user) => {
 
           querySnapshot.forEach(doc => {
 
-            if((doc.data().user_uid_1 === user.uid_1 && doc.data().user_uid_2 === user.uid_2)
+            if((doc.data().user_uid_1 == user.uid_1 && doc.data().user_uid_2 == user.uid_2)
                 ||
-                (doc.data().user_uid_1 === user.uid_2 && doc.data().user_uid_2 === user.uid_1))
+                (doc.data().user_uid_1 == user.uid_2 && doc.data().user_uid_2 == user.uid_1))
             {
               conversations.push(doc.data())
             }
 
-            if (conversations.length > 0) {
-              dispatch({
-                type: userConstants.GET_REALTIME_MESSAGES,
-                payload: {conversations}
-              })
-            } else {
-              dispatch({
-                type: `${userConstants.GET_REALTIME_MESSAGES}_FAILURE`,
-                payload: {conversations}
-              })
-            }
-            // dispatch({
-            //   type: userConstants.GET_REALTIME_MESSAGES,
-            //   payload:{conversations}
-            // })
+            // if (conversations.length > 0) {
+            //   dispatch({
+            //     type: userConstants.GET_REALTIME_MESSAGES,
+            //     payload: {conversations}
+            //   })
+            // } else {
+            //   dispatch({
+            //     type: `${userConstants.GET_REALTIME_MESSAGES}_FAILURE`,
+            //     payload: {conversations}
+            //   })
+            // }
+            dispatch({
+              type: userConstants.GET_REALTIME_MESSAGES,
+              payload:{conversations}
+            })
           })
 
 
