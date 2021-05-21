@@ -63,7 +63,7 @@ export const Map = () => {
   const [selected, setSelected] = useState(null)
   const [location, setLocation] = useState()
   const [onlineUsers, setOnlineUsers] = useState([])
-  const [onlineCurrentUser, setOnlineCurrentUSer] = useState(JSON.parse(localStorage.getItem('user')))
+  const onlineCurrentUser = JSON.parse(localStorage.getItem('user'))
   const [checkRealTimeUsers, setCheckRealTimeUsers] = useState()
   const [openDrawer, setOpenDrawer] = useState(false)
 
@@ -173,6 +173,7 @@ export const Map = () => {
     setOpenDrawer(!openDrawer)
     setChatStarted(!chatStarted)
   }
+
   return (
       <SideNav>
         <h1 className="headerMap"><span role="img" aria-label="tent">😋</span></h1>
@@ -189,7 +190,7 @@ export const Map = () => {
           {/*<Marker position={{lat: location.lat, lng: location.lng}} icon={{url:  defUser, scaledSize: new window.google.maps.Size(30, 30),anchor: new window.google.maps.Point(15, 15), origin: new window.google.maps.Point(0, 0)}}/>*/}
 
 
-          {onlineCurrentUser.isOnline === true && onlineUsers.map(user => {
+          {onlineCurrentUser?.isOnline && onlineUsers.map(user => {
             return <Marker
                 key={user.uid}
                 position={{lat: user.location.lat, lng: user.location.lng}}
@@ -254,8 +255,6 @@ export const Map = () => {
                     >
                       {selected.uid === authFromState.uid ? 'That\'s like people see your account' : 'Write'}
                     </Button>
-
-
                   </CardActions>
                 </Card>
 

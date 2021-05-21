@@ -2,11 +2,13 @@ import {userConstants} from "../actions/constants";
 
 const initialState = {
   users: [],
-  conversations: []
+  conversations: [],
+  loading: false
 }
 
 
 export default (state = initialState, action) => {
+
   switch (action.type) {
 
     case `${userConstants.GET_REALTIME_USERS}_REQUEST`:
@@ -23,12 +25,17 @@ export default (state = initialState, action) => {
         conversations: action.payload.conversations
       }
       break;
-      case `${userConstants.GET_REALTIME_MESSAGES}_FAILURE`:
-        state ={
-          ...state,
-          conversations: []
-        }
-        break;
+    case `${userConstants.GET_REALTIME_MESSAGES}_FAILURE`:
+      state = {
+        ...state,
+        conversations: []
+      }
+      break;
+    case 'GET_REALTIME_MESSAGES_REQUEST':
+      state = {
+        ...state,
+        loading:  action.payload
+      }
   }
 
   return state;
