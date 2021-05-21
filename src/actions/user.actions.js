@@ -1,18 +1,16 @@
 import {userConstants} from "./constants";
 import {db} from '../firebase'
 
-export const updateCurrentUser =(uid, data) =>{
-  return async dispatch =>{
+export const updateCurrentUser = (uid, data) => {
+  return async dispatch => {
     const unsubscribe = db.collection('users')
         .doc(uid)
-        .onSnapshot((querySnapshot)=>{
-          console.log('updateCurrentUser',querySnapshot)
+        .onSnapshot((querySnapshot) => {
+          console.log('updateCurrentUser', querySnapshot)
         })
     return unsubscribe
   }
 }
-
-
 
 
 export const getRealtimeUsers = (uid) => {
@@ -60,6 +58,7 @@ export const updateMessage = (msgObj) => {
 export const getRealtimeConversations = (user) => {
 
   return async dispatch => {
+    dispatch({type: userConstants.GET_REALTIME_MESSAGES_REQUEST, payload: true})
     db.collection('conversations')
         .where('user_uid_1', 'in', [user.uid_1, user.uid_2])
         .orderBy('createdAt', 'asc')
@@ -69,10 +68,9 @@ export const getRealtimeConversations = (user) => {
 
           querySnapshot.forEach(doc => {
 
-            if((doc.data().user_uid_1 == user.uid_1 && doc.data().user_uid_2 == user.uid_2)
+            if ((doc.data().user_uid_1 == user.uid_1 && doc.data().user_uid_2 == user.uid_2)
                 ||
-                (doc.data().user_uid_1 == user.uid_2 && doc.data().user_uid_2 == user.uid_1))
-            {
+                (doc.data().user_uid_1 == user.uid_2 && doc.data().user_uid_2 == user.uid_1)) {
               conversations.push(doc.data())
             }
 
@@ -89,10 +87,11 @@ export const getRealtimeConversations = (user) => {
             // }
             dispatch({
               type: userConstants.GET_REALTIME_MESSAGES,
-              payload:{conversations}
+              payload: {conversations}
             })
-          })
 
+          })
+          dispatch({type: userConstants.GET_REALTIME_MESSAGES_REQUEST, payload: false})
 
         })
   }

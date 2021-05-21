@@ -143,7 +143,6 @@ export const isLoggedInUser = () => {
 
 
 export const logout = (uid) => {
-  console.log('uid', uid)
   return async dispatch => {
     dispatch({type: `${authConstant.USER_LOGOUT}_REQUEST`})
     // await database.ref('status/' + uid)
