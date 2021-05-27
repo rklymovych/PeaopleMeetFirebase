@@ -12,47 +12,18 @@ import {Users} from "./Users";
 import {ChatPage} from "./chatroom/ChatPage";
 import Join from "./Join/Join";
 import {isLoggedInUser} from "../actions";
-import {database, db} from "../firebase";
 import {useDispatch, useSelector} from "react-redux";
-import firebase from "firebase/app"
-import {SideNav} from "./SideNav";
 import TestChat from "./Chat/Testchat";
 
 export function RouteComponent() {
-  const {currentUser, getUid} = useAuth()
+  const {currentUser} = useAuth()
 
   const auth = useSelector(state => state.auth);
   const dispatch = useDispatch()
 
-
-  const userStatusDatabaseRef = database.ref('/status/' + getUid());
-  const isOfflineForDatabase = {
-    state: 'offline',
-    last_changed: firebase.database.ServerValue.TIMESTAMP,
-  };
-
-  const isOnlineForDatabase = {
-    state: 'online',
-    last_changed: firebase.database.ServerValue.TIMESTAMP,
-  };
-
-
-  useEffect(() => {
-    database.ref('.info/connected').on('value', function (snapshot) {
-
-      if (snapshot.val() == false) {
-        return;
-      }
-      ;
-      userStatusDatabaseRef.onDisconnect().set(isOfflineForDatabase).then(function () {
-
-        userStatusDatabaseRef.set(isOnlineForDatabase);
-      });
-    });
-  }, [])
-
   useEffect(() => {
     if (!auth.authenticated) {
+
       dispatch(isLoggedInUser())
     }
   }, []);

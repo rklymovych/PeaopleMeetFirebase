@@ -130,22 +130,26 @@ export const ChatPage = ({selected}) => {
   const auth = useSelector(state => state.auth)
   const user = useSelector(state => state.user)
   const loading = useSelector(state => state.user.loading)
+  const [myMessages, setMyMessages] = React.useState([])
 
   const [message, setMessage] = useState('')
 
 
-  // useEffect(() => {
-  //   db.collection('conversations')
+  // React.useEffect(() => {
+  //   let docRef = db.collection("conversations")
   //       .onSnapshot((doc) => {
-  //         const conversations = []
+  //         const myMessages = []
   //         doc.forEach((a) => {
-  //           conversations.push(a.data())
-  //
+  //           if (a.data().user_uid_2 === auth.uid && a.data().user_uid_1 === selected.uid || a.data().user_uid_1 === auth.uid && a.data().user_uid_2) {
+  //             myMessages.push(a.data())
+  //           }
+  //           setMyMessages(myMessages)
   //         })
-  //         setUserFomStorage(conversations)
-  //       });
+  //       })
   //
-  // }, [])
+  //   return docRef
+  // }, [user.conversations])
+  // console.log('myMessages', myMessages.length)
 
   useEffect(() => {
     const uid_1 = auth.uid
@@ -159,7 +163,6 @@ export const ChatPage = ({selected}) => {
       user_uid_1: auth.uid,
       user_uid_2: selected.uid,
       message,
-      idx: new Date()
     }
 
     if (message !== '') {
@@ -185,7 +188,7 @@ export const ChatPage = ({selected}) => {
           className={classes.wrap}
       >
         <Paper elevation={3} className={classes.paperHeader}>
-          {selected.name}
+          {selected?.name}
         </Paper>
 
         <Paper

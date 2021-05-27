@@ -20,11 +20,13 @@ import SupervisorAccountRoundedIcon from '@material-ui/icons/SupervisorAccountRo
 import AccountCircleRoundedIcon from '@material-ui/icons/AccountCircleRounded';
 import {useHistory} from "react-router-dom";
 import InputIcon from "@material-ui/icons/Input";
-import {db} from "../firebase";
+import {database, db} from "../firebase";
 import {useAuth} from "../context/AuthContext";
 import defaultAvatar from '../../src/assets/avatars/avatar.jpg'
 import {useDispatch, useSelector} from "react-redux";
 import {logout} from "../actions";
+import {Badge, MenuItem} from "@material-ui/core";
+import firebase from "firebase";
 
 const drawerWidth = 230;
 
@@ -100,11 +102,12 @@ export const SideNav = ({children}) => {
   const history = useHistory()
   const classes = useStyles();
 
-  // const theme = useTheme();
+  // const theme = useTheme()
   const [open, setOpen] = React.useState(false);
   const {getUid} = useAuth()
   const [avatar, setAvatar] = React.useState(null)
   const [userName, setUserName] = React.useState('')
+  const [myMessages, setMyMessages] = React.useState([])
   const handleDrawerOpen = () => {
     setOpen(true);
   };
@@ -114,7 +117,26 @@ export const SideNav = ({children}) => {
   const handleDrawerClose = () => {
     setOpen(false);
   };
-
+  //  make offline Users/
+  const userStatusDatabaseRef = database.ref('/status/' + auth.uid);
+  const isOnlineForDatabase = {
+    state: 'online',
+    last_changed: firebase.database.ServerValue.TIMESTAMP,
+  };
+  useEffect(() => {
+    if (auth.uid ) {
+      database.ref('.info/connected').on('value', function (snapshot) {
+        if (snapshot.val() === true) {
+          userStatusDatabaseRef.set(isOnlineForDatabase);
+        }
+        if (snapshot.val() === false) {
+          userStatusDatabaseRef.onDisconnect().remove(err => {
+            console.log(err)
+          })
+        }
+      });
+    }
+  }, [auth.uid])
 
   useEffect(() => {
     const avatar = db.collection("users").doc(getUid())
@@ -129,6 +151,21 @@ export const SideNav = ({children}) => {
     return avatar
   }, [])
 
+  useEffect(() => {
+    let docRef = db.collection("conversations")
+        .onSnapshot((doc) => {
+          const myMessages = []
+          doc.forEach((a) => {
+            if (a.data().user_uid_2 === auth.uid) {
+              myMessages.push(a.data())
+            }
+            setMyMessages(myMessages)
+          })
+        })
+
+    return docRef
+  }, [])
+
   return (
       <div className={classes.root}>
         <CssBaseline/>
@@ -138,7 +175,7 @@ export const SideNav = ({children}) => {
               [classes.appBarShift]: open,
             })}
         >
-          <Toolbar style={{display: 'flex', justifyContent: 'space-between'}}>
+          <Toolbar>
             <IconButton
                 color="inherit"
                 aria-label="open drawer"
@@ -148,15 +185,30 @@ export const SideNav = ({children}) => {
             >
               <MenuIcon/>
             </IconButton>
-            <Typography variant="h6" noWrap>
-              People Meet
-            </Typography>
-            <IconButton
-                color="inherit"
-                onClick={() => dispatch(logout(auth.uid))}
-            >
-              <InputIcon/>
-            </IconButton>
+
+
+            <div style={{display: 'flex', justifyContent: 'space-between', width: '100%', alignItems: 'center'}}>
+
+              <MenuItem>
+                <IconButton aria-label="show 4 new mails" color="inherit">
+                  <Badge badgeContent={myMessages.length} color="error">
+                    <MailIcon/>
+                  </Badge>
+                </IconButton>
+              </MenuItem>
+
+              <Typography variant="h6" noWrap>
+                People Meet
+              </Typography>
+
+
+              <IconButton
+                  color="inherit"
+                  onClick={() => dispatch(logout(auth.uid))}
+              >
+                <InputIcon/>
+              </IconButton>
+            </div>
           </Toolbar>
         </AppBar>
         <Drawer

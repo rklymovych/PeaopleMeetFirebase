@@ -50,3 +50,15 @@ code {
     width: 30px;
     cursor: pointer;
 }
+
+.gm-ui-hover-effect {
+    display: none!important;
+}
+.gm-style-iw-c{
+    padding:0!important;
+    max-width: 345px!important;
+    min-width: 300px!important;
+    /*max-width:21rem!important;*/
+    /*width: 300px!important;*/
+    min-height: 200px!important;
+}

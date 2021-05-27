@@ -53,8 +53,6 @@ const ProfileDetails = ({className, ...rest}) => {
       const classes = useStyles();
       const [snackbar, setSnackbar] = useState(false)
       const [open, setOpen] = useState(false);
-      // const [location, setLocation] = useState()
-      // console.log(location)
 
       const [userAge, setUserAge] = useState([])
       const [values, setValues] = useState({

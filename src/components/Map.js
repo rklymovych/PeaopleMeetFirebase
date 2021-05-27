@@ -17,6 +17,10 @@ import {makeStyles} from "@material-ui/core/styles";
 import {ChatPage} from "./chatroom/ChatPage";
 
 const useStyles = makeStyles({
+  root: {
+    paddingTop: '0px',
+    paddingBottom: '0px'
+  },
   drawer: {
     height: '50vh',
     padding: '0.5rem',
@@ -34,9 +38,6 @@ const useStyles = makeStyles({
       backgroundRepeat: 'no-repeat',
     }
   },
-  cardWidth: {
-    maxWidth: '400px'
-  }
 })
 
 
@@ -211,6 +212,7 @@ export const Map = () => {
 
           {selected ? (
               <InfoWindow
+                  className={classes.root}
                   position={
                     {
                       lat: selected.location.lat,
@@ -219,32 +221,32 @@ export const Map = () => {
                   }
                   onCloseClick={() => setSelected(null)}
               >
-
-                <Card
-                    className={classes.cardWidth}
-                >
+                <Card>
                   <CardActionArea>
-                    <CardMedia
-                        style={{height: '200px', backgroundSize: 'contain'}}
-                        // className={classes.media}
-                        image={selected.avatar || defUser}
-                        title="Contemplative Reptile"
-                    />
-                    <CardContent>
-                      <Typography gutterBottom variant="h5" component="h2">
-                        {selected.name}
-                      </Typography>
-                      <Typography variant="body2" color="textSecondary" component="p">
-                        {selected.age}
-                      </Typography>
-                      <Typography variant="body2" color="textSecondary" component="p">
-                        {selected.sex}
-                      </Typography>
-                      <Typography variant="body2" color="textSecondary" component="p">
-                        {selected.description}
-                      </Typography>
+                  <CardMedia
+                      style={{
+                        height: '190px',
+                        backgroundSize: 'contain',
+                      }}
+                      // className={classes.media}
+                      image={selected.avatar || defUser}
+                      title="Contemplative Reptile"
+                  />
+                  <CardContent className={classes.root}>
+                    <Typography gutterBottom variant="h5" component="h2">
+                      {selected?.name}
+                    </Typography>
+                    <Typography variant="body2" color="textSecondary" component="p">
+                      {selected?.age}
+                    </Typography>
+                    <Typography variant="body2" color="textSecondary" component="p">
+                      {selected?.sex}
+                    </Typography>
+                    <Typography variant="body2" color="textSecondary" component="p">
+                      {selected?.description}
+                    </Typography>
 
-                    </CardContent>
+                  </CardContent>
                   </CardActionArea>
                   <CardActions>
                     <Button
