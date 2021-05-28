@@ -6,7 +6,6 @@ import {
 } from '@material-ui/core';
 import Profile from './Profile';
 import ProfileDetails from './ProfileDetails';
-import {SideNav} from "../components/SideNav";
 
 
 const useStyles = makeStyles((theme) => ({
@@ -22,7 +21,7 @@ const Account = () => {
   const classes = useStyles();
 
   return (
-      <SideNav>
+      <>
         <div className="wrapper-profile">
           <Container maxWidth="lg">
             <Grid
@@ -49,7 +48,7 @@ const Account = () => {
             </Grid>
           </Container>
         </div>
-      </SideNav>
+      </>
   );
 };
 

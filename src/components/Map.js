@@ -2,21 +2,26 @@ import React, {useCallback, useEffect, useState, useRef} from 'react'
 import {GoogleMap, InfoWindow, Marker, useLoadScript} from '@react-google-maps/api';
 import mapStyles from "../components/maps/MapStyles";
 import compass from '../assets/2277999_map-compass-compass-svg-hd-png-download.png'
-import {db} from "../firebase";
+import {db,database} from "../firebase";
 import {getRealtimeUsers} from "../actions";
 import {useDispatch, useSelector} from 'react-redux'
 import defUser from '../assets/def-user.jpg'
 import chatBackground from '../assets/chatBachground.jpg'
 
 import '@reach/combobox/styles.css'
-import {SideNav} from "./SideNav";
 import {Card, CardActionArea, CardActions, CardContent, CardMedia, Drawer, Grid} from "@material-ui/core";
 import Typography from "@material-ui/core/Typography";
 import Button from "@material-ui/core/Button";
 import {makeStyles} from "@material-ui/core/styles";
 import {ChatPage} from "./chatroom/ChatPage";
+import axios from "axios";
+import {getRequest} from "../pureFunctions";
 
 const useStyles = makeStyles({
+  root: {
+    paddingTop: '0px',
+    paddingBottom: '0px'
+  },
   drawer: {
     height: '50vh',
     padding: '0.5rem',
@@ -34,9 +39,6 @@ const useStyles = makeStyles({
       backgroundRepeat: 'no-repeat',
     }
   },
-  cardWidth: {
-    maxWidth: '400px'
-  }
 })
 
 
@@ -74,6 +76,28 @@ export const Map = () => {
       setLocation({lat: position.coords.latitude, lng: position.coords.longitude})
     })
   }
+  const getRequest = async () => {
+    const url = process.env.REACT_APP_REALTIME_DB
+    try {
+      const res = await axios.get(`${url}/status.json`)
+
+      const key = Object.keys(res.data).map(key => {
+        return {
+          ...res.data[key],
+          id: key
+        }
+
+      })
+      console.log(key)
+      return key.sort((a, b) => {
+        return a.date - b.date
+      })
+    } catch (e) {
+      console.log(e.message)
+    }
+  }
+
+
 
   useEffect(() => {
     db.collection('users')
@@ -85,38 +109,18 @@ export const Map = () => {
           });
           setOnlineUsers(users)
         });
+
   }, [])
-  // db.collection('users')
-  //     .where('isOnline', '==', true)
-  //     .onSnapshot((querySnapshot) => {
-  //       let users = []
-  //       querySnapshot.forEach((doc) => {
-  //         users.push(doc.data())
-  //       });
-  //
-  //       setOnlineUsers(users)
-  //     });
+  console.log('onlineUsers', onlineUsers)
 
+  useEffect(()=>{
+    const unsubscribe = database.ref('status/')
+    unsubscribe.on('value', snap=>{
+      console.log(Object.keys(snap.val()))
+    })
+    return unsubscribe
+  },[])
 
-  // useEffect(() => {
-  //   const starCountRef = database.ref('status/');
-  //   starCountRef.on('value', (snapshot) => {
-  //     const data = snapshot.val();
-  //     for (let key in data) {
-  //       console.log('tt', key, data[key])
-  //       if (data[key].state == 'offline') {
-  //         // db.collection('users')
-  //         console.log('key', key)
-  //         db.collection('users').doc(key)
-  //             .update({
-  //               isOnline: false,
-  //               location: {lat: null, lng: null}
-  //             })
-  //       }
-  //     }
-  //   });
-  //
-  // }, [])
 
   useEffect(() => {
 
@@ -175,8 +179,10 @@ export const Map = () => {
   }
 
   return (
-      <SideNav>
-        <h1 className="headerMap"><span role="img" aria-label="tent">😋</span></h1>
+      <>
+        <h1 className="headerMap"><span
+            onClick={getRequest}
+            role="img" aria-label="tent">😋</span></h1>
         <Locate/>
         {location ? (<GoogleMap
             mapContainerStyle={containerStyle}
@@ -211,6 +217,7 @@ export const Map = () => {
 
           {selected ? (
               <InfoWindow
+                  className={classes.root}
                   position={
                     {
                       lat: selected.location.lat,
@@ -219,29 +226,29 @@ export const Map = () => {
                   }
                   onCloseClick={() => setSelected(null)}
               >
-
-                <Card
-                    className={classes.cardWidth}
-                >
+                <Card>
                   <CardActionArea>
                     <CardMedia
-                        style={{height: '200px', backgroundSize: 'contain'}}
+                        style={{
+                          height: '190px',
+                          backgroundSize: 'contain',
+                        }}
                         // className={classes.media}
                         image={selected.avatar || defUser}
                         title="Contemplative Reptile"
                     />
-                    <CardContent>
+                    <CardContent className={classes.root}>
                       <Typography gutterBottom variant="h5" component="h2">
-                        {selected.name}
+                        {selected?.name}
                       </Typography>
                       <Typography variant="body2" color="textSecondary" component="p">
-                        {selected.age}
+                        {selected?.age}
                       </Typography>
                       <Typography variant="body2" color="textSecondary" component="p">
-                        {selected.sex}
+                        {selected?.sex}
                       </Typography>
                       <Typography variant="body2" color="textSecondary" component="p">
-                        {selected.description}
+                        {selected?.description}
                       </Typography>
 
                     </CardContent>
@@ -271,7 +278,7 @@ export const Map = () => {
             </Grid>
           </Grid>
         </Drawer>
-      </SideNav>
+      </>
 
 
   )

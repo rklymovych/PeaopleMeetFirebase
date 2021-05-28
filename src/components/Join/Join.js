@@ -1,38 +1,85 @@
-import React, {useState} from 'react'
-import {Link} from 'react-router-dom'
-import './Join.css'
-const Join = () => {
-  const [name, setName] = useState('')
-  const [room, setRoom] = useState('')
+import React from 'react';
+import { makeStyles } from '@material-ui/core/styles';
+import axios from 'axios'
+import {getRequest} from "../../pureFunctions";
+
+const Join = ({children}) => {
+  const url = process.env.REACT_APP_REALTIME_DB
+
+
+  const testAxios = async () => {
+    const note = {
+      title: 'text test ',
+      date: Date.now()
+    }
+    try {
+      await axios.post(`${url}/status.json`, note)
+
+    } catch (e) {
+      console.log(e.message)
+    }
+  }
+  const test2Axios = async () => {
+    const note = {
+      title: 'text test ',
+      date: Date.now()
+    }
+    try {
+      await axios.post(`${url}/test.json`, note)
+
+    } catch (e) {
+      console.log(e.message)
+    }
+  }
+
+  const deleteLastStatus = async () => {
+    const a = await getRequest()
+    console.log(a[0].id)
+    try {
+      await axios.delete(`${url}/test/${a[0].id}.json`)
+      //
+      // const key = Object.keys(res.data).map(key => {
+      //   return {
+      //     ...res.data[key],
+      //     id: key
+      //   }
+
+
+    } catch (e) {
+      console.log(e.message)
+    }
+  }
+  const putLastStatus = async () => {
+    const a = await getRequest()
+    console.log(a)
+    const note123 = {
+      title: 'put text123 123 ',
+      date: Date.now()
+    }
+    try {
+      await axios.put(`${url}/test/${a[0].id}.json`, note123)
+      //
+      // const key = Object.keys(res.data).map(key => {
+      //   return {
+      //     ...res.data[key],
+      //     id: key
+      //   }
+
+
+    } catch (e) {
+      console.log(e.message)
+    }
+  }
 
 
   return (
-      <div className="joinOuterContainer">
-        <div className="joinInnerContainer">
-          <h1 className="heading">
-            <div>
-              <input placeholder="Name"
-                     className="joinInput"
-                     type="text"
-                     onChange={(event) => setName(event.target.value)}
-              />
-            </div>
-            <div>
-              <input
-                  placeholder="Room"
-                  className="joinInput mt-20"
-                  type="text"
-                  onChange={(event) => setRoom(event.target.value)}
-              />
-            </div>
-            <Link
-                onClick={(event) => (!name || !room) ? event.preventDefault() : null}
-                to={`/testchat?name=${name}&room=${room}`}>
-              <button className='button' type='submit'>Sign In</button>
-            </Link>
-          </h1>
-        </div>
+      <div>
+       <button onClick={testAxios}>testAxios</button>
+       <button onClick={putLastStatus}>putLastStatus</button>
+       <button onClick={deleteLastStatus}>deleteLastStatus</button>
+       <button onClick={test2Axios}>test2Axios</button>
+       <button onClick={getRequest}>getRequest</button>
       </div>
-  )
+  );
 }
 export default Join

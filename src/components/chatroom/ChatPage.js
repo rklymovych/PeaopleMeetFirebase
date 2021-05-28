@@ -1,14 +1,12 @@
 import React, {useEffect, useRef, useState} from 'react';
 import ReactEmoji from 'react-emoji'
 import clsx from 'clsx';
-import {makeStyles, useTheme, withStyles} from '@material-ui/core/styles';
+import {makeStyles} from '@material-ui/core/styles';
 import {Paper, TextField} from "@material-ui/core";
 import Button from "@material-ui/core/Button";
 import 'firebase/firestore'
 import {useDispatch, useSelector} from "react-redux";
-import {getRealtimeConversations, getRealtimeUsers, updateMessage} from "../../actions";
-import {db, auth} from "../../firebase";
-import {userConstants} from "../../actions/constants";
+import {getRealtimeConversations, updateMessage} from "../../actions";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -122,7 +120,6 @@ const useStyles = makeStyles((theme) => ({
 export const ChatPage = ({selected}) => {
 
   const classes = useStyles();
-  const theme = useTheme();
 
 
   const dummy = useRef();
@@ -134,18 +131,21 @@ export const ChatPage = ({selected}) => {
   const [message, setMessage] = useState('')
 
 
-  // useEffect(() => {
-  //   db.collection('conversations')
+  // React.useEffect(() => {
+  //   let docRef = db.collection("conversations")
   //       .onSnapshot((doc) => {
-  //         const conversations = []
+  //         const myMessages = []
   //         doc.forEach((a) => {
-  //           conversations.push(a.data())
-  //
+  //           if (a.data().user_uid_2 === auth.uid && a.data().user_uid_1 === selected.uid || a.data().user_uid_1 === auth.uid && a.data().user_uid_2) {
+  //             myMessages.push(a.data())
+  //           }
+  //           setMyMessages(myMessages)
   //         })
-  //         setUserFomStorage(conversations)
-  //       });
+  //       })
   //
-  // }, [])
+  //   return docRef
+  // }, [user.conversations])
+  // console.log('myMessages', myMessages.length)
 
   useEffect(() => {
     const uid_1 = auth.uid
@@ -159,7 +159,6 @@ export const ChatPage = ({selected}) => {
       user_uid_1: auth.uid,
       user_uid_2: selected.uid,
       message,
-      idx: new Date()
     }
 
     if (message !== '') {
@@ -185,7 +184,7 @@ export const ChatPage = ({selected}) => {
           className={classes.wrap}
       >
         <Paper elevation={3} className={classes.paperHeader}>
-          {selected.name}
+          {selected?.name}
         </Paper>
 
         <Paper
