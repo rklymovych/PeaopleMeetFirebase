@@ -14,12 +14,24 @@ import Join from "./Join/Join";
 import {isLoggedInUser} from "../actions";
 import {useDispatch, useSelector} from "react-redux";
 import TestChat from "./Chat/Testchat";
+import SwipeableDrawer from "@material-ui/core/SwipeableDrawer";
+import Drawer from "./Drawer";
+import {TopBar} from "./TopBar";
 
 export function RouteComponent() {
-  const {currentUser} = useAuth()
-
   const auth = useSelector(state => state.auth);
   const dispatch = useDispatch()
+  const {currentUser} = useAuth()
+  const [state, setState] = React.useState({'left': false});
+
+
+  const toggleDrawer = (anchor, open) => (event) => {
+    if (event && event.type === 'keydown' && (event.key === 'Tab' || event.key === 'Shift')) {
+      return;
+    }
+
+    setState({...state, 'left': open});
+  }
 
   useEffect(() => {
     if (!auth.authenticated) {
@@ -31,6 +43,8 @@ export function RouteComponent() {
   if (currentUser) {
     return (
         <>
+          <TopBar setState={setState}/>
+          <div style={{height: '65px'}} />
           <Switch>
             <PrivateRoute exact path="/" component={Account}/>
             <PrivateRoute exact path="/map" component={Map}/>
@@ -42,6 +56,20 @@ export function RouteComponent() {
             <PrivateRoute exact path='/testchat' component={TestChat}/>
             <Redirect to="/"/>
           </Switch>
+          <SwipeableDrawer
+              open={state['left']}
+              onClose={toggleDrawer('left', false)}
+              onOpen={toggleDrawer('left', true)}
+          >
+            <div
+                style={{width: '250px'}}
+                onClick={toggleDrawer('left', false)}
+                onKeyDown={toggleDrawer('left', false)}
+            >
+
+              <Drawer/>
+            </div>
+          </SwipeableDrawer>
         </>
     )
   }

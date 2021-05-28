@@ -1,14 +1,12 @@
 import React, {useEffect, useRef, useState} from 'react';
 import ReactEmoji from 'react-emoji'
 import clsx from 'clsx';
-import {makeStyles, useTheme, withStyles} from '@material-ui/core/styles';
+import {makeStyles} from '@material-ui/core/styles';
 import {Paper, TextField} from "@material-ui/core";
 import Button from "@material-ui/core/Button";
 import 'firebase/firestore'
 import {useDispatch, useSelector} from "react-redux";
-import {getRealtimeConversations, getRealtimeUsers, updateMessage} from "../../actions";
-import {db, auth} from "../../firebase";
-import {userConstants} from "../../actions/constants";
+import {getRealtimeConversations, updateMessage} from "../../actions";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -122,7 +120,6 @@ const useStyles = makeStyles((theme) => ({
 export const ChatPage = ({selected}) => {
 
   const classes = useStyles();
-  const theme = useTheme();
 
 
   const dummy = useRef();
@@ -130,7 +127,6 @@ export const ChatPage = ({selected}) => {
   const auth = useSelector(state => state.auth)
   const user = useSelector(state => state.user)
   const loading = useSelector(state => state.user.loading)
-  const [myMessages, setMyMessages] = React.useState([])
 
   const [message, setMessage] = useState('')
 

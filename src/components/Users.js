@@ -6,7 +6,6 @@ import Typography from "@material-ui/core/Typography";
 import List from "@material-ui/core/List";
 import {UserModal} from "./UserModal";
 import {UserContext} from '../context/UserContext'
-import {SideNav} from "./SideNav";
 import {useDispatch, useSelector} from "react-redux";
 import {getRealtimeUsers} from "../actions";
 
@@ -84,7 +83,7 @@ export const Users = () => {
   }
 
   return (
-      <SideNav>
+      <>
         <List
             className={classes.root}
         >
@@ -128,7 +127,8 @@ export const Users = () => {
             openModal={openModal}
             setOpenModal={setOpenModal}
             selectedUser={selectedUser}/>
-      </SideNav>
+            </>
+      // </SideNav>
   )
 }
 

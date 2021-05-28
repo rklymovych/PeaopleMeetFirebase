@@ -1,11 +1,11 @@
-import React, {useState} from 'react'
-import {Link} from 'react-router-dom'
+import React from 'react';
+import { makeStyles } from '@material-ui/core/styles';
 import axios from 'axios'
-import './Join.css'
-import {database, db} from '../../firebase'
+import {getRequest} from "../../pureFunctions";
 
-const Join = () => {
+const Join = ({children}) => {
   const url = process.env.REACT_APP_REALTIME_DB
+
 
   const testAxios = async () => {
     const note = {
@@ -13,7 +13,7 @@ const Join = () => {
       date: Date.now()
     }
     try {
-      const res = await axios.post(`${url}/status.json`, note)
+      await axios.post(`${url}/status.json`, note)
 
     } catch (e) {
       console.log(e.message)
@@ -25,30 +25,13 @@ const Join = () => {
       date: Date.now()
     }
     try {
-      const res = await axios.post(`${url}/test.json`, note)
+      await axios.post(`${url}/test.json`, note)
 
     } catch (e) {
       console.log(e.message)
     }
   }
-  const getRequest = async () => {
-    try {
-      const res = await axios.get(`${url}/test.json`)
 
-      const key = Object.keys(res.data).map(key => {
-        return {
-          ...res.data[key],
-          id: key
-        }
-
-      })
-      return key.sort((a, b) => {
-        return a.date - b.date
-      })
-    } catch (e) {
-      console.log(e.message)
-    }
-  }
   const deleteLastStatus = async () => {
     const a = await getRequest()
     console.log(a[0].id)
@@ -87,14 +70,16 @@ const Join = () => {
       console.log(e.message)
     }
   }
+
+
   return (
-      <div className="joinOuterContainer">
-        <button onClick={testAxios}>test</button>
-        <button onClick={test2Axios}>test2</button>
-        <button onClick={getRequest}>get</button>
-        <button onClick={deleteLastStatus}>deleteStatus</button>
-        <button onClick={putLastStatus}>putLastStatus</button>
+      <div>
+       <button onClick={testAxios}>testAxios</button>
+       <button onClick={putLastStatus}>putLastStatus</button>
+       <button onClick={deleteLastStatus}>deleteLastStatus</button>
+       <button onClick={test2Axios}>test2Axios</button>
+       <button onClick={getRequest}>getRequest</button>
       </div>
-  )
+  );
 }
 export default Join
