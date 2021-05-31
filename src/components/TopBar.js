@@ -93,7 +93,7 @@ export const TopBar = ({setState}) => {
         }
         if (snapshot.val() === false) {
           userStatusDatabaseRef.onDisconnect().remove(err => {
-            console.log(err)
+            console.log('err', err)
           })
         }
       });

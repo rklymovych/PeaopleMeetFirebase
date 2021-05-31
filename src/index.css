@@ -60,5 +60,10 @@ code {
     min-width: 300px!important;
     /*max-width:21rem!important;*/
     /*width: 300px!important;*/
-    min-height: 200px!important;
+    /*min-height: 200px!important;*/
+}
+.gm-style-iw-d {
+    overflow: auto!important;
+    max-height: 200px!important;
+    /*padding-bottom: 4px!important;*/
 }

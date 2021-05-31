@@ -19,10 +19,11 @@ export const getRealtimeUsers = (uid) => {
     dispatch({type: `${userConstants.GET_REALTIME_USERS}_REQUEST`})
 
     const unsubscribe = db.collection("users")
-        // .where("uid", "!=", uid)
+        .where("isOnline", "==", true)
         .onSnapshot((querySnapshot) => {
           const users = [];
           querySnapshot.forEach((doc) => {
+
             if (doc.data().uid !== uid) {
               users.push(doc.data());
             }
