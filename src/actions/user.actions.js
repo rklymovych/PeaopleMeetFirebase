@@ -44,6 +44,7 @@ export const updateMessage = (msgObj) => {
         .add({
           ...msgObj,
           isView: false,
+          isRead: false,
           createdAt: new Date()
         })
         .then((data) => {

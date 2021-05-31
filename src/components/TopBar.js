@@ -101,7 +101,6 @@ export const TopBar = ({setState}) => {
   }, [auth.uid])
 
 
-
   useEffect(() => {
     let docRef = db.collection("conversations")
         .onSnapshot((doc) => {
@@ -116,6 +115,18 @@ export const TopBar = ({setState}) => {
 
     return docRef
   }, [])
+  // subscribe on messages
+
+  // useEffect(() => {
+  //   db.collection('conversations')
+  //       .where('user_uid_2', '==', auth.uid)
+  //       .onSnapshot(snap => {
+  //         snap.forEach(el => {
+  //           console.log(el.data())
+  //         })
+  //       })
+  // }, [])
+
 
   return (
       <AppBar>
@@ -130,7 +141,7 @@ export const TopBar = ({setState}) => {
           </IconButton>
 
           <div style={{display: 'flex', justifyContent: 'space-between', width: '100%', alignItems: 'center'}}>
-            <MenuItem>
+            <MenuItem onClick={() => history.push('/users')}>
               <IconButton aria-label="show 4 new mails" color="inherit">
                 <Badge badgeContent={myMessages.length} color="error">
                   <MailIcon/>

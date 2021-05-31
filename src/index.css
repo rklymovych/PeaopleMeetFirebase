@@ -64,6 +64,6 @@ code {
 }
 .gm-style-iw-d {
     overflow: auto!important;
-    max-height: 200px!important;
+    min-height: 200px!important;
     /*padding-bottom: 4px!important;*/
 }
