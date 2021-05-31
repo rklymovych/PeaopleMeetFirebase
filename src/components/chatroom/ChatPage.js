@@ -7,6 +7,7 @@ import Button from "@material-ui/core/Button";
 import 'firebase/firestore'
 import {useDispatch, useSelector} from "react-redux";
 import {getRealtimeConversations, updateMessage} from "../../actions";
+import {db} from "../../firebase";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -121,13 +122,12 @@ export const ChatPage = ({selected}) => {
 
   const classes = useStyles();
 
-
   const dummy = useRef();
   const dispatch = useDispatch()
   const auth = useSelector(state => state.auth)
   const user = useSelector(state => state.user)
   const loading = useSelector(state => state.user.loading)
-
+  const [conversations, setConversations] = useState([])
   const [message, setMessage] = useState('')
 
 
@@ -150,9 +150,26 @@ export const ChatPage = ({selected}) => {
   useEffect(() => {
     const uid_1 = auth.uid
     const uid_2 = selected.uid
-    dispatch(getRealtimeConversations({uid_1, uid_2}))
-  }, [])
+    // dispatch(getRealtimeConversations({uid_1, uid_2}))
+    db.collection('conversations')
+        .where('user_uid_1', 'in', [auth.uid, selected.uid])
+        .orderBy('createdAt', 'asc')
+        .onSnapshot((querySnapshot) => {
 
+          const conversations = []
+
+          querySnapshot.forEach(doc => {
+
+            if ((doc.data().user_uid_1 == auth.uid && doc.data().user_uid_2 == selected.uid)
+                ||
+                (doc.data().user_uid_1 == selected.uid && doc.data().user_uid_2 == auth.uid)) {
+              conversations.push(doc.data())
+            }
+          })
+          setConversations(conversations)
+        })
+
+  }, [])
 
   const submitMessage = (e) => {
     const msgObj = {
@@ -165,7 +182,7 @@ export const ChatPage = ({selected}) => {
 
       dispatch(updateMessage(msgObj))
           .then(() => {
-            dummy.current.scrollTo(0, 9999)
+            dummy.current.scrollIntoView({behavior: "smooth"})
             setMessage('')
           })
     }
@@ -179,6 +196,9 @@ export const ChatPage = ({selected}) => {
     }
   }
 
+  useEffect(() => {
+    dummy.current.scrollIntoView({behavior: "smooth"})
+  }, [conversations])
   return (
       <div
           className={classes.wrap}
@@ -188,14 +208,13 @@ export const ChatPage = ({selected}) => {
         </Paper>
 
         <Paper
-            ref={dummy}
             className={classes.paperBody}
             elevation={0}
         >
           {loading ? (<h2 style={{textAlign: 'center'}}>Loading...</h2>)
               :
               (
-                  !loading && user.conversations.map((con, idx) =>
+                  !loading && conversations.map((con, idx) =>
                       <div
                           key={idx}
                           style={{textAlign: con.user_uid_1 == auth.uid ? 'right' : 'left'}}
@@ -211,8 +230,9 @@ export const ChatPage = ({selected}) => {
                   )
               )
           }
-
+          <div ref={dummy}></div>
         </Paper>
+
         <Paper
             className={classes.paperFooter}
             elevation={3}

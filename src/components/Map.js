@@ -15,7 +15,6 @@ import Button from "@material-ui/core/Button";
 import {makeStyles} from "@material-ui/core/styles";
 import {ChatPage} from "./chatroom/ChatPage";
 import axios from "axios";
-import {getRequest} from "../pureFunctions";
 
 const useStyles = makeStyles({
   root: {
@@ -120,6 +119,7 @@ export const Map = () => {
     })
     return unsubscribe
   }, [onlineUsers])
+
 
 
   // useEffect(() => {
