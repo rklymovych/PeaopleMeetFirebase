@@ -2,7 +2,7 @@ import React, {useCallback, useEffect, useState, useRef} from 'react'
 import {GoogleMap, InfoWindow, Marker, useLoadScript} from '@react-google-maps/api';
 import mapStyles from "../components/maps/MapStyles";
 import compass from '../assets/2277999_map-compass-compass-svg-hd-png-download.png'
-import {db,database} from "../firebase";
+import {db, database} from "../firebase";
 import {getRealtimeUsers} from "../actions";
 import {useDispatch, useSelector} from 'react-redux'
 import defUser from '../assets/def-user.jpg'
@@ -66,7 +66,7 @@ export const Map = () => {
   const [location, setLocation] = useState()
   const [onlineUsers, setOnlineUsers] = useState([])
   const onlineCurrentUser = JSON.parse(localStorage.getItem('user'))
-  const [checkRealTimeUsers, setCheckRealTimeUsers] = useState()
+  const [getRealTimeUsers, setRealTimeUsers] = useState([])
   const [openDrawer, setOpenDrawer] = useState(false)
 
   const authFromState = useSelector(state => state.auth)
@@ -76,6 +76,7 @@ export const Map = () => {
       setLocation({lat: position.coords.latitude, lng: position.coords.longitude})
     })
   }
+
   const getRequest = async () => {
     const url = process.env.REACT_APP_REALTIME_DB
     try {
@@ -88,7 +89,7 @@ export const Map = () => {
         }
 
       })
-      console.log(key)
+      console.log('getRequest axios', key)
       return key.sort((a, b) => {
         return a.date - b.date
       })
@@ -96,7 +97,6 @@ export const Map = () => {
       console.log(e.message)
     }
   }
-
 
 
   useEffect(() => {
@@ -109,37 +109,37 @@ export const Map = () => {
           });
           setOnlineUsers(users)
         });
-
   }, [])
-  console.log('onlineUsers', onlineUsers)
 
-  useEffect(()=>{
+
+  useEffect(() => {
     const unsubscribe = database.ref('status/')
-    unsubscribe.on('value', snap=>{
-      console.log(Object.keys(snap.val()))
+    unsubscribe.on('value', snap => {
+      if (!snap.val()) return
+      setRealTimeUsers(onlineUsers.filter(user => Object.keys(snap.val()).includes(user.uid)))
     })
     return unsubscribe
-  },[])
+  }, [onlineUsers])
 
 
-  useEffect(() => {
-
-    unsubscribe = dispatch(getRealtimeUsers(authFromState.uid))
-        .then(unsubscribe => {
-          return unsubscribe;
-        })
-        .catch(error => console.log(error))
-
-
-  }, [authFromState.uid])
-
-  useEffect(() => {
-    return () => {
-      //cleanup
-      unsubscribe.then(f => f()).catch(error => console.log(error))
-    }
-  }, [])
+  // useEffect(() => {
   //
+  //   unsubscribe = dispatch(getRealtimeUsers(authFromState.uid))
+  //       .then(unsubscribe => {
+  //         return unsubscribe;
+  //       })
+  //       .catch(error => console.log(error))
+  //
+  //
+  // }, [authFromState.uid])
+  //
+  // useEffect(() => {
+  //   return () => {
+  //     //cleanup
+  //     unsubscribe.then(f => f()).catch(error => console.log(error))
+  //   }
+  // }, [])
+  // //
   useEffect(() => {
     getCurrentPosition()
   }, [])
@@ -196,7 +196,8 @@ export const Map = () => {
           {/*<Marker position={{lat: location.lat, lng: location.lng}} icon={{url:  defUser, scaledSize: new window.google.maps.Size(30, 30),anchor: new window.google.maps.Point(15, 15), origin: new window.google.maps.Point(0, 0)}}/>*/}
 
 
-          {onlineCurrentUser?.isOnline && onlineUsers.map(user => {
+          {getRealTimeUsers && getRealTimeUsers.map(user => {
+
             return <Marker
                 key={user.uid}
                 position={{lat: user.location.lat, lng: user.location.lng}}
@@ -253,7 +254,7 @@ export const Map = () => {
 
                     </CardContent>
                   </CardActionArea>
-                  <CardActions>
+                  <CardActions style={{marginBottom: '10px'}}>
                     <Button
                         onClick={openDrawerHandler}
                         size="small"
