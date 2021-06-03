@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React, {useContext, useEffect} from 'react';
 import {makeStyles} from '@material-ui/core/styles';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
@@ -14,6 +14,7 @@ import {useDispatch, useSelector} from "react-redux";
 import {logout} from "../actions";
 import {Badge, MenuItem} from "@material-ui/core";
 import firebase from "firebase";
+import {FirebaseContext} from "../context/firebaseContext/firebaseContext";
 
 const drawerWidth = 230;
 
@@ -67,12 +68,12 @@ const useStyles = makeStyles((theme) => ({
 export const TopBar = ({setState}) => {
   const history = useHistory()
   const classes = useStyles();
-
+  const {getUsersOnlineRealTime} = useContext(FirebaseContext)
   // const theme = useTheme()
   const [open, setOpen] = React.useState(false);
   const {getUid} = useAuth()
+  const [isNewMessage, setNewMessage] = React.useState(false)
 
-  const [myMessages, setMyMessages] = React.useState([])
   const handleDrawerOpen = () => {
     setState({'left': true});
   };
@@ -93,39 +94,46 @@ export const TopBar = ({setState}) => {
         }
         if (snapshot.val() === false) {
           userStatusDatabaseRef.onDisconnect().remove(err => {
-            console.log('err', err)
+            // console.log('err', err)
           })
         }
       });
     }
   }, [auth.uid])
+//  make offline Users END****/
 
 
-  useEffect(() => {
-    let docRef = db.collection("conversations")
-        .onSnapshot((doc) => {
-          const myMessages = []
-          doc.forEach((a) => {
-            if (a.data().user_uid_2 === auth.uid) {
-              myMessages.push(a.data())
-            }
-            setMyMessages(myMessages)
-          })
-        })
 
-    return docRef
-  }, [])
-  // subscribe on messages
 
+  // getUsersOnlineRealTime();
   // useEffect(() => {
-  //   db.collection('conversations')
-  //       .where('user_uid_2', '==', auth.uid)
-  //       .onSnapshot(snap => {
-  //         snap.forEach(el => {
-  //           console.log(el.data())
+  //   let docRef = db.collection("conversations")
+  //       .onSnapshot((doc) => {
+  //         const myMessages = []
+  //         doc.forEach((a) => {
+  //           if (a.data().user_uid_2 === auth.uid) {
+  //             myMessages.push(a.data())
+  //           }
+  //           setMyMessages(myMessages)
   //         })
   //       })
+  //
+  //   return docRef
   // }, [])
+
+  useEffect(() => {
+    if (auth.uid) {
+      db.collection('conversations')
+          .where('user_uid_2', '==', auth.uid)
+          .onSnapshot(snap => {
+            snap.forEach(el => {
+              if (el.data()) {
+                setNewMessage(true)
+              }
+            })
+          })
+    }
+  }, [auth.uid])
 
 
   return (
@@ -143,7 +151,7 @@ export const TopBar = ({setState}) => {
           <div style={{display: 'flex', justifyContent: 'space-between', width: '100%', alignItems: 'center'}}>
             <MenuItem onClick={() => history.push('/users')}>
               <IconButton aria-label="show 4 new mails" color="inherit">
-                <Badge badgeContent={myMessages.length} color="error">
+                <Badge badgeContent={isNewMessage ? '1' : null} color="error">
                   <MailIcon/>
                 </Badge>
               </IconButton>

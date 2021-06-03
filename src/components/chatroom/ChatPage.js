@@ -1,4 +1,4 @@
-import React, {useEffect, useRef, useState} from 'react';
+import React, {useEffect, useRef, useState, useContext} from 'react';
 import ReactEmoji from 'react-emoji'
 import clsx from 'clsx';
 import {makeStyles} from '@material-ui/core/styles';
@@ -6,8 +6,7 @@ import {Paper, TextField} from "@material-ui/core";
 import Button from "@material-ui/core/Button";
 import 'firebase/firestore'
 import {useDispatch, useSelector} from "react-redux";
-import {getRealtimeConversations, updateMessage} from "../../actions";
-import {db} from "../../firebase";
+import {FirebaseContext} from "../../context/firebaseContext/firebaseContext";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -119,7 +118,8 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export const ChatPage = ({selected}) => {
-
+  const {getConversations, conversations} = useContext(FirebaseContext)
+  const firebase = useContext(FirebaseContext)
   const classes = useStyles();
 
   const dummy = useRef();
@@ -127,67 +127,27 @@ export const ChatPage = ({selected}) => {
   const auth = useSelector(state => state.auth)
   const user = useSelector(state => state.user)
   const loading = useSelector(state => state.user.loading)
-  const [conversations, setConversations] = useState([])
   const [message, setMessage] = useState('')
 
-
-  // React.useEffect(() => {
-  //   let docRef = db.collection("conversations")
-  //       .onSnapshot((doc) => {
-  //         const myMessages = []
-  //         doc.forEach((a) => {
-  //           if (a.data().user_uid_2 === auth.uid && a.data().user_uid_1 === selected.uid || a.data().user_uid_1 === auth.uid && a.data().user_uid_2) {
-  //             myMessages.push(a.data())
-  //           }
-  //           setMyMessages(myMessages)
-  //         })
-  //       })
-  //
-  //   return docRef
-  // }, [user.conversations])
-  // console.log('myMessages', myMessages.length)
-
   useEffect(() => {
-    const uid_1 = auth.uid
-    const uid_2 = selected.uid
-    // dispatch(getRealtimeConversations({uid_1, uid_2}))
-    db.collection('conversations')
-        .where('user_uid_1', 'in', [auth.uid, selected.uid])
-        .orderBy('createdAt', 'asc')
-        .onSnapshot((querySnapshot) => {
-
-          const conversations = []
-
-          querySnapshot.forEach(doc => {
-
-            if ((doc.data().user_uid_1 == auth.uid && doc.data().user_uid_2 == selected.uid)
-                ||
-                (doc.data().user_uid_1 == selected.uid && doc.data().user_uid_2 == auth.uid)) {
-              conversations.push(doc.data())
-            }
-          })
-          setConversations(conversations)
-        })
-
+    const unsubscribe = getConversations(auth.uid, selected.uid)
+    console.log(unsubscribe)
+    return unsubscribe
+    // eslint-disable-next-line
   }, [])
 
   const submitMessage = (e) => {
-    const msgObj = {
-      user_uid_1: auth.uid,
-      user_uid_2: selected.uid,
-      message,
-    }
-
     if (message !== '') {
-
-      dispatch(updateMessage(msgObj))
-          .then(() => {
-            dummy.current.scrollIntoView({behavior: "smooth"})
-            setMessage('')
-          })
+      const msgObj = {
+        user_uid_1: auth.uid,
+        user_uid_2: selected.uid,
+        message,
+      }
+      firebase.updateMessage1(msgObj).then(() => {
+        setMessage('')
+      })
     }
   }
-
 
   const _handleKeyDown = (e) => {
     if (e.key === "Enter") {
@@ -199,6 +159,7 @@ export const ChatPage = ({selected}) => {
   useEffect(() => {
     dummy.current.scrollIntoView({behavior: "smooth"})
   }, [conversations])
+
   return (
       <div
           className={classes.wrap}

@@ -8,6 +8,7 @@ import {UserModal} from "./UserModal";
 import {UserContext} from '../context/UserContext'
 import {useDispatch, useSelector} from "react-redux";
 import {getRealtimeUsers} from "../actions";
+import {FirebaseContext} from "../context/firebaseContext/firebaseContext";
 
 
 const useStyles = makeStyles((theme) => ({
@@ -41,6 +42,8 @@ export const Users = () => {
   const [openModal, setOpenModal] = useState(false)
   const users = useSelector(state => state.user)
   let unsubscribe;
+  const conversations = useContext(FirebaseContext)
+  console.log('users', conversations)
   // const getUsers = () => {
   //   return db.collection("users").get() // надо ли ретурн???
   //       .then((querySnapshot) => {
@@ -127,7 +130,7 @@ export const Users = () => {
             openModal={openModal}
             setOpenModal={setOpenModal}
             selectedUser={selectedUser}/>
-            </>
+      </>
       // </SideNav>
   )
 }
