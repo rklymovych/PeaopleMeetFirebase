@@ -44,7 +44,7 @@ export function RouteComponent() {
     return (
         <>
           <TopBar setState={setState}/>
-          <div style={{height: '65px'}} />
+          <div style={{height: '60px'}} />
           <Switch>
             <PrivateRoute exact path="/" component={Account}/>
             <PrivateRoute exact path="/map" component={Map}/>

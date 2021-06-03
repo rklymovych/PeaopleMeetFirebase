@@ -1,4 +1,4 @@
-import React, {useCallback, useEffect, useState, useRef} from 'react'
+import React, {useCallback, useEffect, useState, useRef, useContext} from 'react'
 import {GoogleMap, InfoWindow, Marker, useLoadScript} from '@react-google-maps/api';
 import mapStyles from "../components/maps/MapStyles";
 import compass from '../assets/2277999_map-compass-compass-svg-hd-png-download.png'
@@ -15,6 +15,8 @@ import Button from "@material-ui/core/Button";
 import {makeStyles} from "@material-ui/core/styles";
 import {ChatPage} from "./chatroom/ChatPage";
 import axios from "axios";
+import {FirebaseContext} from "../context/firebaseContext/firebaseContext";
+import Loader from "./loader/Loader";
 
 const useStyles = makeStyles({
   root: {
@@ -53,6 +55,7 @@ const options = {
 }
 
 export const Map = () => {
+  const {realUsers, getOnlineUsersChecked} = useContext(FirebaseContext)
   const classes = useStyles();
   const dispatch = useDispatch()
   const {isLoaded, loadError} = useLoadScript({
@@ -69,7 +72,7 @@ export const Map = () => {
   const [openDrawer, setOpenDrawer] = useState(false)
 
   const authFromState = useSelector(state => state.auth)
-  let unsubscribe;
+
   const getCurrentPosition = async () => {
     await navigator.geolocation.getCurrentPosition((position) => {
       setLocation({lat: position.coords.latitude, lng: position.coords.longitude})
@@ -97,49 +100,10 @@ export const Map = () => {
     }
   }
 
-
   useEffect(() => {
-    db.collection('users')
-        .where('isOnline', '==', true)
-        .onSnapshot((querySnapshot) => {
-          const users = []
-          querySnapshot.forEach((doc) => {
-            users.push(doc.data())
-          });
-          setOnlineUsers(users)
-        });
+    getOnlineUsersChecked();
   }, [])
 
-
-  useEffect(() => {
-    const unsubscribe = database.ref('status/')
-    unsubscribe.on('value', snap => {
-      if (!snap.val()) return
-      setRealTimeUsers(onlineUsers.filter(user => Object.keys(snap.val()).includes(user.uid)))
-    })
-    return unsubscribe
-  }, [onlineUsers])
-
-
-
-  // useEffect(() => {
-  //
-  //   unsubscribe = dispatch(getRealtimeUsers(authFromState.uid))
-  //       .then(unsubscribe => {
-  //         return unsubscribe;
-  //       })
-  //       .catch(error => console.log(error))
-  //
-  //
-  // }, [authFromState.uid])
-  //
-  // useEffect(() => {
-  //   return () => {
-  //     //cleanup
-  //     unsubscribe.then(f => f()).catch(error => console.log(error))
-  //   }
-  // }, [])
-  // //
   useEffect(() => {
     getCurrentPosition()
   }, [])
@@ -163,7 +127,7 @@ export const Map = () => {
   }, [])
 
   if (loadError) return 'Error loading maps'
-  if (!isLoaded) return 'Loading maps'
+  if (!isLoaded) return <Loader/>
 
   function Locate() {
     return (
@@ -196,7 +160,7 @@ export const Map = () => {
           {/*<Marker position={{lat: location.lat, lng: location.lng}} icon={{url:  defUser, scaledSize: new window.google.maps.Size(30, 30),anchor: new window.google.maps.Point(15, 15), origin: new window.google.maps.Point(0, 0)}}/>*/}
 
 
-          {getRealTimeUsers && getRealTimeUsers.map(user => {
+          {realUsers && realUsers.map(user => {
 
             return <Marker
                 key={user.uid}
@@ -280,7 +244,5 @@ export const Map = () => {
           </Grid>
         </Drawer>
       </>
-
-
   )
 }

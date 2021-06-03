@@ -9,6 +9,7 @@ import {theme} from './theme/theme'
 import {UserContextProvider} from './context/UserContext'
 import {Provider} from 'react-redux'
 import store from './store/store'
+import {FirebaseState} from "./context/firebaseContext/FirebaseState";
 
 if (typeof window !== 'undefined') {
   window.React = React;
@@ -16,21 +17,21 @@ if (typeof window !== 'undefined') {
 window.store = store
 
 
-
-
 ReactDOM.render(
     // <React.StrictMode>
-    <Provider store={store}>
-      <React.StrictMode>
-        <UserContextProvider>
-          <ThemeProvider theme={theme}>
-            <AuthProvider>
-              <App/>
-            </AuthProvider>
-          </ThemeProvider>
-        </UserContextProvider>
-      </React.StrictMode>
-    </Provider>
+    <FirebaseState>
+      <Provider store={store}>
+        <React.StrictMode>
+          <UserContextProvider>
+            <ThemeProvider theme={theme}>
+              <AuthProvider>
+                <App/>
+              </AuthProvider>
+            </ThemeProvider>
+          </UserContextProvider>
+        </React.StrictMode>
+      </Provider>
+    </FirebaseState>
     ,
     document.getElementById('root')
 );

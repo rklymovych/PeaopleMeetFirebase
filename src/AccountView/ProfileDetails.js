@@ -53,7 +53,6 @@ const ProfileDetails = ({className, ...rest}) => {
       const classes = useStyles();
       const [snackbar, setSnackbar] = useState(false)
       const [open, setOpen] = useState(false);
-
       const [userAge, setUserAge] = useState([])
       const [values, setValues] = useState({
         name: '',
@@ -95,7 +94,6 @@ const ProfileDetails = ({className, ...rest}) => {
           setSnackbar(true)
         }
       }, [error])
-
       useEffect(() => {
         const unsubscribe = db.collection('users').doc(getUid())
             .onSnapshot((doc) => {
@@ -243,7 +241,7 @@ const ProfileDetails = ({className, ...rest}) => {
                           fullWidth
                           label="Name"
                           name="name"
-                          value={formik.values.name}
+                          value={values.name}
                           onChange={handleChange}
                           required
                           variant="outlined"
@@ -283,7 +281,7 @@ const ProfileDetails = ({className, ...rest}) => {
                           name="age"
                           onChange={handleChange}
                           required
-                          value={formik.values.age ? formik.values.age : ''}
+                          value={values.age ? values.age : ''}
                           variant="outlined"
                           error={!!formik.errors.age && formik.touched.age}
                       >
@@ -309,7 +307,7 @@ const ProfileDetails = ({className, ...rest}) => {
                           name="sex"
                           required
                           onChange={handleChange}
-                          value={formik.values.sex ? formik.values.sex : ""}
+                          value={values.sex ? values.sex : ""}
                           variant="outlined"
                           error={!!formik.errors.sex && formik.touched.sex}
                       >
@@ -337,7 +335,7 @@ const ProfileDetails = ({className, ...rest}) => {
                           multiline
                           rows={4}
                           required
-                          value={formik.values.description ? formik.values.description : ''}
+                          value={values.description ? values.description : ''}
                           variant="outlined"
                           onChange={handleChange}
                       />
