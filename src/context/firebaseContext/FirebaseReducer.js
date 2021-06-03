@@ -1,4 +1,4 @@
-import {GET_CONVERSATIONS, SET_REAL_USERS, UPDATE_MESSAGES} from "../../actions/constants";
+import {GET_CONVERSATIONS, IS_LOADED, SET_REAL_USERS, UPDATE_MESSAGES} from "../../actions/constants";
 
 const handlers = {
   [GET_CONVERSATIONS]: (state, {payload}) => ({...state, conversations: payload}),
@@ -9,6 +9,7 @@ const handlers = {
 
   }),
   [SET_REAL_USERS]: (state, {payload}) => ({...state, realUsers: payload}),
+  [IS_LOADED]: (state, {payload}) => ({...state, isLoaded: payload}),
   DEFAULT: state => state
 }
 

@@ -67,3 +67,16 @@ code {
     min-height: 200px!important;
     /*padding-bottom: 4px!important;*/
 }
+.loader-wrapper-map-page {
+    height: calc(100vh - 65px);
+    width: 100vw;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.loader-wrapper-chat-page {
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}

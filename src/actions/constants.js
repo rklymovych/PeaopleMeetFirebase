@@ -14,3 +14,4 @@ export const userConstants ={
 export const GET_CONVERSATIONS = 'GET_CONVERSATIONS'
 export const SET_REAL_USERS = 'SET_REAL_USERS'
 export const UPDATE_MESSAGES = 'UPDATE_MESSAGES'
+export const IS_LOADED = 'IS_LOADED'
