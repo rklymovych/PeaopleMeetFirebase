@@ -7,6 +7,7 @@ import Button from "@material-ui/core/Button";
 import 'firebase/firestore'
 import {useDispatch, useSelector} from "react-redux";
 import {FirebaseContext} from "../../context/firebaseContext/firebaseContext";
+import Loader from "../loader/Loader";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -118,7 +119,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export const ChatPage = ({selected}) => {
-  const {getConversations, conversations} = useContext(FirebaseContext)
+  const {getConversations, conversations, isLoaded} = useContext(FirebaseContext)
   const firebase = useContext(FirebaseContext)
   const classes = useStyles();
 
@@ -131,8 +132,8 @@ export const ChatPage = ({selected}) => {
 
   useEffect(() => {
     const unsubscribe = getConversations(auth.uid, selected.uid)
-    console.log(unsubscribe)
     return unsubscribe
+
     // eslint-disable-next-line
   }, [])
 
@@ -158,7 +159,7 @@ export const ChatPage = ({selected}) => {
 
   useEffect(() => {
     dummy.current.scrollIntoView({behavior: "smooth"})
-  }, [conversations])
+  }, [conversations, isLoaded])
 
   return (
       <div
@@ -172,10 +173,10 @@ export const ChatPage = ({selected}) => {
             className={classes.paperBody}
             elevation={0}
         >
-          {loading ? (<h2 style={{textAlign: 'center'}}>Loading...</h2>)
+          {isLoaded ? <div className="loader-wrapper-chat-page"><Loader/></div>
               :
               (
-                  !loading && conversations.map((con, idx) =>
+                  !isLoaded && conversations.map((con, idx) =>
                       <div
                           key={idx}
                           style={{textAlign: con.user_uid_1 == auth.uid ? 'right' : 'left'}}

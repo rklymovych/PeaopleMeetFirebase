@@ -55,20 +55,20 @@ const options = {
 }
 
 export const Map = () => {
+  const dispatch = useDispatch()
+  const [markers, setMarkers] = useState([])
+  const [onlineUsers, setOnlineUsers] = useState([])
+  const onlineCurrentUser = JSON.parse(localStorage.getItem('user'))
+  const [getRealTimeUsers, setRealTimeUsers] = useState([])
   const {realUsers, getOnlineUsersChecked} = useContext(FirebaseContext)
   const classes = useStyles();
-  const dispatch = useDispatch()
   const {isLoaded, loadError} = useLoadScript({
     googleMapsApiKey: process.env.REACT_APP_GOOGLE_KEY,
     libraries
   })
   const [chatStarted, setChatStarted] = useState(false)
-  const [markers, setMarkers] = useState([])
   const [selected, setSelected] = useState(null)
   const [location, setLocation] = useState()
-  const [onlineUsers, setOnlineUsers] = useState([])
-  const onlineCurrentUser = JSON.parse(localStorage.getItem('user'))
-  const [getRealTimeUsers, setRealTimeUsers] = useState([])
   const [openDrawer, setOpenDrawer] = useState(false)
 
   const authFromState = useSelector(state => state.auth)
@@ -89,7 +89,6 @@ export const Map = () => {
           ...res.data[key],
           id: key
         }
-
       })
       console.log('getRequest axios', key)
       return key.sort((a, b) => {
@@ -127,7 +126,7 @@ export const Map = () => {
   }, [])
 
   if (loadError) return 'Error loading maps'
-  if (!isLoaded) return <Loader/>
+  if (!isLoaded) return <div className="loader-wrapper-map-page"><Loader/></div>
 
   function Locate() {
     return (
@@ -141,6 +140,7 @@ export const Map = () => {
     setOpenDrawer(!openDrawer)
     setChatStarted(!chatStarted)
   }
+
 
   return (
       <>
