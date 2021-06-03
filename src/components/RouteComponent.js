@@ -47,11 +47,11 @@ export function RouteComponent() {
           <div style={{height: '60px'}} />
           <Switch>
             <PrivateRoute exact path="/" component={Account}/>
-            <PrivateRoute exact path="/map" component={Map}/>
+            <PrivateRoute  path="/map" component={Map}/>
             <PrivateRoute exact path="/users" component={Users}/>
             <PrivateRoute exact path="/update-profile" component={UpdateProfile}/>
             {/*<PrivateRoute exact path='/chat/:id' component={ChatPage}/>*/}
-            <PrivateRoute exact path='/chat' component={ChatPage}/>
+            {/*<PrivateRoute exact path='/map/chat/:id' component={ChatPage}/>*/}
             <PrivateRoute exact path='/join' component={Join}/>
             <PrivateRoute exact path='/testchat' component={TestChat}/>
             <Redirect to="/"/>

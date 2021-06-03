@@ -13,7 +13,6 @@ export const FirebaseState = ({children}) => {
   const [state, dispatch] = useReducer(firebaseReducer, initialState)
 
   const getConversations = (uid_1, uid_2) => {
-    console.log(uid_1, uid_2)
     let unsubscribe;
     try {
       dispatch({type: IS_LOADED, payload:  true})
@@ -21,9 +20,7 @@ export const FirebaseState = ({children}) => {
           .where('user_uid_1', 'in', [uid_1, uid_2])
           .orderBy('createdAt', 'asc')
           .onSnapshot((querySnapshot) => {
-
             const conversations = []
-            console.log('conversations1', conversations)
             querySnapshot.forEach(doc => {
               if ((doc.data().user_uid_1 == uid_1 && doc.data().user_uid_2 == uid_2)
                   ||
@@ -31,7 +28,6 @@ export const FirebaseState = ({children}) => {
                 conversations.push(doc.data())
 
               }
-              console.log('conversations2', conversations)
             })
 
             dispatch({

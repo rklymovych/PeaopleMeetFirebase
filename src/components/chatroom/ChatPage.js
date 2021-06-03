@@ -1,4 +1,5 @@
 import React, {useEffect, useRef, useState, useContext} from 'react';
+import {useParams} from 'react-router-dom'
 import ReactEmoji from 'react-emoji'
 import clsx from 'clsx';
 import {makeStyles} from '@material-ui/core/styles';
@@ -119,6 +120,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export const ChatPage = ({selected}) => {
+
   const {getConversations, conversations, isLoaded} = useContext(FirebaseContext)
   const firebase = useContext(FirebaseContext)
   const classes = useStyles();
