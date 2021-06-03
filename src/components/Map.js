@@ -17,6 +17,8 @@ import {ChatPage} from "./chatroom/ChatPage";
 import axios from "axios";
 import {FirebaseContext} from "../context/firebaseContext/firebaseContext";
 import Loader from "./loader/Loader";
+import {useHistory} from "react-router-dom";
+import {useAuth} from "../context/AuthContext";
 
 const useStyles = makeStyles({
   root: {
@@ -60,6 +62,8 @@ export const Map = () => {
   const [onlineUsers, setOnlineUsers] = useState([])
   const onlineCurrentUser = JSON.parse(localStorage.getItem('user'))
   const [getRealTimeUsers, setRealTimeUsers] = useState([])
+  const history = useHistory()
+  const {getUid} = useAuth()
   const {realUsers, getOnlineUsersChecked} = useContext(FirebaseContext)
   const classes = useStyles();
   const {isLoaded, loadError} = useLoadScript({
@@ -110,6 +114,7 @@ export const Map = () => {
 
   const onMapClick = useCallback((event) => {
     setSelected(null)
+
     // new Date().toISOString()
     // setMarkers(current => [
     //   ...current,
@@ -137,10 +142,10 @@ export const Map = () => {
   }
 
   const openDrawerHandler = () => {
+    history.push(`/map/chat/${selected.uid}`)
     setOpenDrawer(!openDrawer)
     setChatStarted(!chatStarted)
   }
-
 
   return (
       <>
@@ -235,11 +240,16 @@ export const Map = () => {
         <Drawer
             anchor='bottom'
             open={openDrawer}
-            onClose={() => setOpenDrawer(false)}
+            onClose={() => {
+              setOpenDrawer(false)
+              history.push('/map')
+            }}
         >
           <Grid container>
             <Grid item className={classes.drawer} xs={12}>
-              <ChatPage selected={selected}/>
+              <ChatPage
+                  selected={selected}
+              />
             </Grid>
           </Grid>
         </Drawer>
