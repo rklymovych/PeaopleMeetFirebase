@@ -15,7 +15,8 @@ export const FirebaseState = ({children}) => {
   const getConversations = (uid_1, uid_2) => {
     let unsubscribe;
     try {
-      dispatch({type: IS_LOADED, payload:  true})
+      dispatch({type: IS_LOADED, payload: true})
+      console.log(initialState.isLoaded)
       unsubscribe = db.collection('conversations')
           .where('user_uid_1', 'in', [uid_1, uid_2])
           .orderBy('createdAt', 'asc')
@@ -34,7 +35,7 @@ export const FirebaseState = ({children}) => {
               type: GET_CONVERSATIONS,
               payload: conversations
             })
-            dispatch({type: IS_LOADED, payload:  false})
+            dispatch({type: IS_LOADED, payload: false})
           })
     } catch (e) {
       throw new Error(e.message)
@@ -94,11 +95,31 @@ export const FirebaseState = ({children}) => {
     return unsubscribe;
   }
 
+  const messagesUnread = (uid_1) => {
+    db.collection("conversations")
+        .onSnapshot((doc) => {
+          const myMessages = []
+          doc.forEach((matchMessages) => {
+            if (matchMessages.data().user_uid_2 === uid_1) {
+              console.log('matchMessages.data().user_uid_2', matchMessages.data().user_uid_2)
+              myMessages.push(matchMessages.data())
+            }
+            console.log('myMessages', myMessages)
+            return myMessages
+          })
+        })
+
+  }
+
   return (
       <FirebaseContext.Provider value={{
-        getOnlineUsersChecked, isLoaded: state.isLoaded,
-        getConversations, conversations: state.conversations, updateMessage1,
-        realUsers: state.realUsers
+        isLoaded: state.isLoaded,
+        conversations: state.conversations,
+        realUsers: state.realUsers,
+        getOnlineUsersChecked,
+        messagesUnread,
+        getConversations,
+        updateMessage1,
       }}
       >
         {children}

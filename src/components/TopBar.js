@@ -68,12 +68,12 @@ const useStyles = makeStyles((theme) => ({
 export const TopBar = ({setState}) => {
   const history = useHistory()
   const classes = useStyles();
-  const {getUsersOnlineRealTime} = useContext(FirebaseContext)
+  const {messagesUnread, conversations} = useContext(FirebaseContext)
   // const theme = useTheme()
   const [open, setOpen] = React.useState(false);
   const {getUid} = useAuth()
   const [isNewMessage, setNewMessage] = React.useState(false)
-
+  const [myMessages, setMyMessages] = React.useState([])
   const handleDrawerOpen = () => {
     setState({'left': true});
   };
@@ -93,8 +93,8 @@ export const TopBar = ({setState}) => {
           userStatusDatabaseRef.set(isOnlineForDatabase);
         }
         if (snapshot.val() === false) {
-          userStatusDatabaseRef.onDisconnect().remove(err => {
-            // console.log('err', err)
+          userStatusDatabaseRef.onDisconnect().remove(() => {
+            // console.log('status off')
           })
         }
       });
@@ -102,38 +102,39 @@ export const TopBar = ({setState}) => {
   }, [auth.uid])
 //  make offline Users END****/
 
-
+  console.log('myMessages', myMessages)
 
 
   // getUsersOnlineRealTime();
-  // useEffect(() => {
-  //   let docRef = db.collection("conversations")
-  //       .onSnapshot((doc) => {
-  //         const myMessages = []
-  //         doc.forEach((a) => {
-  //           if (a.data().user_uid_2 === auth.uid) {
-  //             myMessages.push(a.data())
-  //           }
-  //           setMyMessages(myMessages)
-  //         })
-  //       })
-  //
-  //   return docRef
-  // }, [])
-
   useEffect(() => {
-    if (auth.uid) {
-      db.collection('conversations')
-          .where('user_uid_2', '==', auth.uid)
-          .onSnapshot(snap => {
-            snap.forEach(el => {
-              if (el.data()) {
-                setNewMessage(true)
-              }
-            })
+    db.collection("conversations")
+        .onSnapshot((doc) => {
+          const myMessages = []
+          doc.forEach((a) => {
+            if (a.data().user_uid_2 === auth.uid) {
+              myMessages.push(a.data())
+            }
+            setMyMessages(myMessages)
           })
-    }
-  }, [auth.uid])
+        })
+
+
+    // messagesUnread('myMessages', auth.uid)
+  }, [])
+
+  // useEffect(() => {
+  //   if (auth.uid) {
+  //     db.collection('conversations')
+  //         .where('user_uid_2', '==', auth.uid)
+  //         .onSnapshot(snap => {
+  //           snap.forEach(el => {
+  //             if (el.data()) {
+  //               setNewMessage(true)
+  //             }
+  //           })
+  //         })
+  //   }
+  // }, [conversations])
 
 
   return (
