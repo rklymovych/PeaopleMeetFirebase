@@ -2,21 +2,29 @@ import React, {useReducer} from 'react'
 import {FirebaseContext} from "./firebaseContext";
 import {firebaseReducer} from "./FirebaseReducer";
 import {database, db} from "../../firebase";
-import {GET_CONVERSATIONS, IS_LOADED, SET_REAL_USERS, UPDATE_MESSAGES} from "../../actions/constants";
+import {
+  GET_CONVERSATIONS,
+  IS_LOADED,
+  SET_REAL_USERS,
+  SET_UNREAD_MESSAGES,
+  UPDATE_MESSAGES
+} from "../../actions/constants";
 
 export const FirebaseState = ({children}) => {
   const initialState = {
     conversations: [],
     realUsers: [],
-    isLoaded: false
+    isLoaded: false,
+    unreadMessages: []
   }
+
   const [state, dispatch] = useReducer(firebaseReducer, initialState)
 
   const getConversations = (uid_1, uid_2) => {
     let unsubscribe;
     try {
       dispatch({type: IS_LOADED, payload: true})
-      console.log(initialState.isLoaded)
+
       unsubscribe = db.collection('conversations')
           .where('user_uid_1', 'in', [uid_1, uid_2])
           .orderBy('createdAt', 'asc')
@@ -77,9 +85,8 @@ export const FirebaseState = ({children}) => {
 
   const getUsersOnlineRealTime = (onlineUsers) => {
     let setRealTimeUsers = [];
-    let unsubscribe;
     try {
-      unsubscribe = database.ref('status/')
+      database.ref('status/')
           .on('value', snap => {
             if (!snap.val()) return
             setRealTimeUsers = onlineUsers.filter(user => Object.keys(snap.val()).includes(user.uid))
@@ -92,23 +99,22 @@ export const FirebaseState = ({children}) => {
       console.log(e.message)
       return e
     }
-    return unsubscribe;
   }
 
   const messagesUnread = (uid_1) => {
     db.collection("conversations")
         .onSnapshot((doc) => {
-          const myMessages = []
+          const unreadMessages = [];
           doc.forEach((matchMessages) => {
-            if (matchMessages.data().user_uid_2 === uid_1) {
-              console.log('matchMessages.data().user_uid_2', matchMessages.data().user_uid_2)
-              myMessages.push(matchMessages.data())
+            if (matchMessages.data().user_uid_2 === uid_1 && matchMessages.data().isRead === false) {
+              unreadMessages.push(matchMessages.data())
             }
-            console.log('myMessages', myMessages)
-            return myMessages
+          })
+          dispatch({
+            type: SET_UNREAD_MESSAGES,
+            payload: unreadMessages
           })
         })
-
   }
 
   return (
@@ -116,6 +122,7 @@ export const FirebaseState = ({children}) => {
         isLoaded: state.isLoaded,
         conversations: state.conversations,
         realUsers: state.realUsers,
+        unreadMessages: state.unreadMessages,
         getOnlineUsersChecked,
         messagesUnread,
         getConversations,

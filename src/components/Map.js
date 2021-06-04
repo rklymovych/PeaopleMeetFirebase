@@ -64,7 +64,7 @@ export const Map = () => {
   const [getRealTimeUsers, setRealTimeUsers] = useState([])
   const history = useHistory()
   const {getUid} = useAuth()
-  const {realUsers, getOnlineUsersChecked} = useContext(FirebaseContext)
+  const {realUsers, getOnlineUsersChecked, unreadMessages} = useContext(FirebaseContext)
   const classes = useStyles();
   const {isLoaded, loadError} = useLoadScript({
     googleMapsApiKey: process.env.REACT_APP_GOOGLE_KEY,
@@ -145,6 +145,7 @@ export const Map = () => {
     history.push(`/map/chat/${selected.uid}`)
     setOpenDrawer(!openDrawer)
     setChatStarted(!chatStarted)
+    console.log(unreadMessages)
   }
 
   return (

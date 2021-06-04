@@ -68,12 +68,9 @@ const useStyles = makeStyles((theme) => ({
 export const TopBar = ({setState}) => {
   const history = useHistory()
   const classes = useStyles();
-  const {messagesUnread, conversations} = useContext(FirebaseContext)
+  const {messagesUnread, conversations, unreadMessages} = useContext(FirebaseContext)
   // const theme = useTheme()
-  const [open, setOpen] = React.useState(false);
-  const {getUid} = useAuth()
-  const [isNewMessage, setNewMessage] = React.useState(false)
-  const [myMessages, setMyMessages] = React.useState([])
+
   const handleDrawerOpen = () => {
     setState({'left': true});
   };
@@ -102,39 +99,13 @@ export const TopBar = ({setState}) => {
   }, [auth.uid])
 //  make offline Users END****/
 
-  console.log('myMessages', myMessages)
-
-
-  // getUsersOnlineRealTime();
   useEffect(() => {
-    db.collection("conversations")
-        .onSnapshot((doc) => {
-          const myMessages = []
-          doc.forEach((a) => {
-            if (a.data().user_uid_2 === auth.uid) {
-              myMessages.push(a.data())
-            }
-            setMyMessages(myMessages)
-          })
-        })
+    if (auth.uid) {
+      messagesUnread(auth.uid);
+    }
+  }, [auth.uid, conversations]);
+  // то бы не забыть ... при открывании чата флаг у сообщений от получателя ставить в тру,
 
-
-    // messagesUnread('myMessages', auth.uid)
-  }, [])
-
-  // useEffect(() => {
-  //   if (auth.uid) {
-  //     db.collection('conversations')
-  //         .where('user_uid_2', '==', auth.uid)
-  //         .onSnapshot(snap => {
-  //           snap.forEach(el => {
-  //             if (el.data()) {
-  //               setNewMessage(true)
-  //             }
-  //           })
-  //         })
-  //   }
-  // }, [conversations])
 
 
   return (
@@ -152,7 +123,7 @@ export const TopBar = ({setState}) => {
           <div style={{display: 'flex', justifyContent: 'space-between', width: '100%', alignItems: 'center'}}>
             <MenuItem onClick={() => history.push('/users')}>
               <IconButton aria-label="show 4 new mails" color="inherit">
-                <Badge badgeContent={isNewMessage ? '1' : null} color="error">
+                <Badge badgeContent={unreadMessages.length} color="error">
                   <MailIcon/>
                 </Badge>
               </IconButton>
