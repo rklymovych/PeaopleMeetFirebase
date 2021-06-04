@@ -138,7 +138,6 @@ export const ChatPage = ({selected}) => {
 
     // eslint-disable-next-line
   }, [])
-
   const submitMessage = (e) => {
     if (message !== '') {
       const msgObj = {

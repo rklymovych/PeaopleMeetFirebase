@@ -43,7 +43,6 @@ export const Users = () => {
   const users = useSelector(state => state.user)
   let unsubscribe;
   const conversations = useContext(FirebaseContext)
-  console.log('users', conversations)
   // const getUsers = () => {
   //   return db.collection("users").get() // надо ли ретурн???
   //       .then((querySnapshot) => {
