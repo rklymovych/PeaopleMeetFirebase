@@ -42,7 +42,7 @@ export const Users = () => {
   const [openModal, setOpenModal] = useState(false)
   const users = useSelector(state => state.user)
   let unsubscribe;
-  const conversations = useContext(FirebaseContext)
+  const {conversations, wroteUsers, getWroteUsers, unreadMessages} = useContext(FirebaseContext)
   // const getUsers = () => {
   //   return db.collection("users").get() // надо ли ретурн???
   //       .then((querySnapshot) => {
@@ -59,7 +59,11 @@ export const Users = () => {
   // useEffect(() => {
   //   getUsers()
   // }, [])
-
+  useEffect(() => {
+    if (auth.uid) {
+      getWroteUsers()
+    }
+  }, [auth.uid, unreadMessages])
   useEffect(() => {
 
     unsubscribe = dispatch(getRealtimeUsers(auth.uid))
@@ -89,7 +93,7 @@ export const Users = () => {
         <List
             className={classes.root}
         >
-          {users.users.length && users.users.map(user => {
+          {wroteUsers && wroteUsers.map(user => {
             if (user.isOnline) {    // flag isOnline
               return (
                   <ListItem
