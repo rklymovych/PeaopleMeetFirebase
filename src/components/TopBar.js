@@ -68,7 +68,7 @@ const useStyles = makeStyles((theme) => ({
 export const TopBar = ({setState}) => {
   const history = useHistory()
   const classes = useStyles();
-  const {messagesUnread, conversations, unreadMessages} = useContext(FirebaseContext)
+  const {messagesUnread, conversations, unreadMessages, getWroteUsers, realUsers, getOnlineUsersChecked} = useContext(FirebaseContext)
   // const theme = useTheme()
 
   const handleDrawerOpen = () => {
@@ -106,7 +106,10 @@ export const TopBar = ({setState}) => {
   }, [auth.uid, conversations]);
   // то бы не забыть ... при открывании чата флаг у сообщений от получателя ставить в тру,
 
-
+  const showWroteUsers = () =>{
+    history.push('/users')
+    getWroteUsers()
+  }
 
   return (
       <AppBar>
@@ -121,7 +124,7 @@ export const TopBar = ({setState}) => {
           </IconButton>
 
           <div style={{display: 'flex', justifyContent: 'space-between', width: '100%', alignItems: 'center'}}>
-            <MenuItem onClick={() => history.push('/users')}>
+            <MenuItem onClick={showWroteUsers}>
               <IconButton aria-label="show 4 new mails" color="inherit">
                 <Badge badgeContent={unreadMessages.length} color="error">
                   <MailIcon/>

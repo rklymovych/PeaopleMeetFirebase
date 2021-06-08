@@ -7,6 +7,7 @@ import {
   IS_LOADED,
   SET_REAL_USERS,
   SET_UNREAD_MESSAGES,
+  GET_WROTE_USERS,
   UPDATE_MESSAGES
 } from "../../actions/constants";
 
@@ -15,7 +16,8 @@ export const FirebaseState = ({children}) => {
     conversations: [],
     realUsers: [],
     isLoaded: false,
-    unreadMessages: []
+    unreadMessages: [],
+    wroteUsers: []
   }
 
   const [state, dispatch] = useReducer(firebaseReducer, initialState)
@@ -85,20 +87,17 @@ export const FirebaseState = ({children}) => {
 
   const getUsersOnlineRealTime = (onlineUsers) => {
     let setRealTimeUsers = [];
-    try {
-      database.ref('status/')
-          .on('value', snap => {
-            if (!snap.val()) return
-            setRealTimeUsers = onlineUsers.filter(user => Object.keys(snap.val()).includes(user.uid))
-            dispatch({
-              type: SET_REAL_USERS,
-              payload: setRealTimeUsers
-            })
+
+    database.ref('status/')
+        .on('value', snap => {
+          if (!snap.val()) return
+          setRealTimeUsers = onlineUsers.filter(user => Object.keys(snap.val()).includes(user.uid))
+          dispatch({
+            type: SET_REAL_USERS,
+            payload: setRealTimeUsers
           })
-    } catch (e) {
-      console.log(e.message)
-      return e
-    }
+        })
+
   }
 
   const messagesUnread = (uid_1) => {
@@ -117,16 +116,39 @@ export const FirebaseState = ({children}) => {
         })
   }
 
+  const getWroteUsers = () => {
+    let usersId = new Set([])
+    let users = []
+    const unreadMessages = state.unreadMessages
+
+    unreadMessages.map(el => usersId.add(el.user_uid_1))
+    usersId.forEach(wroteUsers => {
+      db.collection('users')
+          .where('uid', '==', wroteUsers)
+          .onSnapshot(snap => {
+            snap.forEach(user => {
+              users.push(user.data())
+            })
+            dispatch({
+              type: GET_WROTE_USERS,
+              payload: users
+            })
+
+          })
+    })
+  }
   return (
       <FirebaseContext.Provider value={{
         isLoaded: state.isLoaded,
         conversations: state.conversations,
         realUsers: state.realUsers,
         unreadMessages: state.unreadMessages,
+        wroteUsers: state.wroteUsers,
         getOnlineUsersChecked,
         messagesUnread,
         getConversations,
         updateMessage1,
+        getWroteUsers
       }}
       >
         {children}

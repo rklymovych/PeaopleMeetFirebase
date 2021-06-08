@@ -71,7 +71,7 @@ export const Map = () => {
     libraries
   })
   const [chatStarted, setChatStarted] = useState(false)
-  const [selected, setSelected] = useState(null)
+  const [selectedUser, setSelectedUser] = useState(null)
   const [location, setLocation] = useState()
   const [openDrawer, setOpenDrawer] = useState(false)
 
@@ -84,24 +84,40 @@ export const Map = () => {
   }
 
   const getRequest = async () => {
-    const url = process.env.REACT_APP_REALTIME_DB
-    try {
-      const res = await axios.get(`${url}/status.json`)
-
-      const key = Object.keys(res.data).map(key => {
-        return {
-          ...res.data[key],
-          id: key
-        }
-      })
-      console.log('getRequest axios', key)
-      return key.sort((a, b) => {
-        return a.date - b.date
-      })
-    } catch (e) {
-      console.log(e.message)
-    }
+    // const url = process.env.REACT_APP_REALTIME_DB
+    // try {
+    //   const res = await axios.get(`${url}/status.json`)
+    //
+    //   const key = Object.keys(res.data).map(key => {
+    //     return {
+    //       ...res.data[key],
+    //       id: key
+    //     }
+    //   })
+    //
+    //   return key.sort((a, b) => {
+    //     return a.date - b.date
+    //   })
+    // } catch (e) {
+    //   console.log(e.message)
+    // }
+    setSelectedUser({
+      email: "klymovy4roman@gmail.com", description: "All I wanna say is that they don't really care about us.",
+      age: 24,
+      avatar: "https://firebasestorage.googleapis.com/v0/b/peoplemeet-43891.appspot.com/o/users%2F1139AiIL20hPQLmjs7StMKG1l7z2%2FIMG_20210530_140610_868.jpg?alt=media&token=f4a01520-18bb-4c69-b868-3b9e375382f8",
+      createdAt: {seconds: 1622459282, nanoseconds: 212000000},
+      isOnline: true,
+      location: {lng: 26.9888895, lat: 49.4226789},
+      name: "Roman Klymovych",
+      uid: "1139AiIL20hPQLmjs7StMKG1l7z2"
+    })
   }
+  useEffect(()=>{
+  if(selectedUser){
+    console.log(selectedUser)
+    openDrawerHandler()
+  }
+  },[selectedUser])
 
   useEffect(() => {
     getOnlineUsersChecked();
@@ -113,7 +129,7 @@ export const Map = () => {
 
 
   const onMapClick = useCallback((event) => {
-    setSelected(null)
+    setSelectedUser(null)
 
     // new Date().toISOString()
     // setMarkers(current => [
@@ -142,7 +158,8 @@ export const Map = () => {
   }
 
   const openDrawerHandler = () => {
-    history.push(`/map/chat/${selected.uid}`)
+    console.log(selectedUser.uid)
+    history.push(`/map/chat/${selectedUser.uid}`)
     setOpenDrawer(!openDrawer)
     setChatStarted(!chatStarted)
     console.log(unreadMessages)
@@ -178,7 +195,7 @@ export const Map = () => {
                   origin: new window.google.maps.Point(0, 0)
                 }}
                 onClick={() => {
-                  setSelected(user)
+                  setSelectedUser(user)
                 }}
             >
             </Marker>
@@ -186,16 +203,16 @@ export const Map = () => {
           }
 
 
-          {selected ? (
+          {selectedUser ? (
               <InfoWindow
                   className={classes.root}
                   position={
                     {
-                      lat: selected.location.lat,
-                      lng: selected.location.lng
+                      lat: selectedUser.location.lat,
+                      lng: selectedUser.location.lng
                     }
                   }
-                  onCloseClick={() => setSelected(null)}
+                  onCloseClick={() => setSelectedUser(null)}
               >
                 <Card>
                   <CardActionArea>
@@ -205,21 +222,21 @@ export const Map = () => {
                           backgroundSize: 'contain',
                         }}
                         // className={classes.media}
-                        image={selected.avatar || defUser}
+                        image={selectedUser.avatar || defUser}
                         title="Contemplative Reptile"
                     />
                     <CardContent className={classes.root}>
                       <Typography gutterBottom variant="h5" component="h2">
-                        {selected?.name}
+                        {selectedUser?.name}
                       </Typography>
                       <Typography variant="body2" color="textSecondary" component="p">
-                        {selected?.age}
+                        {selectedUser?.age}
                       </Typography>
                       <Typography variant="body2" color="textSecondary" component="p">
-                        {selected?.sex}
+                        {selectedUser?.sex}
                       </Typography>
                       <Typography variant="body2" color="textSecondary" component="p">
-                        {selected?.description}
+                        {selectedUser?.description}
                       </Typography>
 
                     </CardContent>
@@ -229,9 +246,9 @@ export const Map = () => {
                         onClick={openDrawerHandler}
                         size="small"
                         color="primary"
-                        disabled={selected.uid === authFromState.uid}
+                        disabled={selectedUser.uid === authFromState.uid}
                     >
-                      {selected.uid === authFromState.uid ? 'That\'s like people see your account' : 'Write'}
+                      {selectedUser.uid === authFromState.uid ? 'That\'s like people see your account' : 'Write'}
                     </Button>
                   </CardActions>
                 </Card>
@@ -249,7 +266,7 @@ export const Map = () => {
           <Grid container>
             <Grid item className={classes.drawer} xs={12}>
               <ChatPage
-                  selected={selected}
+                  selected={selectedUser}
               />
             </Grid>
           </Grid>
