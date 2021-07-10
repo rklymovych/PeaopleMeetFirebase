@@ -68,7 +68,7 @@ const useStyles = makeStyles((theme) => ({
 export const TopBar = ({setState}) => {
   const history = useHistory()
   const classes = useStyles();
-  const {messagesUnread, conversations, unreadMessages, getWroteUsers, realUsers, getOnlineUsersChecked} = useContext(FirebaseContext)
+  const {getUnreadMessages, conversations, unreadMessages, getWroteUsers, realUsers, getOnlineUsersChecked} = useContext(FirebaseContext)
   // const theme = useTheme()
 
   const handleDrawerOpen = () => {
@@ -101,7 +101,7 @@ export const TopBar = ({setState}) => {
 
   useEffect(() => {
     if (auth.uid) {
-      messagesUnread(auth.uid);
+      getUnreadMessages(auth.uid);
     }
   }, [auth.uid, conversations]);
   // то бы не забыть ... при открывании чата флаг у сообщений от получателя ставить в тру,

@@ -8,7 +8,9 @@ import {
   SET_REAL_USERS,
   SET_UNREAD_MESSAGES,
   GET_WROTE_USERS,
-  UPDATE_MESSAGES
+  UPDATE_MESSAGES,
+  SET_SELECTED_USER,
+  SET_SELECTED_USER_NULL
 } from "../../actions/constants";
 
 export const FirebaseState = ({children}) => {
@@ -17,7 +19,8 @@ export const FirebaseState = ({children}) => {
     realUsers: [],
     isLoaded: false,
     unreadMessages: [],
-    wroteUsers: []
+    wroteUsers: [],
+    selectedUserState: {}
   }
 
   const [state, dispatch] = useReducer(firebaseReducer, initialState)
@@ -100,7 +103,7 @@ export const FirebaseState = ({children}) => {
 
   }
 
-  const messagesUnread = (uid_1) => {
+  const getUnreadMessages = (uid_1) => {
     db.collection("conversations")
         .onSnapshot((doc) => {
           const unreadMessages = [];
@@ -137,6 +140,19 @@ export const FirebaseState = ({children}) => {
           })
     })
   }
+
+  const showSelectedUser = (selectedUser) => {
+    dispatch({
+      type: SET_SELECTED_USER,
+      payload: selectedUser
+    })
+  }
+  const makeSelectedUserNull = () => {
+    dispatch({
+      type: SET_SELECTED_USER_NULL,
+      payload: {}
+    })
+  }
   return (
       <FirebaseContext.Provider value={{
         isLoaded: state.isLoaded,
@@ -144,8 +160,11 @@ export const FirebaseState = ({children}) => {
         realUsers: state.realUsers,
         unreadMessages: state.unreadMessages,
         wroteUsers: state.wroteUsers,
+        selectedUserState: state.selectedUserState,
         getOnlineUsersChecked,
-        messagesUnread,
+        makeSelectedUserNull,
+        showSelectedUser,
+        getUnreadMessages,
         getConversations,
         updateMessage1,
         getWroteUsers
