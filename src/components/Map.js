@@ -64,7 +64,7 @@ export const Map = () => {
   const [getRealTimeUsers, setRealTimeUsers] = useState([])
   const history = useHistory()
   const {getUid} = useAuth()
-  const {realUsers, getOnlineUsersChecked, unreadMessages} = useContext(FirebaseContext)
+  const {realUsers, getOnlineUsersChecked, unreadMessages, selectedUserState, makeSelectedUserNull} = useContext(FirebaseContext)
   const classes = useStyles();
   const {isLoaded, loadError} = useLoadScript({
     googleMapsApiKey: process.env.REACT_APP_GOOGLE_KEY,
@@ -82,63 +82,22 @@ export const Map = () => {
       setLocation({lat: position.coords.latitude, lng: position.coords.longitude})
     })
   }
-
-  const getRequest = async () => {
-    // const url = process.env.REACT_APP_REALTIME_DB
-    // try {
-    //   const res = await axios.get(`${url}/status.json`)
-    //
-    //   const key = Object.keys(res.data).map(key => {
-    //     return {
-    //       ...res.data[key],
-    //       id: key
-    //     }
-    //   })
-    //
-    //   return key.sort((a, b) => {
-    //     return a.date - b.date
-    //   })
-    // } catch (e) {
-    //   console.log(e.message)
-    // }
-    setSelectedUser({
-      email: "klymovy4roman@gmail.com", description: "All I wanna say is that they don't really care about us.",
-      age: 24,
-      avatar: "https://firebasestorage.googleapis.com/v0/b/peoplemeet-43891.appspot.com/o/users%2F1139AiIL20hPQLmjs7StMKG1l7z2%2FIMG_20210530_140610_868.jpg?alt=media&token=f4a01520-18bb-4c69-b868-3b9e375382f8",
-      createdAt: {seconds: 1622459282, nanoseconds: 212000000},
-      isOnline: true,
-      location: {lng: 26.9888895, lat: 49.4226789},
-      name: "Roman Klymovych",
-      uid: "1139AiIL20hPQLmjs7StMKG1l7z2"
-    })
-  }
-  useEffect(()=>{
-  if(selectedUser){
-    console.log(selectedUser)
-    openDrawerHandler()
-  }
-  },[selectedUser])
+  useEffect(() => {
+      if (Object.keys(selectedUserState).length !== 0) {
+        setSelectedUser(selectedUserState)
+        setOpenDrawer(true)
+        setChatStarted(true)
+    }
+  }, [selectedUserState])
 
   useEffect(() => {
     getOnlineUsersChecked();
-  }, [])
-
-  useEffect(() => {
     getCurrentPosition()
   }, [])
 
 
   const onMapClick = useCallback((event) => {
     setSelectedUser(null)
-
-    // new Date().toISOString()
-    // setMarkers(current => [
-    //   ...current,
-    //   {
-    //     lat: event.latLng.lat(),
-    //     lng: event.latLng.lng(),
-    //     time: new Date()
-    //   }])
   }, [])
 
   const mapRef = useRef()
@@ -158,17 +117,14 @@ export const Map = () => {
   }
 
   const openDrawerHandler = () => {
-    console.log(selectedUser.uid)
     history.push(`/map/chat/${selectedUser.uid}`)
     setOpenDrawer(!openDrawer)
     setChatStarted(!chatStarted)
-    console.log(unreadMessages)
   }
 
   return (
       <>
         <h1 className="headerMap"><span
-            onClick={getRequest}
             role="img" aria-label="tent">😋</span></h1>
         <Locate/>
         {location ? (<GoogleMap
@@ -260,6 +216,8 @@ export const Map = () => {
             open={openDrawer}
             onClose={() => {
               setOpenDrawer(false)
+              setChatStarted(false)
+              makeSelectedUserNull()
               history.push('/map')
             }}
         >

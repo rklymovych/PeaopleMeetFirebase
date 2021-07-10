@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useContext} from 'react';
 import {makeStyles} from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
 import clsx from 'clsx'
@@ -11,6 +11,7 @@ import Typography from "@material-ui/core/Typography";
 import {Card, CardActionArea, Grid} from "@material-ui/core";
 import Divider from "@material-ui/core/Divider";
 import {useHistory} from "react-router-dom";
+import {FirebaseContext} from "../context/firebaseContext/firebaseContext";
 
 const useStyles = makeStyles((theme) => {
   return {
@@ -62,14 +63,16 @@ const useStyles = makeStyles((theme) => {
 export const UserModal = ({selectedUser, openModal, setOpenModal}) => {
   const classes = useStyles();
   const history = useHistory()
+  const {selectedUserState, showSelectedUser} = useContext(FirebaseContext)
 
   const handleClose = () => {
     setOpenModal(false);
   };
 
   const writeHandler = () => {
-    // history.push(`/chat/${selectedUser.id}`)
-    history.push('/chat')
+    showSelectedUser(selectedUser)
+    history.push(`map/chat/${selectedUser.uid}`)
+    // history.push('/map')
   }
 
   return (
@@ -140,9 +143,9 @@ export const UserModal = ({selectedUser, openModal, setOpenModal}) => {
             </Grid>
           </Grid>
           <DialogActions className={classes.dialogAction}>
-            {/*<Button onClick={writeHandler} color="secondary">*/}
-            {/*  <b>Write to {selectedUser?.name}</b>*/}
-            {/*</Button>*/}
+            <Button onClick={writeHandler} color="secondary">
+              <b>Write to {selectedUser?.name}</b>
+            </Button>
             <Button onClick={handleClose} color="primary">
               <b>Close</b>
             </Button>
