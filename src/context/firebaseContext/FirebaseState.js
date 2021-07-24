@@ -8,7 +8,6 @@ import {
   SET_REAL_USERS,
   SET_UNREAD_MESSAGES,
   GET_WROTE_USERS,
-  UPDATE_MESSAGES,
   SET_SELECTED_USER,
   SET_SELECTED_USER_NULL
 } from "../../actions/constants";
@@ -36,9 +35,9 @@ export const FirebaseState = ({children}) => {
           .onSnapshot((querySnapshot) => {
             const conversations = []
             querySnapshot.forEach(doc => {
-              if ((doc.data().user_uid_1 == uid_1 && doc.data().user_uid_2 == uid_2)
+              if ((doc.data().user_uid_1 === uid_1 && doc.data().user_uid_2 === uid_2)
                   ||
-                  (doc.data().user_uid_1 == uid_2 && doc.data().user_uid_2 == uid_1)) {
+                  (doc.data().user_uid_1 === uid_2 && doc.data().user_uid_2 === uid_1)) {
                 conversations.push(doc.data())
 
               }
@@ -56,7 +55,7 @@ export const FirebaseState = ({children}) => {
     return unsubscribe
   }
 
-  const updateMessage1 = async (msgObj) => {
+  const updateMessage = async (msgObj) => {
     try {
       await db.collection('conversations')
           .add({
@@ -166,7 +165,7 @@ export const FirebaseState = ({children}) => {
         showSelectedUser,
         getUnreadMessages,
         getConversations,
-        updateMessage1,
+        updateMessage,
         getWroteUsers
       }}
       >

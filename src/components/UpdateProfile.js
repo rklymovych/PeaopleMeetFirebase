@@ -9,7 +9,7 @@ export function UpdateProfile() {
   const passwordConfirmRef = useRef()
   const {currentUser, updatePassword, updateEmail} = useAuth()
   const [error, setError] = useState('')
-  const [loading, setLoading] = useState(false)
+  // const [loading, setLoading] = useState(false)
   const history = useHistory()
 
   function handleSubmit(e) {
@@ -20,7 +20,7 @@ export function UpdateProfile() {
     }
 
     const promises = []
-    setLoading(true)
+    // setLoading(true)
     setError('')
     if (emailRef.current.value !== currentUser.email) {
       promises.push(updateEmail(emailRef.current.value))
@@ -36,7 +36,7 @@ export function UpdateProfile() {
       // setError('Failed to update account')
       setError(e.message)
     }).finally(() => {
-      setLoading(false)
+      // setLoading(false)
     })
   }
 

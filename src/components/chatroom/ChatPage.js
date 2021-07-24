@@ -1,14 +1,15 @@
 import React, {useEffect, useRef, useState, useContext} from 'react';
-import {useParams} from 'react-router-dom'
 import ReactEmoji from 'react-emoji'
 import clsx from 'clsx';
 import {makeStyles} from '@material-ui/core/styles';
 import {Paper, TextField} from "@material-ui/core";
 import Button from "@material-ui/core/Button";
 import 'firebase/firestore'
-import {useDispatch, useSelector} from "react-redux";
+import {useSelector} from "react-redux";
 import {FirebaseContext} from "../../context/firebaseContext/firebaseContext";
 import Loader from "../loader/Loader";
+import moment from 'moment'
+import Typography from "@material-ui/core/Typography";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -111,25 +112,29 @@ const useStyles = makeStyles((theme) => ({
     background: '#8fd7da'
   },
   messageStyle: {
+    position: 'relative',
     display: 'inline-block',
     padding: '5px 10px',
     borderRadius: '10px',
-    margin: '5px',
-    maxWidth: '50vw'
+    margin: '5px 5px 0 5px',
+    maxWidth: '50vw',
+  },
+  timeStamp: {
+    // position: 'absolute',
+    display: 'inline-block',
+    padding: '0 10px',
+    fontSize: '13px',
   }
 }));
 
 export const ChatPage = ({selected}) => {
 
-  const {getConversations, conversations, isLoaded} = useContext(FirebaseContext)
-  const firebase = useContext(FirebaseContext)
+  const {getConversations, conversations, isLoaded, updateMessage} = useContext(FirebaseContext);
   const classes = useStyles();
 
   const dummy = useRef();
-  const dispatch = useDispatch()
   const auth = useSelector(state => state.auth)
-  const user = useSelector(state => state.user)
-  const loading = useSelector(state => state.user.loading)
+
   const [message, setMessage] = useState('')
 
   useEffect(() => {
@@ -138,14 +143,16 @@ export const ChatPage = ({selected}) => {
 
     // eslint-disable-next-line
   }, [])
+
   const submitMessage = (e) => {
     if (message !== '') {
       const msgObj = {
+        timeStamp: Date.now(),
         user_uid_1: auth.uid,
         user_uid_2: selected.uid,
         message,
       }
-      firebase.updateMessage1(msgObj).then(() => {
+     updateMessage(msgObj).then(() => {
         setMessage('')
       })
     }
@@ -161,7 +168,6 @@ export const ChatPage = ({selected}) => {
   useEffect(() => {
     dummy.current.scrollIntoView({behavior: "smooth"})
   }, [conversations, isLoaded])
-
   return (
       <div
           className={classes.wrap}
@@ -177,20 +183,32 @@ export const ChatPage = ({selected}) => {
           {isLoaded ? <div className="loader-wrapper-chat-page"><Loader/></div>
               :
               (
-                  !isLoaded && conversations.map((con, idx) =>
-                      <div
-                          key={idx}
-                          style={{textAlign: con.user_uid_1 == auth.uid ? 'right' : 'left'}}
-                      >
-                        <Paper
-                            className={clsx(classes.messageStyle,
-                                con.user_uid_1 == auth.uid ?
-                                    [classes.textRight] :
-                                    [classes.textLeft])}
-                            elevation={3}
-                        >{ReactEmoji.emojify(con.message)}</Paper>
-                      </div>
-                  )
+                  !isLoaded && conversations.map((con, idx) => {
+                    const timeStamp = moment(con.timeStamp).format('hh:mm a');
+                    return (
+                        <div
+                            key={idx}
+                            style={{
+                              textAlign: con.user_uid_1 === auth.uid ? 'right' : 'left',
+                              position: 'relative',
+                              margin: '10px 0'
+                            }}
+                        >
+                          <div>
+                            <Paper
+                                className={clsx(classes.messageStyle,
+                                    con.user_uid_1 === auth.uid ?
+                                        [classes.textRight] :
+                                        [classes.textLeft])}
+                                elevation={3}
+                            >{ReactEmoji.emojify(con.message)}
+                            </Paper><br/>
+                            <Typography  className={classes.timeStamp}>{timeStamp}</Typography>
+                          </div>
+
+                        </div>
+                    )
+                  })
               )
           }
           <div ref={dummy}></div>

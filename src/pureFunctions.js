@@ -1,5 +1,4 @@
 import axios from "axios";
-import {database, db} from "./firebase";
 
 export const getRequest = async () => {
   const url = process.env.REACT_APP_REALTIME_DB

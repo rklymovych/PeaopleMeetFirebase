@@ -1,11 +1,8 @@
 import React, {useEffect, useState, useContext} from 'react'
-import {db} from "../firebase";
-import {useAuth} from "../context/AuthContext";
 import {Avatar, ListItem, ListItemAvatar, ListItemText, makeStyles} from "@material-ui/core";
 import Typography from "@material-ui/core/Typography";
 import List from "@material-ui/core/List";
 import {UserModal} from "./UserModal";
-import {UserContext} from '../context/UserContext'
 import {useDispatch, useSelector} from "react-redux";
 import {getRealtimeUsers} from "../actions";
 import {FirebaseContext} from "../context/firebaseContext/firebaseContext";
@@ -34,15 +31,12 @@ const useStyles = makeStyles((theme) => ({
 export const Users = () => {
   const dispatch = useDispatch()
   const classes = useStyles()
-  const {getUid} = useAuth()
   const auth = useSelector(state => state.auth)
   const [selectedUser, setSelectedUser] = useState('')
-  const {setUsers1} = useContext(UserContext)
-  // const [users, setUsers] = useState([])
   const [openModal, setOpenModal] = useState(false)
-  const users = useSelector(state => state.user)
+
   let unsubscribe;
-  const {conversations, wroteUsers, getWroteUsers, unreadMessages} = useContext(FirebaseContext)
+  const { wroteUsers, getWroteUsers, unreadMessages} = useContext(FirebaseContext)
   // const getUsers = () => {
   //   return db.collection("users").get() // надо ли ретурн???
   //       .then((querySnapshot) => {
