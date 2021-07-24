@@ -2,9 +2,7 @@ import React, {useCallback, useEffect, useState, useRef, useContext} from 'react
 import {GoogleMap, InfoWindow, Marker, useLoadScript} from '@react-google-maps/api';
 import mapStyles from "../components/maps/MapStyles";
 import compass from '../assets/2277999_map-compass-compass-svg-hd-png-download.png'
-import {db, database} from "../firebase";
-import {getRealtimeUsers} from "../actions";
-import {useDispatch, useSelector} from 'react-redux'
+import {useSelector} from 'react-redux'
 import defUser from '../assets/def-user.jpg'
 import chatBackground from '../assets/chatBachground.jpg'
 
@@ -14,11 +12,9 @@ import Typography from "@material-ui/core/Typography";
 import Button from "@material-ui/core/Button";
 import {makeStyles} from "@material-ui/core/styles";
 import {ChatPage} from "./chatroom/ChatPage";
-import axios from "axios";
 import {FirebaseContext} from "../context/firebaseContext/firebaseContext";
 import Loader from "./loader/Loader";
 import {useHistory} from "react-router-dom";
-import {useAuth} from "../context/AuthContext";
 
 const useStyles = makeStyles({
   root: {
@@ -57,13 +53,7 @@ const options = {
 }
 
 export const Map = () => {
-  const dispatch = useDispatch()
-  const [markers, setMarkers] = useState([])
-  const [onlineUsers, setOnlineUsers] = useState([])
-  const onlineCurrentUser = JSON.parse(localStorage.getItem('user'))
-  const [getRealTimeUsers, setRealTimeUsers] = useState([])
   const history = useHistory()
-  const {getUid} = useAuth()
   const {realUsers, getOnlineUsersChecked, unreadMessages, selectedUserState, makeSelectedUserNull} = useContext(FirebaseContext)
   const classes = useStyles();
   const {isLoaded, loadError} = useLoadScript({

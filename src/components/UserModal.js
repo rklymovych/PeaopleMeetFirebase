@@ -63,7 +63,7 @@ const useStyles = makeStyles((theme) => {
 export const UserModal = ({selectedUser, openModal, setOpenModal}) => {
   const classes = useStyles();
   const history = useHistory()
-  const {selectedUserState, showSelectedUser} = useContext(FirebaseContext)
+  const { showSelectedUser} = useContext(FirebaseContext)
 
   const handleClose = () => {
     setOpenModal(false);
