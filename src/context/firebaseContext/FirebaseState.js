@@ -6,10 +6,9 @@ import {
   GET_CONVERSATIONS,
   IS_LOADED,
   SET_REAL_USERS,
-  SET_UNREAD_MESSAGES,
-  GET_WROTE_USERS,
+  GET_WROTE_USERS_IDS,
   SET_SELECTED_USER,
-  SET_SELECTED_USER_NULL
+  SET_SELECTED_USER_NULL, GET_WROTE_USERS
 } from "../../actions/constants";
 
 export const FirebaseState = ({children}) => {
@@ -19,18 +18,19 @@ export const FirebaseState = ({children}) => {
     isLoaded: false,
     unreadMessages: [],
     wroteUsersIds: [],
+    wroteUsers: [],
     selectedUserState: {},
     dialogWithUser: [{time: Date.now()}, {userId: ''}]
   }
 
   const [state, dispatch] = useReducer(firebaseReducer, initialState)
 
-  const getConversations = async (uid_1, uid_2) => {
+  const getConversations = (uid_1, uid_2) => {
     let unsubscribe;
     try {
       dispatch({type: IS_LOADED, payload: true})
 
-      unsubscribe = await db.collection('conversations')
+      unsubscribe = db.collection('conversations')
           .where('user_uid_1', 'in', [uid_1, uid_2])
           .orderBy('createdAt', 'asc')
           .onSnapshot((querySnapshot) => {
@@ -53,7 +53,7 @@ export const FirebaseState = ({children}) => {
     } catch (e) {
       throw new Error(e.message)
     }
-    return unsubscribe;
+    return unsubscribe
   }
 
   const updateMessage = async (msgObj) => {
@@ -104,25 +104,21 @@ export const FirebaseState = ({children}) => {
 
   }
 
-  const getWroteUsersIds = async (uid_1) => {
+  const getWroteUsersIds = (uid_1) => {
     let unsubscribe;
     try {
-      unsubscribe = await db.collection("conversations")
+      unsubscribe = db.collection("conversations")
           .where('user_uid_2', '==', uid_1)
-          .orderBy('createdAt', 'asc')
           .onSnapshot((doc) => {
-            const unreadMessages = [];
-            const wroteUsersID = [];
-            doc.forEach((matchMessages) => {
-              // unreadMessages.push(matchMessages.data())
-              console.log(matchMessages.data().user_uid_1)
-              if(!wroteUsersID.includes(matchMessages.data().user_uid_1)){
-                wroteUsersID.push(matchMessages.data().user_uid_1);
+            const wroteUsersIds = [];
+            doc.forEach((userId) => {
+              if (!wroteUsersIds.includes(userId.data().user_uid_1) && !userId.data().isRead) {
+                wroteUsersIds.push(userId.data().user_uid_1);
               }
             })
             dispatch({
-              type: GET_WROTE_USERS,
-              payload: wroteUsersID
+              type: GET_WROTE_USERS_IDS,
+              payload: wroteUsersIds
             })
           })
     } catch (e) {
@@ -131,30 +127,27 @@ export const FirebaseState = ({children}) => {
     return unsubscribe;
   }
 
-  const   getMyUnreadMessages= (unreadMessages) => {
-    console.log('getWroteUsers1')
-    // let usersId = new Set([])
-    // let users = []
-    // // const unreadMessages = state.unreadMessages
-    // unreadMessages && unreadMessages.map(el => usersId.add(el.user_uid_1))
-    // console.log(3)
-    // usersId.forEach(wroteUsers => {
-    //   console.log(usersId, wroteUsers)
-    //   db.collection('users')
-    //       .where('uid', '==', wroteUsers)
-    //       .onSnapshot(snap => {
-    //           console.log('thiiiiiis')
-    //         snap.forEach(user => {
-    //           users.push(user.data())
-    //         })
-    //         console.log('thiiiiiis222')
-    //         dispatch({
-    //           type: GET_WROTE_USERS,
-    //           payload: users
-    //         })
-    //         console.log('thiiiiiis3333')
-    //       })
-    // })
+  const showWroteUsers = (usersId) => {
+    let unsubscribe;
+    try {
+      unsubscribe = db.collection('users')
+          .onSnapshot((querySnapshot) => {
+            const wroteUsers = [];
+            querySnapshot.forEach((user) => {
+              if (usersId.includes(user.data().uid)) {
+                wroteUsers.push(user.data())
+              }
+            })
+
+            dispatch({
+              type: GET_WROTE_USERS,
+              payload: wroteUsers
+            })
+          })
+    } catch (e) {
+      console.log(e);
+    }
+    return unsubscribe;
   }
 
   const showSelectedUser = (selectedUser) => {
@@ -169,6 +162,32 @@ export const FirebaseState = ({children}) => {
       payload: {}
     })
   }
+
+  const removeIdFromWroteUsers = (user, userIds) => {
+    if (userIds.includes(user.uid)) {
+      makeReadMessages(user.uid)
+      userIds.splice(user.uid, 1)
+    }
+  }
+
+  const makeReadMessages = (wroteUser) => {
+    let unsubscribe;
+    try {
+      unsubscribe = db.collection('conversations')
+          .where("user_uid_1", "==", wroteUser).get()
+          .then(messages => {
+            messages.forEach((doc) => {
+              doc.ref.update({
+                isRead: true
+              });
+            });
+          })
+
+    } catch (e) {
+      console.log(e)
+    }
+    return unsubscribe;
+  }
   return (
       <FirebaseContext.Provider value={{
         isLoaded: state.isLoaded,
@@ -177,13 +196,15 @@ export const FirebaseState = ({children}) => {
         unreadMessages: state.unreadMessages,
         wroteUsersIds: state.wroteUsersIds,
         selectedUserState: state.selectedUserState,
+        wroteUsers: state.wroteUsers,
         getOnlineUsersChecked,
         makeSelectedUserNull,
         showSelectedUser,
-        getMyUnreadMessages,
         getConversations,
         updateMessage,
         getWroteUsersIds,
+        showWroteUsers,
+        removeIdFromWroteUsers
       }}
       >
         {children}

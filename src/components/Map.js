@@ -81,8 +81,9 @@ export const Map = () => {
   }, [selectedUserState])
 
   useEffect(() => {
-    getOnlineUsersChecked();
+    const unsubscribe = getOnlineUsersChecked();
     getCurrentPosition()
+    return unsubscribe;
   }, [])
 
 

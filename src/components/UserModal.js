@@ -63,13 +63,14 @@ const useStyles = makeStyles((theme) => {
 export const UserModal = ({selectedUser, openModal, setOpenModal}) => {
   const classes = useStyles();
   const history = useHistory()
-  const { showSelectedUser, wroteUsers } = useContext(FirebaseContext)
+  const { showSelectedUser, wroteUsersIds, removeIdFromWroteUsers } = useContext(FirebaseContext)
 
   const handleClose = () => {
     setOpenModal(false);
   };
 
   const writeHandler = () => {
+    removeIdFromWroteUsers(selectedUser ,wroteUsersIds)
     showSelectedUser(selectedUser)
     history.push(`map/chat/${selectedUser.uid}`)
     // history.push('/map')
