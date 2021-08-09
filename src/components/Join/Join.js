@@ -1,9 +1,8 @@
 import React from 'react';
-import { makeStyles } from '@material-ui/core/styles';
 import axios from 'axios'
 import {getRequest} from "../../pureFunctions";
 
-const Join = ({children}) => {
+const Join = () => {
   const url = process.env.REACT_APP_REALTIME_DB
 
 

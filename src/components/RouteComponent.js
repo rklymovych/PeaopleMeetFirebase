@@ -13,7 +13,6 @@ import {ChatPage} from "./chatroom/ChatPage";
 import Join from "./Join/Join";
 import {isLoggedInUser} from "../actions";
 import {useDispatch, useSelector} from "react-redux";
-import TestChat from "./Chat/Testchat";
 import SwipeableDrawer from "@material-ui/core/SwipeableDrawer";
 import Drawer from "./Drawer";
 import {TopBar} from "./TopBar";
@@ -53,7 +52,6 @@ export function RouteComponent() {
             {/*<PrivateRoute exact path='/chat/:id' component={ChatPage}/>*/}
             {/*<PrivateRoute exact path='/map/chat/:id' component={ChatPage}/>*/}
             <PrivateRoute exact path='/join' component={Join}/>
-            <PrivateRoute exact path='/testchat' component={TestChat}/>
             <Redirect to="/"/>
           </Switch>
           <SwipeableDrawer

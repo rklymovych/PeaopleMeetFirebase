@@ -10,17 +10,17 @@ import {
 } from "../../actions/constants";
 
 const handlers = {
-  [GET_CONVERSATIONS]: (state, {payload}) => ({...state, conversations: payload}),
+  [GET_CONVERSATIONS]: (state, {payload}) => ({...state, myConversationWithCurrentUser: payload}),
   [UPDATE_MESSAGES]: (state, {payload}) => ({
     ...state,
-    conversations: [...state.conversations],
+    myConversationWithCurrentUser: [...state.myConversationWithCurrentUser],
     payload
 
   }),
   [SET_REAL_USERS]: (state, {payload}) => ({...state, realUsers: payload}),
   [IS_LOADED]: (state, {payload}) => ({...state, isLoaded: payload}),
   [SET_UNREAD_MESSAGES]: (state, {payload}) => ({...state, unreadMessages: payload}),
-  [GET_WROTE_USERS]: (state, {payload}) => ({...state, wroteUsers: payload}),
+  [GET_WROTE_USERS]: (state, {payload}) => ({...state, wroteUsersIds: payload}),
   [SET_SELECTED_USER]: (state, {payload}) => ({...state, selectedUserState: payload}),
   [SET_SELECTED_USER_NULL]: (state, {payload}) => ({...state, selectedUserState: payload}),
   DEFAULT: state => state

@@ -14,22 +14,23 @@ import {
 
 export const FirebaseState = ({children}) => {
   const initialState = {
-    conversations: [],
+    myConversationWithCurrentUser: [],
     realUsers: [],
     isLoaded: false,
     unreadMessages: [],
-    wroteUsers: [],
-    selectedUserState: {}
+    wroteUsersIds: [],
+    selectedUserState: {},
+    dialogWithUser: [{time: Date.now()}, {userId: ''}]
   }
 
   const [state, dispatch] = useReducer(firebaseReducer, initialState)
 
-  const getConversations = (uid_1, uid_2) => {
+  const getConversations = async (uid_1, uid_2) => {
     let unsubscribe;
     try {
       dispatch({type: IS_LOADED, payload: true})
 
-      unsubscribe = db.collection('conversations')
+      unsubscribe = await db.collection('conversations')
           .where('user_uid_1', 'in', [uid_1, uid_2])
           .orderBy('createdAt', 'asc')
           .onSnapshot((querySnapshot) => {
@@ -52,10 +53,11 @@ export const FirebaseState = ({children}) => {
     } catch (e) {
       throw new Error(e.message)
     }
-    return unsubscribe
+    return unsubscribe;
   }
 
   const updateMessage = async (msgObj) => {
+    console.log('first')
     try {
       await db.collection('conversations')
           .add({
@@ -102,42 +104,57 @@ export const FirebaseState = ({children}) => {
 
   }
 
-  const getUnreadMessages = (uid_1) => {
-    db.collection("conversations")
-        .onSnapshot((doc) => {
-          const unreadMessages = [];
-          doc.forEach((matchMessages) => {
-            if (matchMessages.data().user_uid_2 === uid_1 && matchMessages.data().isRead === false) {
-              unreadMessages.push(matchMessages.data())
-            }
-          })
-          dispatch({
-            type: SET_UNREAD_MESSAGES,
-            payload: unreadMessages
-          })
-        })
-  }
-
-  const getWroteUsers = () => {
-    let usersId = new Set([])
-    let users = []
-    const unreadMessages = state.unreadMessages
-
-    unreadMessages.map(el => usersId.add(el.user_uid_1))
-    usersId.forEach(wroteUsers => {
-      db.collection('users')
-          .where('uid', '==', wroteUsers)
-          .onSnapshot(snap => {
-            snap.forEach(user => {
-              users.push(user.data())
+  const getWroteUsersIds = async (uid_1) => {
+    let unsubscribe;
+    try {
+      unsubscribe = await db.collection("conversations")
+          .where('user_uid_2', '==', uid_1)
+          .orderBy('createdAt', 'asc')
+          .onSnapshot((doc) => {
+            const unreadMessages = [];
+            const wroteUsersID = [];
+            doc.forEach((matchMessages) => {
+              // unreadMessages.push(matchMessages.data())
+              console.log(matchMessages.data().user_uid_1)
+              if(!wroteUsersID.includes(matchMessages.data().user_uid_1)){
+                wroteUsersID.push(matchMessages.data().user_uid_1);
+              }
             })
             dispatch({
               type: GET_WROTE_USERS,
-              payload: users
+              payload: wroteUsersID
             })
-
           })
-    })
+    } catch (e) {
+      console.log(e)
+    }
+    return unsubscribe;
+  }
+
+  const   getMyUnreadMessages= (unreadMessages) => {
+    console.log('getWroteUsers1')
+    // let usersId = new Set([])
+    // let users = []
+    // // const unreadMessages = state.unreadMessages
+    // unreadMessages && unreadMessages.map(el => usersId.add(el.user_uid_1))
+    // console.log(3)
+    // usersId.forEach(wroteUsers => {
+    //   console.log(usersId, wroteUsers)
+    //   db.collection('users')
+    //       .where('uid', '==', wroteUsers)
+    //       .onSnapshot(snap => {
+    //           console.log('thiiiiiis')
+    //         snap.forEach(user => {
+    //           users.push(user.data())
+    //         })
+    //         console.log('thiiiiiis222')
+    //         dispatch({
+    //           type: GET_WROTE_USERS,
+    //           payload: users
+    //         })
+    //         console.log('thiiiiiis3333')
+    //       })
+    // })
   }
 
   const showSelectedUser = (selectedUser) => {
@@ -155,18 +172,18 @@ export const FirebaseState = ({children}) => {
   return (
       <FirebaseContext.Provider value={{
         isLoaded: state.isLoaded,
-        conversations: state.conversations,
+        myConversationWithCurrentUser: state.myConversationWithCurrentUser,
         realUsers: state.realUsers,
         unreadMessages: state.unreadMessages,
-        wroteUsers: state.wroteUsers,
+        wroteUsersIds: state.wroteUsersIds,
         selectedUserState: state.selectedUserState,
         getOnlineUsersChecked,
         makeSelectedUserNull,
         showSelectedUser,
-        getUnreadMessages,
+        getMyUnreadMessages,
         getConversations,
         updateMessage,
-        getWroteUsers
+        getWroteUsersIds,
       }}
       >
         {children}

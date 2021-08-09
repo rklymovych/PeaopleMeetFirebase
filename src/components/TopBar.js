@@ -1,5 +1,4 @@
-import React, {useContext, useEffect} from 'react';
-import {makeStyles} from '@material-ui/core/styles';
+import React, {useContext, useEffect, useCallback} from 'react';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
@@ -15,11 +14,17 @@ import {Badge, MenuItem} from "@material-ui/core";
 import firebase from "firebase";
 import {FirebaseContext} from "../context/firebaseContext/firebaseContext";
 
-const drawerWidth = 230;
+// const drawerWidth = 230;
 
 export const TopBar = ({setState}) => {
   const history = useHistory()
-  const {getUnreadMessages, conversations, unreadMessages, getWroteUsers, wroteUsers, realUsers, getOnlineUsersChecked} = useContext(FirebaseContext)
+  const {
+    getMyUnreadMessages,
+    myConversationWithCurrentUser,
+    getWroteUsersIds,
+    unreadMessages,
+    wroteUsersIds
+  } = useContext(FirebaseContext)
   const handleDrawerOpen = () => {
     setState({'left': true});
   };
@@ -34,7 +39,7 @@ export const TopBar = ({setState}) => {
   };
   useEffect(() => {
     if (auth.uid) {
-      getWroteUsers()
+
       database.ref('.info/connected').on('value', function (snapshot) {
         if (snapshot.val() === true) {
           userStatusDatabaseRef.set(isOnlineForDatabase);
@@ -49,16 +54,16 @@ export const TopBar = ({setState}) => {
   }, [auth.uid])
 //  make offline Users END****/
 
-  useEffect(() => {
-    if (auth.uid) {
-      getUnreadMessages(auth.uid);
-    }
-  }, [auth.uid, conversations]);
 
-  const showWroteUsers = () =>{
+  const showWroteUsers = () => {
     history.push('/users')
-    getWroteUsers()
   }
+  useEffect(() => {
+    if(auth.uid){
+      const unsubscribe = getWroteUsersIds(auth.uid)
+      return unsubscribe
+    }
+  }, [auth.uid]);
 
   return (
       <AppBar>
@@ -75,7 +80,7 @@ export const TopBar = ({setState}) => {
           <div style={{display: 'flex', justifyContent: 'space-between', width: '100%', alignItems: 'center'}}>
             <MenuItem onClick={showWroteUsers}>
               <IconButton aria-label="show 4 new mails" color="inherit">
-                <Badge badgeContent={wroteUsers.length} color="error">
+                <Badge badgeContent={wroteUsersIds.length} color="error">
                   <MailIcon/>
                 </Badge>
               </IconButton>

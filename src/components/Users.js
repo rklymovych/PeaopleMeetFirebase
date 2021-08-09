@@ -36,7 +36,7 @@ export const Users = () => {
   const [openModal, setOpenModal] = useState(false)
 
   let unsubscribe;
-  const { wroteUsers, getWroteUsers, unreadMessages} = useContext(FirebaseContext)
+  const { wroteUsers, unreadMessages} = useContext(FirebaseContext)
   // const getUsers = () => {
   //   return db.collection("users").get() // надо ли ретурн???
   //       .then((querySnapshot) => {
@@ -55,7 +55,7 @@ export const Users = () => {
   // }, [])
   useEffect(() => {
     if (auth.uid) {
-      getWroteUsers()
+      // getWroteUsers()
     }
   }, [auth.uid, unreadMessages])
   useEffect(() => {

@@ -54,7 +54,7 @@ const options = {
 
 export const Map = () => {
   const history = useHistory()
-  const {realUsers, getOnlineUsersChecked, unreadMessages, selectedUserState, makeSelectedUserNull} = useContext(FirebaseContext)
+  const {realUsers, getOnlineUsersChecked, unreadMessages, myConversationWithCurrentUser, selectedUserState, makeSelectedUserNull} = useContext(FirebaseContext)
   const classes = useStyles();
   const {isLoaded, loadError} = useLoadScript({
     googleMapsApiKey: process.env.REACT_APP_GOOGLE_KEY,
