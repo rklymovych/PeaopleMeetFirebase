@@ -6,20 +6,21 @@ import {
   GET_CONVERSATIONS,
   IS_LOADED,
   SET_REAL_USERS,
-  SET_UNREAD_MESSAGES,
-  GET_WROTE_USERS,
+  GET_WROTE_USERS_IDS,
   SET_SELECTED_USER,
-  SET_SELECTED_USER_NULL
+  SET_SELECTED_USER_NULL, GET_WROTE_USERS
 } from "../../actions/constants";
 
 export const FirebaseState = ({children}) => {
   const initialState = {
-    conversations: [],
+    myConversationWithCurrentUser: [],
     realUsers: [],
     isLoaded: false,
     unreadMessages: [],
+    wroteUsersIds: [],
     wroteUsers: [],
-    selectedUserState: {}
+    selectedUserState: {},
+    dialogWithUser: [{time: Date.now()}, {userId: ''}]
   }
 
   const [state, dispatch] = useReducer(firebaseReducer, initialState)
@@ -56,6 +57,7 @@ export const FirebaseState = ({children}) => {
   }
 
   const updateMessage = async (msgObj) => {
+    console.log('first')
     try {
       await db.collection('conversations')
           .add({
@@ -102,42 +104,51 @@ export const FirebaseState = ({children}) => {
 
   }
 
-  const getUnreadMessages = (uid_1) => {
-    db.collection("conversations")
-        .onSnapshot((doc) => {
-          const unreadMessages = [];
-          doc.forEach((matchMessages) => {
-            if (matchMessages.data().user_uid_2 === uid_1 && matchMessages.data().isRead === false) {
-              unreadMessages.push(matchMessages.data())
-            }
-          })
-          dispatch({
-            type: SET_UNREAD_MESSAGES,
-            payload: unreadMessages
-          })
-        })
-  }
-
-  const getWroteUsers = () => {
-    let usersId = new Set([])
-    let users = []
-    const unreadMessages = state.unreadMessages
-
-    unreadMessages.map(el => usersId.add(el.user_uid_1))
-    usersId.forEach(wroteUsers => {
-      db.collection('users')
-          .where('uid', '==', wroteUsers)
-          .onSnapshot(snap => {
-            snap.forEach(user => {
-              users.push(user.data())
+  const getWroteUsersIds = (uid_1) => {
+    let unsubscribe;
+    try {
+      unsubscribe = db.collection("conversations")
+          .where('user_uid_2', '==', uid_1)
+          .onSnapshot((doc) => {
+            const wroteUsersIds = [];
+            doc.forEach((userId) => {
+              const pathname = window.location.pathname
+              if (!wroteUsersIds.includes(userId.data().user_uid_1) && !userId.data().isRead && !pathname.includes(userId.data().user_uid_1)) {
+                wroteUsersIds.push(userId.data().user_uid_1);
+                }
             })
             dispatch({
-              type: GET_WROTE_USERS,
-              payload: users
+              type: GET_WROTE_USERS_IDS,
+              payload: wroteUsersIds
+            })
+          })
+    } catch (e) {
+      console.log(e)
+    }
+    return unsubscribe;
+  }
+
+  const showWroteUsers = (usersId) => {
+    let unsubscribe;
+    try {
+      unsubscribe = db.collection('users')
+          .onSnapshot((querySnapshot) => {
+            const wroteUsers = [];
+            querySnapshot.forEach((user) => {
+              if (usersId.includes(user.data().uid)) {
+                wroteUsers.push(user.data())
+              }
             })
 
+            dispatch({
+              type: GET_WROTE_USERS,
+              payload: wroteUsers
+            })
           })
-    })
+    } catch (e) {
+      console.log(e);
+    }
+    return unsubscribe;
   }
 
   const showSelectedUser = (selectedUser) => {
@@ -152,21 +163,50 @@ export const FirebaseState = ({children}) => {
       payload: {}
     })
   }
+
+  const removeIdFromWroteUsers = (user, userIds) => {
+    if (userIds.includes(user.uid)) {
+      makeReadMessages(user.uid)
+      userIds.splice(user.uid, 1)
+    }
+  }
+
+  const makeReadMessages = (wroteUser) => {
+    let unsubscribe;
+    try {
+      unsubscribe = db.collection('conversations')
+          .where("user_uid_1", "==", wroteUser).get()
+          .then(messages => {
+            messages.forEach((doc) => {
+              doc.ref.update({
+                isRead: true
+              });
+            });
+          })
+
+    } catch (e) {
+      console.log(e)
+    }
+    return unsubscribe;
+  }
   return (
       <FirebaseContext.Provider value={{
         isLoaded: state.isLoaded,
-        conversations: state.conversations,
+        myConversationWithCurrentUser: state.myConversationWithCurrentUser,
         realUsers: state.realUsers,
         unreadMessages: state.unreadMessages,
-        wroteUsers: state.wroteUsers,
+        wroteUsersIds: state.wroteUsersIds,
         selectedUserState: state.selectedUserState,
+        wroteUsers: state.wroteUsers,
         getOnlineUsersChecked,
         makeSelectedUserNull,
         showSelectedUser,
-        getUnreadMessages,
         getConversations,
         updateMessage,
-        getWroteUsers
+        getWroteUsersIds,
+        showWroteUsers,
+        removeIdFromWroteUsers,
+        makeReadMessages
       }}
       >
         {children}

@@ -54,7 +54,7 @@ const options = {
 
 export const Map = () => {
   const history = useHistory()
-  const {realUsers, getOnlineUsersChecked, unreadMessages, selectedUserState, makeSelectedUserNull} = useContext(FirebaseContext)
+  const {makeReadMessages, wroteUsersIds, removeIdFromWroteUsers, realUsers, getOnlineUsersChecked, unreadMessages, myConversationWithCurrentUser, selectedUserState, makeSelectedUserNull} = useContext(FirebaseContext)
   const classes = useStyles();
   const {isLoaded, loadError} = useLoadScript({
     googleMapsApiKey: process.env.REACT_APP_GOOGLE_KEY,
@@ -81,8 +81,9 @@ export const Map = () => {
   }, [selectedUserState])
 
   useEffect(() => {
-    getOnlineUsersChecked();
+    const unsubscribe = getOnlineUsersChecked();
     getCurrentPosition()
+    return unsubscribe;
   }, [])
 
 
@@ -107,6 +108,8 @@ export const Map = () => {
   }
 
   const openDrawerHandler = () => {
+    removeIdFromWroteUsers(selectedUser ,wroteUsersIds)
+    makeReadMessages(selectedUser.uid)
     history.push(`/map/chat/${selectedUser.uid}`)
     setOpenDrawer(!openDrawer)
     setChatStarted(!chatStarted)
@@ -215,6 +218,7 @@ export const Map = () => {
             <Grid item className={classes.drawer} xs={12}>
               <ChatPage
                   selected={selectedUser}
+                  chatStarted={chatStarted}
               />
             </Grid>
           </Grid>

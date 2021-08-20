@@ -13,12 +13,22 @@ import {ChatPage} from "./chatroom/ChatPage";
 import Join from "./Join/Join";
 import {isLoggedInUser} from "../actions";
 import {useDispatch, useSelector} from "react-redux";
-import TestChat from "./Chat/Testchat";
 import SwipeableDrawer from "@material-ui/core/SwipeableDrawer";
 import Drawer from "./Drawer";
 import {TopBar} from "./TopBar";
+import {makeStyles} from "@material-ui/core/styles";
+
+const useStyles = makeStyles((theme) => ({
+  drawerWrapper: {
+    width: '250px',
+    height: '100%',
+    display: 'flex',
+    flexDirection: 'column'
+  }
+}))
 
 export function RouteComponent() {
+  const classes = useStyles()
   const auth = useSelector(state => state.auth);
   const dispatch = useDispatch()
   const {currentUser} = useAuth()
@@ -44,16 +54,15 @@ export function RouteComponent() {
     return (
         <>
           <TopBar setState={setState}/>
-          <div style={{height: '60px'}} />
+          <div style={{height: '60px'}}/>
           <Switch>
             <PrivateRoute exact path="/" component={Account}/>
-            <PrivateRoute  path="/map" component={Map}/>
+            <PrivateRoute path="/map" component={Map}/>
             <PrivateRoute exact path="/users" component={Users}/>
             <PrivateRoute exact path="/update-profile" component={UpdateProfile}/>
             {/*<PrivateRoute exact path='/chat/:id' component={ChatPage}/>*/}
             {/*<PrivateRoute exact path='/map/chat/:id' component={ChatPage}/>*/}
             <PrivateRoute exact path='/join' component={Join}/>
-            <PrivateRoute exact path='/testchat' component={TestChat}/>
             <Redirect to="/"/>
           </Switch>
           <SwipeableDrawer
@@ -62,7 +71,7 @@ export function RouteComponent() {
               onOpen={toggleDrawer('left', true)}
           >
             <div
-                style={{width: '250px'}}
+                className={classes.drawerWrapper}
                 onClick={toggleDrawer('left', false)}
                 onKeyDown={toggleDrawer('left', false)}
             >

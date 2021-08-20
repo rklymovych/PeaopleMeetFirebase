@@ -127,9 +127,9 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-export const ChatPage = ({selected}) => {
+export const ChatPage = ({selected, chatStarted}) => {
 
-  const {getConversations, conversations, isLoaded, updateMessage} = useContext(FirebaseContext);
+  const {makeReadMessages, wroteUsersIds, getConversations, myConversationWithCurrentUser, isLoaded, updateMessage} = useContext(FirebaseContext);
   const classes = useStyles();
 
   const dummy = useRef();
@@ -153,6 +153,7 @@ export const ChatPage = ({selected}) => {
         message,
       }
      updateMessage(msgObj).then(() => {
+       console.log('theeeeen')
         setMessage('')
       })
     }
@@ -166,8 +167,12 @@ export const ChatPage = ({selected}) => {
   }
 
   useEffect(() => {
+    const pathname = window.location.pathname
+    // if(pathname.includes(selected.uid)){
+    //   makeReadMessages(selected.uid)
+    // }
     dummy.current.scrollIntoView({behavior: "smooth"})
-  }, [conversations, isLoaded])
+  }, [myConversationWithCurrentUser, isLoaded])
   return (
       <div
           className={classes.wrap}
@@ -183,7 +188,7 @@ export const ChatPage = ({selected}) => {
           {isLoaded ? <div className="loader-wrapper-chat-page"><Loader/></div>
               :
               (
-                  !isLoaded && conversations.map((con, idx) => {
+                  !isLoaded && myConversationWithCurrentUser.map((con, idx) => {
                     const timeStamp = moment(con.timeStamp).format('hh:mm a');
                     return (
                         <div
@@ -203,7 +208,7 @@ export const ChatPage = ({selected}) => {
                                 elevation={3}
                             >{ReactEmoji.emojify(con.message)}
                             </Paper><br/>
-                            <Typography  className={classes.timeStamp}>{timeStamp}</Typography>
+                            <Typography className={classes.timeStamp}>{timeStamp}</Typography>
                           </div>
 
                         </div>
