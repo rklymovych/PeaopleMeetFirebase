@@ -112,9 +112,10 @@ export const FirebaseState = ({children}) => {
           .onSnapshot((doc) => {
             const wroteUsersIds = [];
             doc.forEach((userId) => {
-              if (!wroteUsersIds.includes(userId.data().user_uid_1) && !userId.data().isRead) {
+              const pathname = window.location.pathname
+              if (!wroteUsersIds.includes(userId.data().user_uid_1) && !userId.data().isRead && !pathname.includes(userId.data().user_uid_1)) {
                 wroteUsersIds.push(userId.data().user_uid_1);
-              }
+                }
             })
             dispatch({
               type: GET_WROTE_USERS_IDS,
@@ -204,7 +205,8 @@ export const FirebaseState = ({children}) => {
         updateMessage,
         getWroteUsersIds,
         showWroteUsers,
-        removeIdFromWroteUsers
+        removeIdFromWroteUsers,
+        makeReadMessages
       }}
       >
         {children}

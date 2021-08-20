@@ -127,9 +127,9 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-export const ChatPage = ({selected}) => {
+export const ChatPage = ({selected, chatStarted}) => {
 
-  const {getConversations, myConversationWithCurrentUser, isLoaded, updateMessage} = useContext(FirebaseContext);
+  const {makeReadMessages, wroteUsersIds, getConversations, myConversationWithCurrentUser, isLoaded, updateMessage} = useContext(FirebaseContext);
   const classes = useStyles();
 
   const dummy = useRef();
@@ -167,6 +167,10 @@ export const ChatPage = ({selected}) => {
   }
 
   useEffect(() => {
+    const pathname = window.location.pathname
+    // if(pathname.includes(selected.uid)){
+    //   makeReadMessages(selected.uid)
+    // }
     dummy.current.scrollIntoView({behavior: "smooth"})
   }, [myConversationWithCurrentUser, isLoaded])
   return (

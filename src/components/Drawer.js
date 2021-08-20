@@ -9,6 +9,7 @@ import ListItemText from "@material-ui/core/ListItemText";
 import MailIcon from "@material-ui/icons/Mail";
 import SupervisorAccountRoundedIcon from "@material-ui/icons/SupervisorAccountRounded";
 import AccountCircleRoundedIcon from "@material-ui/icons/AccountCircleRounded";
+import FeedbackIcon from '@material-ui/icons/Feedback';
 import React, {useEffect} from "react";
 import {makeStyles} from "@material-ui/core/styles";
 import {useHistory} from "react-router-dom";
@@ -30,6 +31,10 @@ const useStyles = makeStyles((theme) => ({
     left: '50%',
     transform: 'translate(-50%)',
     color: theme.palette.common.white
+  },
+  feedback : {
+    alignSelf: 'flex-end',
+    marginTop: 'auto'
   }
 }))
 
@@ -94,7 +99,10 @@ const Drawer = () => {
           </ListItem>
 
         </List>
-
+        <ListItem button className={classes.feedback}>
+          <ListItemIcon><FeedbackIcon/></ListItemIcon>
+          <ListItemText primary={'v: 1.202.8.19'}/>
+        </ListItem>
       </>
   )
 }
