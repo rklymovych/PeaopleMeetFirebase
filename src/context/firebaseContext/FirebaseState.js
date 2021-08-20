@@ -56,6 +56,16 @@ export const FirebaseState = ({children}) => {
     return unsubscribe
   }
 
+  const filterOwnMessagesDrawerIsOpen = (myId) => {
+    const pathname = window.location.pathname;
+    const messages = state.myConversationWithCurrentUser.filter(mes => mes.isRead === false)
+    messages.map(message => {
+      if(pathname.includes(message.user_uid_1) && myId !== message.user_uid_1){
+        makeReadMessages(message.user_uid_1)
+      }
+    })
+  }
+
   const updateMessage = async (msgObj) => {
     console.log('first')
     try {
@@ -115,7 +125,7 @@ export const FirebaseState = ({children}) => {
               const pathname = window.location.pathname
               if (!wroteUsersIds.includes(userId.data().user_uid_1) && !userId.data().isRead && !pathname.includes(userId.data().user_uid_1)) {
                 wroteUsersIds.push(userId.data().user_uid_1);
-                }
+              }
             })
             dispatch({
               type: GET_WROTE_USERS_IDS,
@@ -171,11 +181,11 @@ export const FirebaseState = ({children}) => {
     }
   }
 
-  const makeReadMessages = (wroteUser) => {
+  const makeReadMessages = (wroteUserId) => {
     let unsubscribe;
     try {
       unsubscribe = db.collection('conversations')
-          .where("user_uid_1", "==", wroteUser).get()
+          .where("user_uid_1", "==", wroteUserId).get()
           .then(messages => {
             messages.forEach((doc) => {
               doc.ref.update({
@@ -202,6 +212,7 @@ export const FirebaseState = ({children}) => {
         makeSelectedUserNull,
         showSelectedUser,
         getConversations,
+        filterOwnMessagesDrawerIsOpen,
         updateMessage,
         getWroteUsersIds,
         showWroteUsers,

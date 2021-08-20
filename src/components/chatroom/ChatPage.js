@@ -129,7 +129,13 @@ const useStyles = makeStyles((theme) => ({
 
 export const ChatPage = ({selected, chatStarted}) => {
 
-  const {makeReadMessages, wroteUsersIds, getConversations, myConversationWithCurrentUser, isLoaded, updateMessage} = useContext(FirebaseContext);
+  const {
+    filterOwnMessagesDrawerIsOpen,
+    getConversations,
+    myConversationWithCurrentUser,
+    isLoaded,
+    updateMessage
+  } = useContext(FirebaseContext);
   const classes = useStyles();
 
   const dummy = useRef();
@@ -153,7 +159,6 @@ export const ChatPage = ({selected, chatStarted}) => {
         message,
       }
      updateMessage(msgObj).then(() => {
-       console.log('theeeeen')
         setMessage('')
       })
     }
@@ -167,10 +172,8 @@ export const ChatPage = ({selected, chatStarted}) => {
   }
 
   useEffect(() => {
-    const pathname = window.location.pathname
-    // if(pathname.includes(selected.uid)){
-    //   makeReadMessages(selected.uid)
-    // }
+    if (myConversationWithCurrentUser) filterOwnMessagesDrawerIsOpen();
+
     dummy.current.scrollIntoView({behavior: "smooth"})
   }, [myConversationWithCurrentUser, isLoaded])
   return (
