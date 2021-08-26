@@ -5,7 +5,7 @@ import Typography from '@material-ui/core/Typography';
 import IconButton from '@material-ui/core/IconButton';
 import MenuIcon from '@material-ui/icons/Menu';
 import MailIcon from '@material-ui/icons/Mail';
-import {useHistory} from "react-router-dom";
+import {useHistory, matchPath, useLocation} from "react-router-dom";
 import InputIcon from "@material-ui/icons/Input";
 import {database} from "../firebase";
 import {useDispatch, useSelector} from "react-redux";
@@ -19,10 +19,7 @@ import {FirebaseContext} from "../context/firebaseContext/firebaseContext";
 export const TopBar = ({setState}) => {
   const history = useHistory()
   const {
-    getMyUnreadMessages,
-    myConversationWithCurrentUser,
     getWroteUsersIds,
-    unreadMessages,
     wroteUsersIds
   } = useContext(FirebaseContext)
   const handleDrawerOpen = () => {
@@ -59,7 +56,33 @@ export const TopBar = ({setState}) => {
     history.push('/users')
   }
   useEffect(() => {
-    if(auth.uid){
+    if (auth.uid) {
+      const pathname = window.location.pathname.split('/')
+      const pathId = pathname.filter(id => id.length > 20)
+      if (pathId.length > 0) {
+        console.log(pathId);
+        history.push('/map', pathId[0])
+      }
+
+      // database.ref('status').on('value', (snapshot) => {
+      //   const data = snapshot.val();
+      //   for( let [key, val] of Object.entries(data)){
+      //     if(pathname.includes(key)){
+      //       console.log('data1[key]', key)
+      //       history.push({
+      //         pathname: '/map',
+      //         search: key,
+      //       })
+      //     }
+      //   }
+      // })
+      // http://localhost:3000/map/chat/5ndXpcYzqVW0T4njq0JlQqwAFvu2
+      // if(pathname) {
+      //   console.log('pathname', pathname)
+      //   console.log('match', match.setState)
+      //   console.log('location', location)
+      //   console.log('matchPath',a)
+      // }
       const unsubscribe = getWroteUsersIds(auth.uid)
       return unsubscribe
     }

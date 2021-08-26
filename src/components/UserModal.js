@@ -12,6 +12,7 @@ import {Card, CardActionArea, Grid} from "@material-ui/core";
 import Divider from "@material-ui/core/Divider";
 import {useHistory} from "react-router-dom";
 import {FirebaseContext} from "../context/firebaseContext/firebaseContext";
+import {theme} from "../theme/theme";
 
 const useStyles = makeStyles((theme) => {
   return {
@@ -56,6 +57,12 @@ const useStyles = makeStyles((theme) => {
     },
     colorSuccess: {
       color: theme.palette.secondary.main
+    },
+    dialogTitle: {
+      paddingBottom: 0,
+    },
+    red: {
+      color: theme.palette.error.dark
     }
   }
 });
@@ -80,14 +87,17 @@ export const UserModal = ({selectedUser, openModal, setOpenModal}) => {
       <React.Fragment>
         <Dialog
             fullWidth
-            maxWidth='lg'
+            maxWidth='md'
             open={openModal}
             onClose={handleClose}
         >
-          <DialogTitle id="max-width-dialog-title"><b>Information about user</b></DialogTitle>
+          <DialogTitle className={classes.dialogTitle} id="max-width-dialog-title"><b>Information about user</b></DialogTitle>
 
           <Grid container className={classes.dialogContent}>
-            <Grid item md={5} sm={12} style={{margin: 'auto'}}>
+            <Grid item
+                  // md={5}
+                  sm={7}
+                  style={{margin: 'auto'}}>
               <DialogContent>
                 <Card className={classes.root}>
                   <CardActionArea>
@@ -97,7 +107,10 @@ export const UserModal = ({selectedUser, openModal, setOpenModal}) => {
                 </Card>
               </DialogContent>
             </Grid>
-            <Grid item md={7} sm={12} style={{width: '100%'}}>
+            <Grid item
+                  // md={7}
+                  sm={5}
+                  style={{width: '100%'}}>
               <DialogContent>
                 <Typography component={'span'} variant={'body2'} className={classes.padding}>
                   <b>Name</b> - {selectedUser?.name}
@@ -137,6 +150,9 @@ export const UserModal = ({selectedUser, openModal, setOpenModal}) => {
                 )
                 }
                 <Typography component={'span'} variant={'body2'} className={classes.padding}>
+                  <b>Distance</b> - 20m
+                </Typography>
+                <Typography component={'span'} variant={'body2'} className={classes.padding}>
                   <b>About</b> - {selectedUser?.description}
                 </Typography>
                 <Divider/>
@@ -144,10 +160,10 @@ export const UserModal = ({selectedUser, openModal, setOpenModal}) => {
             </Grid>
           </Grid>
           <DialogActions className={classes.dialogAction}>
-            <Button onClick={writeHandler} color="secondary">
+            <Button onClick={writeHandler} color="primary">
               <b>Write to {selectedUser?.name}</b>
             </Button>
-            <Button onClick={handleClose} color="primary">
+            <Button onClick={handleClose} className={classes.red}>
               <b>Close</b>
             </Button>
           </DialogActions>

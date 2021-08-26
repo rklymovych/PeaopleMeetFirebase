@@ -66,7 +66,8 @@ const Drawer = () => {
                backgroundImage: `url(${avatar ? avatar : defaultAvatar})`,
                backgroundRepeat: 'no-repeat',
                backgroundPosition: 'center center',
-               backgroundSize: 'cover'
+               backgroundSize: 'cover',
+               minHeight: '220px'
              }}
 
         >

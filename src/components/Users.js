@@ -36,28 +36,8 @@ export const Users = () => {
   const [openModal, setOpenModal] = useState(false)
 
   let unsubscribe;
-  const { wroteUsers, unreadMessages, wroteUsersIds, showWroteUsers} = useContext(FirebaseContext)
-  // const getUsers = () => {
-  //   return db.collection("users").get() // надо ли ретурн???
-  //       .then((querySnapshot) => {
-  //         const users = querySnapshot.docs.filter((user => getUid() !== user.id)).map((doc) => {
-  //           return {id: doc.id, ...doc.data()};
-  //         })
-  //         console.log(users)
-  //         setUsers(users);
-  //         setUsers1(users);
-  //       });
-  // };
-  //
-  //
-  // useEffect(() => {
-  //   getUsers()
-  // }, [])
-  useEffect(() => {
-    if (auth.uid) {
-      // getWroteUsers()
-    }
-  }, [auth.uid, unreadMessages])
+  const { wroteUsers, wroteUsersIds, showWroteUsers} = useContext(FirebaseContext)
+
   useEffect(() => {
 
     unsubscribe = dispatch(getRealtimeUsers(auth.uid))

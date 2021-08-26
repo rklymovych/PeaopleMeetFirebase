@@ -1,5 +1,5 @@
 import React, {useCallback, useEffect, useState, useRef, useContext} from 'react'
-import {GoogleMap, InfoWindow, Marker, useLoadScript} from '@react-google-maps/api';
+import {GoogleMap, InfoWindow, Marker, useLoadScript, MarkerClusterer} from '@react-google-maps/api';
 import mapStyles from "../components/maps/MapStyles";
 import compass from '../assets/2277999_map-compass-compass-svg-hd-png-download.png'
 import {useSelector} from 'react-redux'
@@ -14,7 +14,10 @@ import {makeStyles} from "@material-ui/core/styles";
 import {ChatPage} from "./chatroom/ChatPage";
 import {FirebaseContext} from "../context/firebaseContext/firebaseContext";
 import Loader from "./loader/Loader";
-import {useHistory} from "react-router-dom";
+import {useHistory, useLocation} from "react-router-dom";
+import {db} from "../firebase";
+import {useAuth} from "../context/AuthContext";
+
 
 const useStyles = makeStyles({
   root: {
@@ -38,6 +41,12 @@ const useStyles = makeStyles({
       backgroundRepeat: 'no-repeat',
     }
   },
+  clusterIconStyle: {
+    backgroundColor: 'red',
+    color: 'red',
+    backgroundImage: "url('https://i.picsum.photos/id/701/200/300.jpg?hmac=gVWdD9Rh_J0iGXpXOJAN7MZpGPrpeHX_M5JwGGvTSsI')",
+    backgroundSize: 'cover'
+  }
 })
 
 
@@ -53,8 +62,18 @@ const options = {
 }
 
 export const Map = () => {
+  const { getUid } = useAuth()
+  const {state} = useLocation();
   const history = useHistory()
-  const {makeReadMessages, wroteUsersIds, removeIdFromWroteUsers, realUsers, getOnlineUsersChecked, unreadMessages, myConversationWithCurrentUser, selectedUserState, makeSelectedUserNull} = useContext(FirebaseContext)
+  const {
+    makeReadMessages,
+    wroteUsersIds,
+    removeIdFromWroteUsers,
+    realUsers,
+    getOnlineUsersChecked,
+    selectedUserState,
+    makeSelectedUserNull
+  } = useContext(FirebaseContext)
   const classes = useStyles();
   const {isLoaded, loadError} = useLoadScript({
     googleMapsApiKey: process.env.REACT_APP_GOOGLE_KEY,
@@ -73,12 +92,41 @@ export const Map = () => {
     })
   }
   useEffect(() => {
-      if (Object.keys(selectedUserState).length !== 0) {
-        setSelectedUser(selectedUserState)
-        setOpenDrawer(true)
-        setChatStarted(true)
+    if (Object.keys(selectedUserState).length !== 0) {
+      setSelectedUser(selectedUserState)
+      console.log('history', history)
+      setOpenDrawer(true)
+      setChatStarted(true)
     }
   }, [selectedUserState])
+
+  useEffect(() => {
+    const searchPath = history.location.state
+    if (searchPath) {
+      const us = db.collection('users').doc(state)
+      us.get().then((doc) => {
+        if (doc.exists) {
+          console.log(doc.data());
+          setSelectedUser(doc.data())
+        }
+      })
+    }
+    if(selectedUser){
+    removeIdFromWroteUsers(selectedUser, [])
+
+    }
+    console.log(selectedUser)
+  }, [state])
+
+  // useEffect(() => {
+  //   console.log(selectedUser, getUid())
+  //   if (selectedUser && selectedUser.uid !== getUid()) {
+  //     setChatStarted(true)
+  //     setOpenDrawer(true)
+  //     removeIdFromWroteUsers(selectedUser, [])
+  //     history.push(`/map/chat/${selectedUser.uid}`)
+  //   }
+  // }, [selectedUser])
 
   useEffect(() => {
     const unsubscribe = getOnlineUsersChecked();
@@ -89,6 +137,8 @@ export const Map = () => {
 
   const onMapClick = useCallback((event) => {
     setSelectedUser(null)
+    console.log(123)
+    // setMapOnAll(null);
   }, [])
 
   const mapRef = useRef()
@@ -108,7 +158,7 @@ export const Map = () => {
   }
 
   const openDrawerHandler = () => {
-    removeIdFromWroteUsers(selectedUser ,wroteUsersIds)
+    removeIdFromWroteUsers(selectedUser, wroteUsersIds)
     makeReadMessages(selectedUser.uid)
     history.push(`/map/chat/${selectedUser.uid}`)
     setOpenDrawer(!openDrawer)
@@ -131,26 +181,26 @@ export const Map = () => {
           {/* это маркер Я*/}
           {/*<Marker position={{lat: location.lat, lng: location.lng}} icon={{url:  defUser, scaledSize: new window.google.maps.Size(30, 30),anchor: new window.google.maps.Point(15, 15), origin: new window.google.maps.Point(0, 0)}}/>*/}
 
-
-          {realUsers && realUsers.map(user => {
-
-            return <Marker
-                key={user.uid}
-                position={{lat: user.location.lat, lng: user.location.lng}}
-                icon={{
-                  url: user.avatar || defUser,
-                  scaledSize: new window.google.maps.Size(30, 30),
-                  anchor: new window.google.maps.Point(15, 15),
-                  origin: new window.google.maps.Point(0, 0)
-                }}
-                onClick={() => {
-                  setSelectedUser(user)
-                }}
-            >
-            </Marker>
-          })
-          }
-
+          {/*<MarkerClusterer>*/}
+          {/*  {(clusterer) =>*/}
+          {realUsers && realUsers.map(user => (
+              <Marker
+                  key={user.uid}
+                  position={{lat: user.location.lat, lng: user.location.lng}}
+                  icon={{
+                    url: user.avatar || defUser,
+                    scaledSize: new window.google.maps.Size(30, 30),
+                    anchor: new window.google.maps.Point(15, 15),
+                    origin: new window.google.maps.Point(0, 0)
+                  }}
+                  onClick={() => {
+                    setSelectedUser(user)
+                    console.log('selectedUser', selectedUser)
+                  }}
+                  // clusterer={clusterer}
+              >
+              </Marker>
+          ))}
 
           {selectedUser ? (
               <InfoWindow

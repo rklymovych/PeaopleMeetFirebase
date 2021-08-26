@@ -40,7 +40,7 @@ const Profile = ({ className, ...rest }) => {
       });
     return unsubscribe;
   }, []);
-  // getAvatar(getUid())
+
   const uploadPhotoHandler = async (e) => {
     const file = e.target.files[0]
     const storageRef = storage.ref(`users/${getUid()}/`)

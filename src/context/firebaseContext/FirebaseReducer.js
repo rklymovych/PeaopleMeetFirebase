@@ -2,7 +2,6 @@ import {
   GET_CONVERSATIONS,
   IS_LOADED,
   SET_REAL_USERS,
-  UPDATE_MESSAGES,
   GET_WROTE_USERS_IDS,
   SET_SELECTED_USER,
   SET_SELECTED_USER_NULL,
@@ -11,12 +10,6 @@ import {
 
 const handlers = {
   [GET_CONVERSATIONS]: (state, {payload}) => ({...state, myConversationWithCurrentUser: payload}),
-  [UPDATE_MESSAGES]: (state, {payload}) => ({
-    ...state,
-    myConversationWithCurrentUser: [...state.myConversationWithCurrentUser],
-    payload
-
-  }),
   [SET_REAL_USERS]: (state, {payload}) => ({...state, realUsers: payload}),
   [IS_LOADED]: (state, {payload}) => ({...state, isLoaded: payload}),
   [GET_WROTE_USERS_IDS]: (state, {payload}) => ({...state, wroteUsersIds: payload}),
