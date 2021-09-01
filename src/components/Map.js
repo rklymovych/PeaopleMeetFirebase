@@ -15,6 +15,7 @@ import {ChatPage} from "./chatroom/ChatPage";
 import {FirebaseContext} from "../context/firebaseContext/firebaseContext";
 import Loader from "./loader/Loader";
 import {useHistory} from "react-router-dom";
+import Divider from "@material-ui/core/Divider";
 
 const useStyles = makeStyles({
   root: {
@@ -38,6 +39,12 @@ const useStyles = makeStyles({
       backgroundRepeat: 'no-repeat',
     }
   },
+  padding: {
+    padding: '7px 0 3px'
+  },
+  paddingForDescription: {
+    padding: 0
+  }
 })
 
 
@@ -54,7 +61,17 @@ const options = {
 
 export const Map = () => {
   const history = useHistory()
-  const {makeReadMessages, wroteUsersIds, removeIdFromWroteUsers, realUsers, getOnlineUsersChecked, unreadMessages, myConversationWithCurrentUser, selectedUserState, makeSelectedUserNull} = useContext(FirebaseContext)
+  const {
+    distance,
+    getDistanceToTarget,
+    makeReadMessages,
+    wroteUsersIds,
+    removeIdFromWroteUsers,
+    realUsers,
+    getOnlineUsersChecked,
+    selectedUserState,
+    makeSelectedUserNull
+  } = useContext(FirebaseContext)
   const classes = useStyles();
   const {isLoaded, loadError} = useLoadScript({
     googleMapsApiKey: process.env.REACT_APP_GOOGLE_KEY,
@@ -66,6 +83,7 @@ export const Map = () => {
   const [openDrawer, setOpenDrawer] = useState(false)
 
   const authFromState = useSelector(state => state.auth)
+  const {isOnline} = JSON.parse(localStorage.getItem('user'))
 
   const getCurrentPosition = async () => {
     await navigator.geolocation.getCurrentPosition((position) => {
@@ -73,10 +91,10 @@ export const Map = () => {
     })
   }
   useEffect(() => {
-      if (Object.keys(selectedUserState).length !== 0) {
-        setSelectedUser(selectedUserState)
-        setOpenDrawer(true)
-        setChatStarted(true)
+    if (Object.keys(selectedUserState).length !== 0) {
+      setSelectedUser(selectedUserState)
+      setOpenDrawer(true)
+      setChatStarted(true)
     }
   }, [selectedUserState])
 
@@ -108,7 +126,7 @@ export const Map = () => {
   }
 
   const openDrawerHandler = () => {
-    removeIdFromWroteUsers(selectedUser ,wroteUsersIds)
+    removeIdFromWroteUsers(selectedUser, wroteUsersIds)
     makeReadMessages(selectedUser.uid)
     history.push(`/map/chat/${selectedUser.uid}`)
     setOpenDrawer(!openDrawer)
@@ -132,7 +150,7 @@ export const Map = () => {
           {/*<Marker position={{lat: location.lat, lng: location.lng}} icon={{url:  defUser, scaledSize: new window.google.maps.Size(30, 30),anchor: new window.google.maps.Point(15, 15), origin: new window.google.maps.Point(0, 0)}}/>*/}
 
 
-          {realUsers && realUsers.map(user => {
+          {isOnline && realUsers.map(user => {
 
             return <Marker
                 key={user.uid}
@@ -144,6 +162,10 @@ export const Map = () => {
                   origin: new window.google.maps.Point(0, 0)
                 }}
                 onClick={() => {
+                  getDistanceToTarget({lat: location.lat, lng: location.lng}, {
+                    lat: user.location.lat,
+                    lng: user.location.lng
+                  })
                   setSelectedUser(user)
                 }}
             >
@@ -178,19 +200,39 @@ export const Map = () => {
                       <Typography gutterBottom variant="h5" component="h2">
                         {selectedUser?.name}
                       </Typography>
-                      <Typography variant="body2" color="textSecondary" component="p">
-                        {selectedUser?.age}
+                      <Typography variant="body2" color="textSecondary" component="p" className={classes.padding}>
+                        Age - {selectedUser?.age}
                       </Typography>
-                      <Typography variant="body2" color="textSecondary" component="p">
-                        {selectedUser?.sex}
+                      <Divider/>
+                      <Typography variant="body2" color="textSecondary" component="p" className={classes.padding}>
+                        Sex - {selectedUser?.sex}
                       </Typography>
-                      <Typography variant="body2" color="textSecondary" component="p">
+                      <Divider/>
+                      {distance && authFromState.uid !== selectedUser.uid
+                          ?
+                          <>
+                            <Typography variant="body2" color="textSecondary" component="p" className={classes.padding}>
+                              Distance - {distance} m
+                            </Typography>
+                            <Divider/>
+                          </>
+                          : ''
+                      }
+
+
+                      <Typography variant="body2" color="textSecondary" component="p" className={classes.paddingForDescription}>
+                        Description
+                      </Typography>
+                      <Typography variant="body2" color="textSecondary" component="p" >
                         {selectedUser?.description}
                       </Typography>
+                      <Divider/>
 
                     </CardContent>
                   </CardActionArea>
-                  <CardActions style={{marginBottom: '10px'}}>
+                  <CardActions
+                      style={{justifyContent: 'flex-end'}}
+                  >
                     <Button
                         onClick={openDrawerHandler}
                         size="small"

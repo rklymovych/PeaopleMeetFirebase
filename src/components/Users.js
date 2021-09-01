@@ -32,11 +32,11 @@ export const Users = () => {
   const dispatch = useDispatch()
   const classes = useStyles()
   const auth = useSelector(state => state.auth)
-  const [selectedUser, setSelectedUser] = useState('')
+  const [selectedUser, setSelectedUser] = useState(null)
   const [openModal, setOpenModal] = useState(false)
 
   let unsubscribe;
-  const { wroteUsers, unreadMessages, wroteUsersIds, showWroteUsers} = useContext(FirebaseContext)
+  const { wroteUsers, wroteUsersIds, showWroteUsers} = useContext(FirebaseContext)
   // const getUsers = () => {
   //   return db.collection("users").get() // надо ли ретурн???
   //       .then((querySnapshot) => {
@@ -53,11 +53,7 @@ export const Users = () => {
   // useEffect(() => {
   //   getUsers()
   // }, [])
-  useEffect(() => {
-    if (auth.uid) {
-      // getWroteUsers()
-    }
-  }, [auth.uid, unreadMessages])
+
   useEffect(() => {
 
     unsubscribe = dispatch(getRealtimeUsers(auth.uid))
@@ -86,6 +82,11 @@ export const Users = () => {
     return unsubscribe;
   },[wroteUsersIds])
 
+useEffect(()=>{
+  if(!openModal) {
+    setSelectedUser(null)
+  }
+},[openModal])
   return (
       <>
         <List

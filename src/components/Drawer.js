@@ -66,7 +66,8 @@ const Drawer = () => {
                backgroundImage: `url(${avatar ? avatar : defaultAvatar})`,
                backgroundRepeat: 'no-repeat',
                backgroundPosition: 'center center',
-               backgroundSize: 'cover'
+               backgroundSize: 'cover',
+               minHeight: '220px'
              }}
 
         >
@@ -101,7 +102,7 @@ const Drawer = () => {
         </List>
         <ListItem button className={classes.feedback}>
           <ListItemIcon><FeedbackIcon/></ListItemIcon>
-          <ListItemText primary={'v: 1.202.8.21'}/>
+          <ListItemText primary={'v: 1.202.9.01'}/>
         </ListItem>
       </>
   )

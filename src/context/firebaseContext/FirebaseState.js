@@ -8,7 +8,8 @@ import {
   SET_REAL_USERS,
   GET_WROTE_USERS_IDS,
   SET_SELECTED_USER,
-  SET_SELECTED_USER_NULL, GET_WROTE_USERS
+  SET_SELECTED_USER_NULL, GET_WROTE_USERS,
+  SET_DISTANCE_TO_TARGET
 } from "../../actions/constants";
 
 export const FirebaseState = ({children}) => {
@@ -20,7 +21,8 @@ export const FirebaseState = ({children}) => {
     wroteUsersIds: [],
     wroteUsers: [],
     selectedUserState: {},
-    dialogWithUser: [{time: Date.now()}, {userId: ''}]
+    dialogWithUser: [{time: Date.now()}, {userId: ''}],
+    distance: null
   }
 
   const [state, dispatch] = useReducer(firebaseReducer, initialState)
@@ -60,7 +62,7 @@ export const FirebaseState = ({children}) => {
     const pathname = window.location.pathname;
     const messages = state.myConversationWithCurrentUser.filter(mes => mes.isRead === false)
     messages.map(message => {
-      if(pathname.includes(message.user_uid_1) && myId !== message.user_uid_1){
+      if (pathname.includes(message.user_uid_1) && myId !== message.user_uid_1) {
         makeReadMessages(message.user_uid_1)
       }
     })
@@ -199,6 +201,26 @@ export const FirebaseState = ({children}) => {
     }
     return unsubscribe;
   }
+
+  let rad = function (x) {
+    return x * Math.PI / 180;
+  };
+  const getDistanceToTarget = (p1, p2) => {
+    let R = 6378137; // Earth’s mean radius in meter
+    let dLat = rad(p2.lat - p1.lat);
+    let dLong = rad(p2.lng - p1.lng);
+    let a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+        Math.cos(rad(p1.lat)) * Math.cos(rad(p2.lat)) *
+        Math.sin(dLong / 2) * Math.sin(dLong / 2);
+    let c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    let d = R * c;
+
+    dispatch({
+      type: SET_DISTANCE_TO_TARGET,
+      payload: d.toFixed(0)
+    })
+  }
+
   return (
       <FirebaseContext.Provider value={{
         isLoaded: state.isLoaded,
@@ -208,6 +230,7 @@ export const FirebaseState = ({children}) => {
         wroteUsersIds: state.wroteUsersIds,
         selectedUserState: state.selectedUserState,
         wroteUsers: state.wroteUsers,
+        distance: state.distance,
         getOnlineUsersChecked,
         makeSelectedUserNull,
         showSelectedUser,
@@ -217,7 +240,8 @@ export const FirebaseState = ({children}) => {
         getWroteUsersIds,
         showWroteUsers,
         removeIdFromWroteUsers,
-        makeReadMessages
+        makeReadMessages,
+        getDistanceToTarget
       }}
       >
         {children}

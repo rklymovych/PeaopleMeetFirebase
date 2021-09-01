@@ -13,16 +13,21 @@ import {logout} from "../actions";
 import {Badge, MenuItem} from "@material-ui/core";
 import firebase from "firebase";
 import {FirebaseContext} from "../context/firebaseContext/firebaseContext";
+import {makeStyles} from "@material-ui/core/styles";
 
-// const drawerWidth = 230;
-
+const useStyles = makeStyles((theme) => {
+ return {
+   root: {
+     backgroundColor: theme.palette.main,
+     boxShadow: theme.shadows[4]
+   }
+ }
+})
 export const TopBar = ({setState}) => {
+  const classes = useStyles();
   const history = useHistory()
   const {
-    getMyUnreadMessages,
-    myConversationWithCurrentUser,
     getWroteUsersIds,
-    unreadMessages,
     wroteUsersIds
   } = useContext(FirebaseContext)
   const handleDrawerOpen = () => {
@@ -59,14 +64,14 @@ export const TopBar = ({setState}) => {
     history.push('/users')
   }
   useEffect(() => {
-    if(auth.uid){
+    if (auth.uid) {
       const unsubscribe = getWroteUsersIds(auth.uid)
       return unsubscribe
     }
   }, [auth.uid]);
 
   return (
-      <AppBar>
+      <AppBar className={classes.root}>
         <Toolbar>
           <IconButton
               color="inherit"

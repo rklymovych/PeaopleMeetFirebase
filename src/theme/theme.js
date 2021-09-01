@@ -14,6 +14,9 @@ export const theme = unstable_createMuiStrictModeTheme({
     },
     white: {
       main: '#fff',
+    },
+    paddingTopZero: {
+      paddingTop: '0!important'
     }
   },
 });

@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import clsx from 'clsx';
 import {useFormik} from 'formik';
 import PropTypes from 'prop-types';
@@ -127,7 +127,8 @@ const ProfileDetails = ({className, ...rest}) => {
           name: values.name,
           email: values.email,
           uid: getUid(),
-          isOnline: values.isOnline
+          isOnline: values.isOnline,
+          location: {lat: values.location.lat, lng: values.location.lng}
         }
         localStorage.setItem('user', JSON.stringify(loggedInUSer))
         history.push('/map')
@@ -175,6 +176,7 @@ const ProfileDetails = ({className, ...rest}) => {
                   {
                     email: doc.data().email,
                     isOnline: doc.data().isOnline,
+                    location: {lat: doc.data().location.lat, lng: doc.data().location.lng},
                     name: doc.data().name,
                     uid: doc.data().uid,
                   }
@@ -197,6 +199,7 @@ const ProfileDetails = ({className, ...rest}) => {
                 {
                   email: doc.data().email,
                   isOnline: doc.data().isOnline,
+                  location: {lat: null, lng: null},
                   name: doc.data().name,
                   uid: doc.data().uid,
                 }
