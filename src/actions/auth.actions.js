@@ -64,7 +64,7 @@ export const signup = (user) => {
                   email: data.user.email
                 }
                 localStorage.setItem('user', JSON.stringify(loggedInUser))
-                console.log('USer logged successfully')
+                console.log('User logged successfully')
                 dispatch({
                   type: `${authConstant.USER_LOGIN}_SUCCESS`,
                   payload: {user: loggedInUser}

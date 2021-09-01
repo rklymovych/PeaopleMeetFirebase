@@ -1,11 +1,10 @@
-import React, {useContext} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import {makeStyles} from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
 import clsx from 'clsx'
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
-import DialogTitle from '@material-ui/core/DialogTitle';
 import defaultAvatar from '../assets/avatars/avatar.jpg'
 import Typography from "@material-ui/core/Typography";
 import {Card, CardActionArea, Grid} from "@material-ui/core";
@@ -28,18 +27,10 @@ const useStyles = makeStyles((theme) => {
     formControlLabel: {
       marginTop: theme.spacing(1),
     },
-    root: {
-      // minWidth: 300
-    },
     media: {
       height: 'auto',
       width: '100%',
 
-    },
-    dialog: {},
-    dialogContent: {
-      display: 'flex',
-      paddingTop: 0,
     },
     dialogAction: {
       justifyContent: 'space-between',
@@ -47,7 +38,7 @@ const useStyles = makeStyles((theme) => {
     },
     padding: {
       padding: '10px 10px 10px 0',
-      fontSize: '1.5rem',
+      fontSize: theme.typography.pxToRem(16),
       color: theme.palette.text.primary,
       display: 'block'
     },
@@ -55,7 +46,26 @@ const useStyles = makeStyles((theme) => {
       color: theme.palette.error.main
     },
     colorSuccess: {
-      color: theme.palette.secondary.main
+      color: theme.palette.success.main
+    },
+    dialogTitle: {
+      paddingBottom: 0,
+    },
+    paddingTop: {
+      padding: '0!important',
+    },
+    overrides: {
+      'MuiDivider-root': {
+        root: {
+          paddingBottom: '10px!important',
+        },
+      },
+    },
+    MuiDividerRoot: {
+      paddingTop: '10px!important',
+    },
+    divider: {
+      marginBottom: '10px'
     }
   }
 });
@@ -63,33 +73,39 @@ const useStyles = makeStyles((theme) => {
 export const UserModal = ({selectedUser, openModal, setOpenModal}) => {
   const classes = useStyles();
   const history = useHistory()
-  const { showSelectedUser, wroteUsersIds, removeIdFromWroteUsers } = useContext(FirebaseContext)
-
+  const {distance, getDistanceToTarget, showSelectedUser, wroteUsersIds, removeIdFromWroteUsers} = useContext(FirebaseContext)
+  const {location} = JSON.parse(localStorage.getItem('user'))
   const handleClose = () => {
     setOpenModal(false);
   };
 
   const writeHandler = () => {
-    removeIdFromWroteUsers(selectedUser ,wroteUsersIds)
+    removeIdFromWroteUsers(selectedUser, wroteUsersIds)
     showSelectedUser(selectedUser)
     history.push(`map/chat/${selectedUser.uid}`)
     // history.push('/map')
   }
 
+  useEffect(() => {
+    if (selectedUser) {
+      getDistanceToTarget(location, selectedUser?.location)
+    }
+  }, [selectedUser])
+
   return (
       <React.Fragment>
         <Dialog
             fullWidth
-            maxWidth='lg'
+            maxWidth='md'
             open={openModal}
             onClose={handleClose}
         >
-          <DialogTitle id="max-width-dialog-title"><b>Information about user</b></DialogTitle>
+          {/*<DialogTitle className={classes.dialogTitle} id="max-width-dialog-title"><b>Information about user</b></DialogTitle>*/}
 
-          <Grid container className={classes.dialogContent}>
-            <Grid item md={5} sm={12} style={{margin: 'auto'}}>
-              <DialogContent>
-                <Card className={classes.root}>
+          <Grid container>
+            <Grid item sm={7}>
+              <DialogContent className='px-0 py-0 px-sm-2 py-sm-2'>
+                <Card>
                   <CardActionArea>
                     <img className={classes.media} src={selectedUser?.avatar ?? defaultAvatar}
                          alt={selectedUser?.avatar}/>
@@ -97,12 +113,12 @@ export const UserModal = ({selectedUser, openModal, setOpenModal}) => {
                 </Card>
               </DialogContent>
             </Grid>
-            <Grid item md={7} sm={12} style={{width: '100%'}}>
-              <DialogContent>
+            <Grid item sm={5} style={{width: '100%'}}>
+              <DialogContent className='px-2 py-0 px-sm-2 py-sm-2'>
                 <Typography component={'span'} variant={'body2'} className={classes.padding}>
                   <b>Name</b> - {selectedUser?.name}
                 </Typography>
-                <Divider/>
+                <Divider classes={{root: classes.divider}}/>
                 <Typography component={'span'} variant={'body2'} className={classes.padding}>
                   <b>Age</b> - {selectedUser?.age}
                 </Typography>
@@ -137,6 +153,10 @@ export const UserModal = ({selectedUser, openModal, setOpenModal}) => {
                 )
                 }
                 <Typography component={'span'} variant={'body2'} className={classes.padding}>
+                  <b>Distance</b> - {distance ? distance : ''} m
+                </Typography>
+                <Divider/>
+                <Typography component={'span'} variant={'body2'} className={classes.padding}>
                   <b>About</b> - {selectedUser?.description}
                 </Typography>
                 <Divider/>
@@ -144,14 +164,19 @@ export const UserModal = ({selectedUser, openModal, setOpenModal}) => {
             </Grid>
           </Grid>
           <DialogActions className={classes.dialogAction}>
-            <Button onClick={writeHandler} color="secondary">
-              <b>Write to {selectedUser?.name}</b>
-            </Button>
-            <Button onClick={handleClose} color="primary">
+            <Button onClick={handleClose} className={classes.colorError}>
               <b>Close</b>
             </Button>
+            <Button onClick={writeHandler} color='primary'>
+              <b>Write</b>
+            </Button>
+
           </DialogActions>
         </Dialog>
+        <hr/>
+        <Typography component={'span'} variant={'body2'} className={classes.padding}>
+          <b>Distance</b> - 20m
+        </Typography>
       </React.Fragment>
   );
 }
