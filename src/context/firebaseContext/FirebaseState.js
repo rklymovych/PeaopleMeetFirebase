@@ -2,6 +2,7 @@ import React, {useReducer} from 'react'
 import {FirebaseContext} from "./firebaseContext";
 import {firebaseReducer} from "./FirebaseReducer";
 import {database, db} from "../../firebase";
+import useMediaQuery from "@material-ui/core/useMediaQuery";
 import {
   GET_CONVERSATIONS,
   IS_LOADED,
@@ -9,8 +10,10 @@ import {
   GET_WROTE_USERS_IDS,
   SET_SELECTED_USER,
   SET_SELECTED_USER_NULL, GET_WROTE_USERS,
+  GET_WROTE_USERS_AND_READ,
   SET_DISTANCE_TO_TARGET
 } from "../../actions/constants";
+import {useTheme} from "@material-ui/core/styles";
 
 export const FirebaseState = ({children}) => {
   const initialState = {
@@ -19,6 +22,7 @@ export const FirebaseState = ({children}) => {
     isLoaded: false,
     unreadMessages: [],
     wroteUsersIds: [],
+    wroteUsersAndRead: [],
     wroteUsers: [],
     selectedUserState: {},
     dialogWithUser: [{time: Date.now()}, {userId: ''}],
@@ -26,6 +30,18 @@ export const FirebaseState = ({children}) => {
   }
 
   const [state, dispatch] = useReducer(firebaseReducer, initialState)
+
+  const useScreenSize = () => {
+    const theme = useTheme();
+    const keys = [...theme.breakpoints.keys].reverse();
+    return (
+        keys.reduce((output, key) => {
+          // eslint-disable-next-line react-hooks/rules-of-hooks
+          const matches = useMediaQuery(theme.breakpoints.up(key));
+          return !output && matches ? key : output;
+        }, null) || 'xs'
+    );
+  }
 
   const getConversations = (uid_1, uid_2) => {
     let unsubscribe;
@@ -120,7 +136,7 @@ export const FirebaseState = ({children}) => {
     let unsubscribe;
     try {
       unsubscribe = db.collection("conversations")
-          .where('user_uid_2', '==', uid_1)
+          .where('user_uid_2', '==', uid_1) // wrote to me
           .onSnapshot((doc) => {
             const wroteUsersIds = [];
             doc.forEach((userId) => {
@@ -133,6 +149,50 @@ export const FirebaseState = ({children}) => {
               type: GET_WROTE_USERS_IDS,
               payload: wroteUsersIds
             })
+          })
+    } catch (e) {
+      console.log(e)
+    }
+    return unsubscribe;
+  }
+
+  const getActiveConversations = (uid_1) => {
+    let unsubscribe;
+    try {
+      unsubscribe = db.collection("conversations")
+          .where('user_uid_2', '==', uid_1) // wrote to me
+          .onSnapshot((doc) => {
+            const wroteUsers = [];
+            doc.forEach((user) => {
+              if (!wroteUsers.includes(user.data().user_uid_1) && user.data().isRead) {
+                wroteUsers.push(user.data().user_uid_1);
+
+              }
+              console.log('wroteUsers', wroteUsers)
+              checkMessages(uid_1, 'WSFiQhkB09UJNihItiFtC7eLBm43')
+            })
+// todo: фильтровать юзеров которые написали и все прочитанные!! и выводить вниз юзер пайдж
+          })
+    } catch (e) {
+      console.log(e)
+    }
+    return unsubscribe;
+  }
+  // todo закончить эту функцию. Идея такая что показывать в поле существующих юзеров всех юзерв вс кем ведется переписка
+  const checkMessages = (uid_1, uid_2) => {
+    let unsubscribe;
+    try {
+      unsubscribe = db.collection("conversations")
+          .where('user_uid_1', '==', uid_2)
+          .onSnapshot((querySnapshot) => {
+            const conversations = []
+            querySnapshot.forEach(doc => {
+
+                conversations.push(doc.data())
+
+
+            })
+            console.log('conversations', conversations)
           })
     } catch (e) {
       console.log(e)
@@ -231,6 +291,7 @@ export const FirebaseState = ({children}) => {
         selectedUserState: state.selectedUserState,
         wroteUsers: state.wroteUsers,
         distance: state.distance,
+        wroteUsersAndRead: state.wroteUsersAndRead,
         getOnlineUsersChecked,
         makeSelectedUserNull,
         showSelectedUser,
@@ -241,7 +302,9 @@ export const FirebaseState = ({children}) => {
         showWroteUsers,
         removeIdFromWroteUsers,
         makeReadMessages,
-        getDistanceToTarget
+        getDistanceToTarget,
+        useScreenSize,
+        getActiveConversations
       }}
       >
         {children}

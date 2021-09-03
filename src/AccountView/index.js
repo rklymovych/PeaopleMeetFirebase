@@ -6,6 +6,7 @@ import {
 } from '@material-ui/core';
 import Profile from './Profile';
 import ProfileDetails from './ProfileDetails';
+import {useAuth} from "../context/AuthContext";
 
 
 const useStyles = makeStyles((theme) => ({

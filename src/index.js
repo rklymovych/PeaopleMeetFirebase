@@ -22,13 +22,13 @@ ReactDOM.render(
     <FirebaseState>
       <Provider store={store}>
         <React.StrictMode>
-          <UserContextProvider>
+          {/*<UserContextProvider>*/}
             <ThemeProvider theme={theme}>
               <AuthProvider>
                 <App/>
               </AuthProvider>
             </ThemeProvider>
-          </UserContextProvider>
+          {/*</UserContextProvider>*/}
         </React.StrictMode>
       </Provider>
     </FirebaseState>

@@ -99,7 +99,9 @@ export const signin = (user) => {
           const loggedInUser = {
             name,
             uid: data.user.uid,
-            email: data.user.email
+            email: data.user.email,
+            isOnline: false,
+            location: {lat: null, lng: null}
           }
           localStorage.setItem('user', JSON.stringify(loggedInUser))
           dispatch({
