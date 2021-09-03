@@ -25,6 +25,36 @@ const useStyles = makeStyles((theme) => ({
     '&:hover': {
       backgroundColor: '#e6dff0'
     }
+  },
+  srtike: {
+    display: 'block',
+    textAlign: 'center',
+    overflow: 'hidden',
+    whiteSpace: 'nowrap',
+    '& > span': {
+      position: 'relative',
+      display: 'inline-block',
+    },
+    '& > span:before': {
+      content: "''",
+      position: 'absolute',
+      top: '50%',
+      width: '9999px',
+      height: '1px',
+      background: theme.palette.grey[300],
+      right: '100%',
+      marginRight: '15px',
+    },
+    '& > span:after': {
+      content: "''",
+      position: 'absolute',
+      top: '50%',
+      width: '9999px',
+      height: '1px',
+      background: theme.palette.grey[300],
+      left: '100%',
+      marginLeft: '15px',
+    }
   }
 }));
 
@@ -36,7 +66,7 @@ export const Users = () => {
   const [openModal, setOpenModal] = useState(false)
 
   let unsubscribe;
-  const { wroteUsers, wroteUsersIds, showWroteUsers} = useContext(FirebaseContext)
+  const {wroteUsers, wroteUsersIds, getActiveConversations, showWroteUsers} = useContext(FirebaseContext)
   // const getUsers = () => {
   //   return db.collection("users").get() // надо ли ретурн???
   //       .then((querySnapshot) => {
@@ -53,7 +83,13 @@ export const Users = () => {
   // useEffect(() => {
   //   getUsers()
   // }, [])
+  useEffect(() => {
+    if(auth.uid){
+      const unsubscribe = getActiveConversations(auth.uid)
+      return unsubscribe
+    }
 
+  }, [wroteUsersIds, ])
   useEffect(() => {
 
     unsubscribe = dispatch(getRealtimeUsers(auth.uid))
@@ -77,21 +113,25 @@ export const Users = () => {
     setSelectedUser(user)
     setOpenModal(!openModal)
   }
-  useEffect(()=>{
+  useEffect(() => {
     const unsubscribe = showWroteUsers(wroteUsersIds);
     return unsubscribe;
-  },[wroteUsersIds])
+  }, [wroteUsersIds])
 
-useEffect(()=>{
-  if(!openModal) {
-    setSelectedUser(null)
-  }
-},[openModal])
+  useEffect(() => {
+    if (!openModal) {
+      setSelectedUser(null)
+    }
+  }, [openModal])
   return (
       <>
         <List
             className={classes.root}
         >
+          <div className={classes.srtike}>
+            <span>New people</span>
+          </div>
+          {wroteUsers.length === 0 ? <div>No new people</div> : ''}
           {wroteUsers && wroteUsers.map(user => {
             if (user.isOnline) {    // flag isOnline
               return (
@@ -127,6 +167,10 @@ useEffect(()=>{
               )
             }
           })}
+          <div className={classes.srtike}>
+            <span>Existed users</span>
+          </div>
+          {wroteUsers.length !== 0 ? <div>No existed people</div> : ''}
         </List>
         <UserModal
             openModal={openModal}

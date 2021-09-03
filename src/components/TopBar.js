@@ -28,7 +28,8 @@ export const TopBar = ({setState}) => {
   const history = useHistory()
   const {
     getWroteUsersIds,
-    wroteUsersIds
+    wroteUsersIds,
+    wroteUsersAndRead
   } = useContext(FirebaseContext)
   const handleDrawerOpen = () => {
     setState({'left': true});
@@ -60,7 +61,7 @@ export const TopBar = ({setState}) => {
 //  make offline Users END****/
 
 
-  const showWroteUsers = () => {
+  const showUsers = () => {
     history.push('/users')
   }
   useEffect(() => {
@@ -83,7 +84,7 @@ export const TopBar = ({setState}) => {
           </IconButton>
 
           <div style={{display: 'flex', justifyContent: 'space-between', width: '100%', alignItems: 'center'}}>
-            <MenuItem onClick={showWroteUsers}>
+            <MenuItem onClick={showUsers}>
               <IconButton aria-label="show 4 new mails" color="inherit">
                 <Badge badgeContent={wroteUsersIds.length} color="error">
                   <MailIcon/>

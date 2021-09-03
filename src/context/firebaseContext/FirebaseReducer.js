@@ -7,7 +7,8 @@ import {
   SET_SELECTED_USER,
   SET_SELECTED_USER_NULL,
   GET_WROTE_USERS,
-  SET_DISTANCE_TO_TARGET
+  SET_DISTANCE_TO_TARGET,
+  GET_WROTE_USERS_AND_READ
 } from "../../actions/constants";
 
 const handlers = {
@@ -25,6 +26,7 @@ const handlers = {
   [SET_SELECTED_USER_NULL]: (state, {payload}) => ({...state, selectedUserState: payload}),
   [GET_WROTE_USERS]: (state, {payload}) => ({...state, wroteUsers: payload}),
   [SET_DISTANCE_TO_TARGET]: (state, {payload}) => ({...state, distance: payload}),
+  [GET_WROTE_USERS_AND_READ]: (state, {payload})=>({state, wroteUsersAndRead: payload}),
   DEFAULT: state => state
 }
 

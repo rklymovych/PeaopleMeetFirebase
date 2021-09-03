@@ -10,7 +10,7 @@ import '@reach/combobox/styles.css'
 import {Card, CardActionArea, CardActions, CardContent, CardMedia, Drawer, Grid} from "@material-ui/core";
 import Typography from "@material-ui/core/Typography";
 import Button from "@material-ui/core/Button";
-import {makeStyles} from "@material-ui/core/styles";
+import {makeStyles, useTheme} from "@material-ui/core/styles";
 import {ChatPage} from "./chatroom/ChatPage";
 import {FirebaseContext} from "../context/firebaseContext/firebaseContext";
 import Loader from "./loader/Loader";
@@ -62,6 +62,7 @@ const options = {
 export const Map = () => {
   const history = useHistory()
   const {
+    // useWidth,
     distance,
     getDistanceToTarget,
     makeReadMessages,
@@ -77,13 +78,15 @@ export const Map = () => {
     googleMapsApiKey: process.env.REACT_APP_GOOGLE_KEY,
     libraries
   })
+  // const screenSize = useWidth()
   const [chatStarted, setChatStarted] = useState(false)
   const [selectedUser, setSelectedUser] = useState(null)
   const [location, setLocation] = useState()
   const [openDrawer, setOpenDrawer] = useState(false)
 
   const authFromState = useSelector(state => state.auth)
-  const {isOnline} = JSON.parse(localStorage.getItem('user'))
+  const storageUser = JSON.parse(localStorage.getItem('user'))
+  const isOnline = storageUser?.isOnline
 
   const getCurrentPosition = async () => {
     await navigator.geolocation.getCurrentPosition((position) => {
@@ -133,6 +136,11 @@ export const Map = () => {
     setChatStarted(!chatStarted)
   }
 
+  const justifyCenter = (truly) => {
+    if (truly) return {justifyContent: 'center'}
+    return {justifyContent: 'flex-end'}
+  }
+
   return (
       <>
         <h1 className="headerMap"><span
@@ -147,12 +155,15 @@ export const Map = () => {
             onLoad={onMapLoad}
         >
           {/* это маркер Я*/}
-          {/*<Marker position={{lat: location.lat, lng: location.lng}} icon={{url:  defUser, scaledSize: new window.google.maps.Size(30, 30),anchor: new window.google.maps.Point(15, 15), origin: new window.google.maps.Point(0, 0)}}/>*/}
+          {/*<Marker position={{lat: location.lat, lng: location.lng}}
+          icon={{url:  defUser, scaledSize: new window.google.maps.Size(30, 30),anchor: new window.google.maps.Point(15, 15),
+           origin: new window.google.maps.Point(0, 0)}}/>*/}
 
 
           {isOnline && realUsers.map(user => {
 
             return <Marker
+                // className={classes.markerClass}
                 key={user.uid}
                 position={{lat: user.location.lat, lng: user.location.lng}}
                 icon={{
@@ -188,13 +199,14 @@ export const Map = () => {
                 <Card>
                   <CardActionArea>
                     <CardMedia
+                        // className={classes.cardMedia}
                         style={{
-                          height: '190px',
+                          height: '200px',
                           backgroundSize: 'contain',
                         }}
                         // className={classes.media}
                         image={selectedUser.avatar || defUser}
-                        title="Contemplative Reptile"
+                        // title="Contemplative Reptile"
                     />
                     <CardContent className={classes.root}>
                       <Typography gutterBottom variant="h5" component="h2">
@@ -219,19 +231,21 @@ export const Map = () => {
                           : ''
                       }
 
-
-                      <Typography variant="body2" color="textSecondary" component="p" className={classes.paddingForDescription}>
-                        Description
-                      </Typography>
-                      <Typography variant="body2" color="textSecondary" component="p" >
-                        {selectedUser?.description}
-                      </Typography>
+                      <div className={classes.padding}>
+                        <Typography variant="body2" color="textSecondary" component="p"
+                                    className={classes.paddingForDescription}>
+                          Description
+                        </Typography>
+                        <Typography variant="body2" color="textSecondary" component="p">
+                          {selectedUser?.description}
+                        </Typography>
+                      </div>
                       <Divider/>
 
                     </CardContent>
                   </CardActionArea>
                   <CardActions
-                      style={{justifyContent: 'flex-end'}}
+                      style={justifyCenter(selectedUser.uid === authFromState.uid)}
                   >
                     <Button
                         onClick={openDrawerHandler}

@@ -1,18 +1,23 @@
-import React, {useRef, useState} from 'react'
+import React, {useRef, useState, useEffect} from 'react'
 import {Card, Button, Form, Alert, Container} from "react-bootstrap";
-import {useAuth} from "../context/AuthContext";
+
 import {Link, useHistory} from "react-router-dom";
 import {useDispatch} from "react-redux";
 import {signin} from "../actions";
+import {useSelector} from 'react-redux'
+import {db} from "../firebase";
+import {useAuth} from "../context/AuthContext";
 
 export function Login() {
+  const {getUid} = useAuth()
   const emailRef = useRef()
   const passwordRef = useRef()
-  // const {login} = useAuth()
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
   const history = useHistory()
   const dispatch = useDispatch()
+
+  const {auth} = useSelector(state => state)
 
   function handleSubmit(e) {
     e.preventDefault()
@@ -29,9 +34,17 @@ export function Login() {
       setError('Failed to log in')
     }
     setLoading(false)
-
   }
 
+  useEffect(() => {
+    if (getUid()) {
+      db.collection('users').doc(getUid())
+          .update({
+            location: {lat: null, lng: null},
+            isOnline: false
+          })
+    }
+  }, [getUid()])
   return (
       <Container
           className='d-flex align-items-center justify-content-center'
@@ -41,6 +54,7 @@ export function Login() {
           <Card>
             <Card.Body>
               <h2 className="text-center mb-4">Log In</h2>
+              {auth?.error && <Alert variant="danger">{auth.error}</Alert>}
               {error && <Alert variant="danger">{error}</Alert>}
               <Form onSubmit={handleSubmit}>
                 <Form.Group id="email">

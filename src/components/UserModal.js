@@ -73,7 +73,13 @@ const useStyles = makeStyles((theme) => {
 export const UserModal = ({selectedUser, openModal, setOpenModal}) => {
   const classes = useStyles();
   const history = useHistory()
-  const {distance, getDistanceToTarget, showSelectedUser, wroteUsersIds, removeIdFromWroteUsers} = useContext(FirebaseContext)
+  const {
+    distance,
+    getDistanceToTarget,
+    showSelectedUser,
+    wroteUsersIds,
+    removeIdFromWroteUsers
+  } = useContext(FirebaseContext)
   const {location} = JSON.parse(localStorage.getItem('user'))
   const handleClose = () => {
     setOpenModal(false);
@@ -103,7 +109,7 @@ export const UserModal = ({selectedUser, openModal, setOpenModal}) => {
           {/*<DialogTitle className={classes.dialogTitle} id="max-width-dialog-title"><b>Information about user</b></DialogTitle>*/}
 
           <Grid container>
-            <Grid item sm={7}>
+            <Grid item sm={6} style={{height: '100%'}}>
               <DialogContent className='px-0 py-0 px-sm-2 py-sm-2'>
                 <Card>
                   <CardActionArea>
@@ -113,7 +119,7 @@ export const UserModal = ({selectedUser, openModal, setOpenModal}) => {
                 </Card>
               </DialogContent>
             </Grid>
-            <Grid item sm={5} style={{width: '100%'}}>
+            <Grid item sm={6} style={{width: '100%'}}>
               <DialogContent className='px-2 py-0 px-sm-2 py-sm-2'>
                 <Typography component={'span'} variant={'body2'} className={classes.padding}>
                   <b>Name</b> - {selectedUser?.name}
@@ -173,10 +179,6 @@ export const UserModal = ({selectedUser, openModal, setOpenModal}) => {
 
           </DialogActions>
         </Dialog>
-        <hr/>
-        <Typography component={'span'} variant={'body2'} className={classes.padding}>
-          <b>Distance</b> - 20m
-        </Typography>
       </React.Fragment>
   );
 }
