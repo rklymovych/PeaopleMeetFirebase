@@ -11,6 +11,7 @@ import {
   SET_SELECTED_USER,
   SET_SELECTED_USER_NULL, GET_WROTE_USERS,
   GET_WROTE_USERS_AND_READ,
+  GET_ACTIVE_CHAT_WITH_USERS,
   SET_DISTANCE_TO_TARGET
 } from "../../actions/constants";
 import {useTheme} from "@material-ui/core/styles";
@@ -25,6 +26,7 @@ export const FirebaseState = ({children}) => {
     wroteUsersAndRead: [],
     wroteUsers: [],
     selectedUserState: {},
+    getActiveChatWithUsers: [],
     dialogWithUser: [{time: Date.now()}, {userId: ''}],
     distance: null
   }
@@ -162,37 +164,43 @@ export const FirebaseState = ({children}) => {
       unsubscribe = db.collection("conversations")
           .where('user_uid_2', '==', uid_1) // wrote to me
           .onSnapshot((doc) => {
-            const wroteUsers = [];
-            doc.forEach((user) => {
-              if (!wroteUsers.includes(user.data().user_uid_1) && user.data().isRead) {
-                wroteUsers.push(user.data().user_uid_1);
-
+            const numberWroteUsersIds = [];
+            const wroteUsersIds = state.wroteUsersIds;
+            doc.forEach((messages) => {
+              if (!numberWroteUsersIds.includes(messages.data().user_uid_1)) {
+                numberWroteUsersIds.push(messages.data().user_uid_1);
               }
-              console.log('wroteUsers', wroteUsers)
-              checkMessages(uid_1, 'WSFiQhkB09UJNihItiFtC7eLBm43')
             })
-// todo: фильтровать юзеров которые написали и все прочитанные!! и выводить вниз юзер пайдж
+            let activeChatWithUsersIds = numberWroteUsersIds.filter(id => {
+              return !wroteUsersIds.includes(id)
+            })
+            showActiveChatWithUsers(activeChatWithUsersIds)
+
           })
     } catch (e) {
       console.log(e)
     }
     return unsubscribe;
   }
-  // todo закончить эту функцию. Идея такая что показывать в поле существующих юзеров всех юзерв вс кем ведется переписка
-  const checkMessages = (uid_1, uid_2) => {
+  // todo: сделать функционал чт окогда ты написал, то сообщение с юзером висит в активном чате
+
+
+  const showActiveChatWithUsers = (activeChatWithUsersIds) => {
     let unsubscribe;
     try {
-      unsubscribe = db.collection("conversations")
-          .where('user_uid_1', '==', uid_2)
+      unsubscribe = db.collection('users')
           .onSnapshot((querySnapshot) => {
-            const conversations = []
-            querySnapshot.forEach(doc => {
-
-                conversations.push(doc.data())
-
-
+            const wroteUsers = [];
+            querySnapshot.forEach((user) => {
+              if (activeChatWithUsersIds.includes(user.data().uid)) {
+                wroteUsers.push(user.data())
+              }
             })
-            console.log('conversations', conversations)
+
+            dispatch({
+              type: GET_ACTIVE_CHAT_WITH_USERS,
+              payload: wroteUsers
+            })
           })
     } catch (e) {
       console.log(e)
@@ -239,7 +247,11 @@ export const FirebaseState = ({children}) => {
   const removeIdFromWroteUsers = (user, userIds) => {
     if (userIds.includes(user.uid)) {
       makeReadMessages(user.uid)
-      userIds.splice(user.uid, 1)
+      let index = userIds.indexOf(user.uid)
+      if (index > -1) {
+        userIds.splice(index, 1)
+
+      }
     }
   }
 
@@ -292,6 +304,7 @@ export const FirebaseState = ({children}) => {
         wroteUsers: state.wroteUsers,
         distance: state.distance,
         wroteUsersAndRead: state.wroteUsersAndRead,
+        getActiveChatWithUsers: state.getActiveChatWithUsers,
         getOnlineUsersChecked,
         makeSelectedUserNull,
         showSelectedUser,

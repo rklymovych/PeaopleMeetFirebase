@@ -66,30 +66,15 @@ export const Users = () => {
   const [openModal, setOpenModal] = useState(false)
 
   let unsubscribe;
-  const {wroteUsers, wroteUsersIds, getActiveConversations, showWroteUsers} = useContext(FirebaseContext)
-  // const getUsers = () => {
-  //   return db.collection("users").get() // надо ли ретурн???
-  //       .then((querySnapshot) => {
-  //         const users = querySnapshot.docs.filter((user => getUid() !== user.id)).map((doc) => {
-  //           return {id: doc.id, ...doc.data()};
-  //         })
-  //         console.log(users)
-  //         setUsers(users);
-  //         setUsers1(users);
-  //       });
-  // };
-  //
-  //
-  // useEffect(() => {
-  //   getUsers()
-  // }, [])
+  const {wroteUsers, wroteUsersIds, getActiveConversations, showWroteUsers, getActiveChatWithUsers} = useContext(FirebaseContext)
+
   useEffect(() => {
-    if(auth.uid){
+    if (auth.uid) {
       const unsubscribe = getActiveConversations(auth.uid)
       return unsubscribe
     }
 
-  }, [wroteUsersIds, ])
+  }, [wroteUsersIds])
   useEffect(() => {
 
     unsubscribe = dispatch(getRealtimeUsers(auth.uid))
@@ -132,6 +117,7 @@ export const Users = () => {
             <span>New people</span>
           </div>
           {wroteUsers.length === 0 ? <div>No new people</div> : ''}
+          {/* eslint-disable-next-line array-callback-return */}
           {wroteUsers && wroteUsers.map(user => {
             if (user.isOnline) {    // flag isOnline
               return (
@@ -170,7 +156,43 @@ export const Users = () => {
           <div className={classes.srtike}>
             <span>Existed users</span>
           </div>
-          {wroteUsers.length !== 0 ? <div>No existed people</div> : ''}
+          {getActiveChatWithUsers.length === 0 ? <div>No existed people</div> : ''}
+          {/* eslint-disable-next-line array-callback-return */}
+          {getActiveChatWithUsers && getActiveChatWithUsers.map(user => {
+            if (user.isOnline) {    // flag isOnline
+              return (
+                  <ListItem
+                      key={user.uid}
+                      alignItems="flex-start"
+                      className={classes.listItem}
+                      onClick={() => handleOpenUserModal(user)}
+                  >
+                    <ListItemAvatar>
+                      <Avatar
+                          alt={user.avatar}
+                          src={user.avatar}
+                      />
+                    </ListItemAvatar>
+                    <ListItemText
+                        primary={user.name}
+                        secondary={
+                          <React.Fragment>
+                            <Typography
+                                component="span"
+                                variant="body2"
+                                className={classes.inline}
+                                color="textPrimary"
+                            >
+                            </Typography>
+                            {user.description}
+                            {user.id}
+                          </React.Fragment>
+                        }
+                    />
+                  </ListItem>
+              )
+            }
+          })}
         </List>
         <UserModal
             openModal={openModal}
