@@ -10,7 +10,7 @@ import '@reach/combobox/styles.css'
 import {Card, CardActionArea, CardActions, CardContent, CardMedia, Drawer, Grid} from "@material-ui/core";
 import Typography from "@material-ui/core/Typography";
 import Button from "@material-ui/core/Button";
-import {makeStyles, useTheme} from "@material-ui/core/styles";
+import {makeStyles} from "@material-ui/core/styles";
 import {ChatPage} from "./chatroom/ChatPage";
 import {FirebaseContext} from "../context/firebaseContext/firebaseContext";
 import Loader from "./loader/Loader";
@@ -62,7 +62,6 @@ const options = {
 export const Map = () => {
   const history = useHistory()
   const {
-    // useWidth,
     distance,
     getDistanceToTarget,
     makeReadMessages,
