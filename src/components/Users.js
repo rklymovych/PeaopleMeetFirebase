@@ -66,8 +66,17 @@ export const Users = () => {
   const [openModal, setOpenModal] = useState(false)
 
   let unsubscribe;
-  const {wroteUsers, wroteUsersIds, getActiveConversations, showWroteUsers, getActiveChatWithUsers} = useContext(FirebaseContext)
-
+  const {
+    wroteUsers,
+    wroteUsersIds,
+    getActiveConversations,
+    showWroteUsers,
+    getActiveChatWithUsers,
+    getActiveConversationWithoutAnswer,
+    activeUsersArr // users
+  } = useContext(FirebaseContext)
+  // const [activeConversation, setActiveConversation] = useState([])
+  console.log(activeUsersArr, getActiveChatWithUsers)
   useEffect(() => {
     if (auth.uid) {
       const unsubscribe = getActiveConversations(auth.uid)
@@ -75,6 +84,13 @@ export const Users = () => {
     }
 
   }, [wroteUsersIds])
+// todo: адо поработать с двумя массивами которые с бека приходит activeConversation   и getActiveChatWithUsers
+  console.log('getActiveChatWithUsers', getActiveChatWithUsers)
+  useEffect(() => {
+    let unsubscribe = getActiveConversationWithoutAnswer(auth.uid);
+    return unsubscribe
+  }, [wroteUsersIds])
+
   useEffect(() => {
 
     unsubscribe = dispatch(getRealtimeUsers(auth.uid))
@@ -108,6 +124,7 @@ export const Users = () => {
       setSelectedUser(null)
     }
   }, [openModal])
+  console.log([...new Set([...activeUsersArr, ...getActiveChatWithUsers])])
   return (
       <>
         <List
@@ -158,6 +175,7 @@ export const Users = () => {
           </div>
           {getActiveChatWithUsers.length === 0 ? <div>No existed people</div> : ''}
           {/* eslint-disable-next-line array-callback-return */}
+          {/*{ getActiveChatWithUsers && [...new Set([...activeUsersArr, ...getActiveChatWithUsers])].map(user => {*/}
           {getActiveChatWithUsers && getActiveChatWithUsers.map(user => {
             if (user.isOnline) {    // flag isOnline
               return (
