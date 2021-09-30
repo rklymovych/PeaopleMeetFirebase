@@ -30,7 +30,7 @@ const handlers = {
   [SET_DISTANCE_TO_TARGET]: (state, {payload}) => ({...state, distance: payload}),
   [GET_WROTE_USERS_AND_READ]: (state, {payload})=>({state, wroteUsersAndRead: payload}),
   [GET_ACTIVE_CHAT_WITH_USERS]: (state, {payload}) => ({...state, getActiveChatWithUsers:payload}),
-  [GET_ACTIVE_CONVERSATION]: (state, {payload}) => ({...state, activeUsersArr:payload}),
+  [GET_ACTIVE_CONVERSATION]: (state, {payload}) => ({...state, firstMessageToUserFromServer:payload}),
   DEFAULT: state => state
 }
 

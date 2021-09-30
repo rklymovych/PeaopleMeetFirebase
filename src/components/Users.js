@@ -69,27 +69,28 @@ export const Users = () => {
   const {
     wroteUsers,
     wroteUsersIds,
-    getActiveConversations,
+    getIdsActiveChat,
     showWroteUsers,
     getActiveChatWithUsers,
     getActiveConversationWithoutAnswer,
-    activeUsersArr // users
+    firstMessageToUserFromServer // users
   } = useContext(FirebaseContext)
-  // const [activeConversation, setActiveConversation] = useState([])
-  console.log(activeUsersArr, getActiveChatWithUsers)
+
   useEffect(() => {
     if (auth.uid) {
-      const unsubscribe = getActiveConversations(auth.uid)
+      const unsubscribe = getIdsActiveChat(auth.uid)
       return unsubscribe
     }
 
   }, [wroteUsersIds])
-// todo: адо поработать с двумя массивами которые с бека приходит activeConversation   и getActiveChatWithUsers
-  console.log('getActiveChatWithUsers', getActiveChatWithUsers)
+
   useEffect(() => {
-    let unsubscribe = getActiveConversationWithoutAnswer(auth.uid);
-    return unsubscribe
-  }, [wroteUsersIds])
+    if (auth.uid) {
+      let unsubscribe = getActiveConversationWithoutAnswer(auth.uid);
+      return unsubscribe
+    }
+
+  }, [wroteUsersIds, getActiveChatWithUsers])
 
   useEffect(() => {
 
@@ -124,16 +125,16 @@ export const Users = () => {
       setSelectedUser(null)
     }
   }, [openModal])
-  console.log([...new Set([...activeUsersArr, ...getActiveChatWithUsers])])
+
   return (
       <>
         <List
             className={classes.root}
         >
           <div className={classes.srtike}>
-            <span>New people</span>
+            <span>Unread Chat</span>
           </div>
-          {wroteUsers.length === 0 ? <div>No new people</div> : ''}
+          {wroteUsers.length === 0 ? <div>No unread messages</div> : ''}
           {/* eslint-disable-next-line array-callback-return */}
           {wroteUsers && wroteUsers.map(user => {
             if (user.isOnline) {    // flag isOnline
@@ -171,12 +172,53 @@ export const Users = () => {
             }
           })}
           <div className={classes.srtike}>
-            <span>Existed users</span>
+            <span>Existed Chat</span>
           </div>
-          {getActiveChatWithUsers.length === 0 ? <div>No existed people</div> : ''}
+          {getActiveChatWithUsers.length === 0 && firstMessageToUserFromServer.length === 0
+              ?
+              <div>No existed Chat</div>
+              :
+              ''
+          }
           {/* eslint-disable-next-line array-callback-return */}
-          {/*{ getActiveChatWithUsers && [...new Set([...activeUsersArr, ...getActiveChatWithUsers])].map(user => {*/}
+          {/*{ getActiveChatWithUsers && [...new Set([...firstMessageToUserFromServer, ...getActiveChatWithUsers])].map(user => {*/}
           {getActiveChatWithUsers && getActiveChatWithUsers.map(user => {
+            if (user.isOnline) {    // flag isOnline
+              return (
+                  <ListItem
+                      key={user.uid}
+                      alignItems="flex-start"
+                      className={classes.listItem}
+                      onClick={() => handleOpenUserModal(user)}
+                  >
+                    <ListItemAvatar>
+                      <Avatar
+                          alt={user.avatar}
+                          src={user.avatar}
+                      />
+                    </ListItemAvatar>
+                    <ListItemText
+                        primary={user.name}
+                        secondary={
+                          <React.Fragment>
+                            <Typography
+                                component="span"
+                                variant="body2"
+                                className={classes.inline}
+                                color="textPrimary"
+                            >
+                            </Typography>
+                            {user.description}
+                            {user.id}
+                          </React.Fragment>
+                        }
+                    />
+                  </ListItem>
+              )
+            }
+          })}
+<hr/>
+          {firstMessageToUserFromServer && firstMessageToUserFromServer.map(user => {
             if (user.isOnline) {    // flag isOnline
               return (
                   <ListItem

@@ -80,6 +80,7 @@ export const UserModal = ({selectedUser, openModal, setOpenModal}) => {
     wroteUsersIds,
     removeIdFromWroteUsers
   } = useContext(FirebaseContext)
+  // todo Cannot destructure property 'location' of 'JSON.parse(...)' as it is null. возможно потому что я добавил новое поле ['not empty array']
   const {location} = JSON.parse(localStorage.getItem('user'))
   const handleClose = () => {
     setOpenModal(false);
