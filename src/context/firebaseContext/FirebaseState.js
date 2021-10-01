@@ -12,6 +12,7 @@ import {
   SET_SELECTED_USER_NULL, GET_WROTE_USERS,
   GET_WROTE_USERS_AND_READ,
   GET_ACTIVE_CHAT_WITH_USERS,
+  GET_ACTIVE_CONVERSATION,
   SET_DISTANCE_TO_TARGET
 } from "../../actions/constants";
 import {useTheme} from "@material-ui/core/styles";
@@ -27,6 +28,7 @@ export const FirebaseState = ({children}) => {
     wroteUsers: [],
     selectedUserState: {},
     getActiveChatWithUsers: [],
+    firstMessageToUserFromServer: [],
     dialogWithUser: [{time: Date.now()}, {userId: ''}],
     distance: null
   }
@@ -158,7 +160,7 @@ export const FirebaseState = ({children}) => {
     return unsubscribe;
   }
 
-  const getActiveConversations = (uid_1) => {
+  const getIdsActiveChat = (uid_1) => {
     let unsubscribe;
     try {
       unsubscribe = db.collection("conversations")
@@ -174,7 +176,9 @@ export const FirebaseState = ({children}) => {
             let activeChatWithUsersIds = numberWroteUsersIds.filter(id => {
               return !wroteUsersIds.includes(id)
             })
-            showActiveChatWithUsers(activeChatWithUsersIds)
+
+            filterIdsActiveChatFromServer(uid_1, activeChatWithUsersIds)
+            makeUsersFromIdsActiveChat(activeChatWithUsersIds)
 
           })
     } catch (e) {
@@ -182,30 +186,111 @@ export const FirebaseState = ({children}) => {
     }
     return unsubscribe;
   }
-  // todo: сделать функционал чт окогда ты написал, то сообщение с юзером висит в активном чате
+
+  const filterIdsActiveChatFromServer = (uid_1, activeChatWithUsersIds) => {
+
+    db.collection('users').doc(uid_1).get()
+        .then(idsCollection => {
+          let collection = idsCollection.data().activeConversation || [];
+          collection = collection.filter(usersId => !state.wroteUsersIds.includes(usersId) && !activeChatWithUsersIds.includes(usersId));
+          db.collection('users').doc(uid_1)
+              .update({
+                activeConversation: collection
+              })
+          // console.log('active Chat With Users Ids', activeChatWithUsersIds)
+          // console.log('first message to user Ids', collection)
+          // console.log('unread Users Ids', state.wroteUsersIds)
+        })
+  }
 
 
-  const showActiveChatWithUsers = (activeChatWithUsersIds) => {
+  // todo: переназвать срочно все функции по человечески
+
+
+  const setIdFirstActiveConversationOnServer = (uid_1, uid_2) => {
+    let unsubscribe;
+    try {
+      unsubscribe = db.collection("conversations")
+      unsubscribe.where('user_uid_1', '==', uid_2).where('user_uid_2', '==', uid_1)
+          .onSnapshot((querySnapshot) => {
+            console.log('empty', querySnapshot.empty)
+            if (!querySnapshot.empty) return;
+
+            let active = db.collection('users').doc(uid_1).get()
+            active.then(el => {
+              let activeConv = el.data().activeConversation
+              if (!activeConv) {
+                el.ref.update({
+                  activeConversation: [uid_2]
+                })
+              } else {
+                if (!activeConv.includes(uid_2)) {
+                  activeConv.push(uid_2)
+                  el.ref.update({
+                    activeConversation: activeConv
+                  })
+                }
+
+              }
+
+            })
+          })
+    } catch (e) {
+      console.log(e)
+    }
+    return unsubscribe
+  }
+
+  const makeUsersFromIdsActiveChat = (activeChatWithUsersIds) => {
     let unsubscribe;
     try {
       unsubscribe = db.collection('users')
           .onSnapshot((querySnapshot) => {
-            const wroteUsers = [];
+            const chatWithUsers = [];
             querySnapshot.forEach((user) => {
               if (activeChatWithUsersIds.includes(user.data().uid)) {
-                wroteUsers.push(user.data())
+                chatWithUsers.push(user.data())
               }
             })
-
             dispatch({
               type: GET_ACTIVE_CHAT_WITH_USERS,
-              payload: wroteUsers
+              payload: chatWithUsers
             })
           })
     } catch (e) {
       console.log(e)
     }
     return unsubscribe;
+  }
+
+  const getActiveConversationWithoutAnswer = (uid) => {
+    let activeIds;
+    try {
+      activeIds = db.collection('users').doc(uid).get()
+      activeIds.then(el => {
+        let activeConversation = el.data()?.activeConversation
+
+        if (activeConversation !== undefined ) {
+          db.collection('users')
+              .where('uid', 'in', activeConversation)// activeConversation этот массив не должен быть пустым!
+              .onSnapshot((querySnapshot) => {
+                const activeUsersArr = []
+                querySnapshot.forEach(activeUsers => {
+
+                  activeUsersArr.push(activeUsers.data())
+                })
+
+                dispatch({
+                  type: GET_ACTIVE_CONVERSATION,
+                  payload: activeUsersArr
+                })
+              })
+        }
+      })
+    } catch (e) {
+      console.log(e)
+    }
+    return activeIds;
   }
 
   const showWroteUsers = (usersId) => {
@@ -305,6 +390,7 @@ export const FirebaseState = ({children}) => {
         distance: state.distance,
         wroteUsersAndRead: state.wroteUsersAndRead,
         getActiveChatWithUsers: state.getActiveChatWithUsers,
+        firstMessageToUserFromServer: state.firstMessageToUserFromServer,
         getOnlineUsersChecked,
         makeSelectedUserNull,
         showSelectedUser,
@@ -317,7 +403,9 @@ export const FirebaseState = ({children}) => {
         makeReadMessages,
         getDistanceToTarget,
         useScreenSize,
-        getActiveConversations
+        getIdsActiveChat,
+        setIdFirstActiveConversationOnServer,
+        getActiveConversationWithoutAnswer
       }}
       >
         {children}

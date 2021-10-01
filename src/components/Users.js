@@ -66,15 +66,32 @@ export const Users = () => {
   const [openModal, setOpenModal] = useState(false)
 
   let unsubscribe;
-  const {wroteUsers, wroteUsersIds, getActiveConversations, showWroteUsers, getActiveChatWithUsers} = useContext(FirebaseContext)
+  const {
+    wroteUsers,
+    wroteUsersIds,
+    getIdsActiveChat,
+    showWroteUsers,
+    getActiveChatWithUsers,
+    getActiveConversationWithoutAnswer,
+    firstMessageToUserFromServer // users
+  } = useContext(FirebaseContext)
 
   useEffect(() => {
     if (auth.uid) {
-      const unsubscribe = getActiveConversations(auth.uid)
+      const unsubscribe = getIdsActiveChat(auth.uid)
       return unsubscribe
     }
 
   }, [wroteUsersIds])
+
+  useEffect(() => {
+    if (auth.uid) {
+      let unsubscribe = getActiveConversationWithoutAnswer(auth.uid);
+      return unsubscribe
+    }
+
+  }, [wroteUsersIds, getActiveChatWithUsers])
+
   useEffect(() => {
 
     unsubscribe = dispatch(getRealtimeUsers(auth.uid))
@@ -108,15 +125,16 @@ export const Users = () => {
       setSelectedUser(null)
     }
   }, [openModal])
+
   return (
       <>
         <List
             className={classes.root}
         >
           <div className={classes.srtike}>
-            <span>New people</span>
+            <span>Unread Chat</span>
           </div>
-          {wroteUsers.length === 0 ? <div>No new people</div> : ''}
+          {wroteUsers.length === 0 ? <div>No unread messages</div> : ''}
           {/* eslint-disable-next-line array-callback-return */}
           {wroteUsers && wroteUsers.map(user => {
             if (user.isOnline) {    // flag isOnline
@@ -154,11 +172,53 @@ export const Users = () => {
             }
           })}
           <div className={classes.srtike}>
-            <span>Existed users</span>
+            <span>Existed Chat</span>
           </div>
-          {getActiveChatWithUsers.length === 0 ? <div>No existed people</div> : ''}
+          {getActiveChatWithUsers.length === 0 && firstMessageToUserFromServer.length === 0
+              ?
+              <div>No existed Chat</div>
+              :
+              ''
+          }
           {/* eslint-disable-next-line array-callback-return */}
+          {/*{ getActiveChatWithUsers && [...new Set([...firstMessageToUserFromServer, ...getActiveChatWithUsers])].map(user => {*/}
           {getActiveChatWithUsers && getActiveChatWithUsers.map(user => {
+            if (user.isOnline) {    // flag isOnline
+              return (
+                  <ListItem
+                      key={user.uid}
+                      alignItems="flex-start"
+                      className={classes.listItem}
+                      onClick={() => handleOpenUserModal(user)}
+                  >
+                    <ListItemAvatar>
+                      <Avatar
+                          alt={user.avatar}
+                          src={user.avatar}
+                      />
+                    </ListItemAvatar>
+                    <ListItemText
+                        primary={user.name}
+                        secondary={
+                          <React.Fragment>
+                            <Typography
+                                component="span"
+                                variant="body2"
+                                className={classes.inline}
+                                color="textPrimary"
+                            >
+                            </Typography>
+                            {user.description}
+                            {user.id}
+                          </React.Fragment>
+                        }
+                    />
+                  </ListItem>
+              )
+            }
+          })}
+<hr/>
+          {firstMessageToUserFromServer && firstMessageToUserFromServer.map(user => {
             if (user.isOnline) {    // flag isOnline
               return (
                   <ListItem

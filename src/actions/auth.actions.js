@@ -53,7 +53,8 @@ export const signup = (user) => {
                       email: '',
                       age: '',
                       location: {lat: null, lng: null},
-                      createdAt: new Date()
+                      createdAt: new Date(),
+                      activeConversation: ['not empty array']
                     })
               })
 

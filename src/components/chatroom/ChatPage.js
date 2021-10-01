@@ -134,7 +134,8 @@ export const ChatPage = ({selected, chatStarted}) => {
     getConversations,
     myConversationWithCurrentUser,
     isLoaded,
-    updateMessage
+    updateMessage,
+    setIdFirstActiveConversationOnServer
   } = useContext(FirebaseContext);
   const classes = useStyles();
 
@@ -158,7 +159,8 @@ export const ChatPage = ({selected, chatStarted}) => {
         user_uid_2: selected.uid,
         message,
       }
-     updateMessage(msgObj).then(() => {
+      setIdFirstActiveConversationOnServer(auth.uid, selected.uid)
+      updateMessage(msgObj).then(() => {
         setMessage('')
       })
     }
