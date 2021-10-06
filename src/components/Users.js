@@ -18,8 +18,9 @@ const useStyles = makeStyles((theme) => ({
     display: 'inline',
   },
   listItem: {
+    boxShadow: theme.palette.shadow.boxShadow,
     cursor: 'pointer',
-    border: '1px solid grey',
+    border: '1px solid #80808038',
     borderRadius: '6px',
     marginTop: '5px',
     '&:hover': {
@@ -137,7 +138,7 @@ export const Users = () => {
           {wroteUsers.length === 0 ? <div>No unread messages</div> : ''}
           {/* eslint-disable-next-line array-callback-return */}
           {wroteUsers && wroteUsers.map(user => {
-            if (user.isOnline) {    // flag isOnline
+            // if (user.isOnline) {    // flag isOnline
               return (
                   <ListItem
                       key={user.uid}
@@ -169,7 +170,7 @@ export const Users = () => {
                     />
                   </ListItem>
               )
-            }
+            // }
           })}
           <div className={classes.srtike}>
             <span>Existed Chat</span>
@@ -183,7 +184,7 @@ export const Users = () => {
           {/* eslint-disable-next-line array-callback-return */}
           {/*{ getActiveChatWithUsers && [...new Set([...firstMessageToUserFromServer, ...getActiveChatWithUsers])].map(user => {*/}
           {getActiveChatWithUsers && getActiveChatWithUsers.map(user => {
-            if (user.isOnline) {    // flag isOnline
+            // if (user.isOnline) {    // flag isOnline
               return (
                   <ListItem
                       key={user.uid}
@@ -215,11 +216,11 @@ export const Users = () => {
                     />
                   </ListItem>
               )
-            }
+            // }
           })}
-<hr/>
+
           {firstMessageToUserFromServer && firstMessageToUserFromServer.map(user => {
-            if (user.isOnline) {    // flag isOnline
+            // if (user.isOnline) {    // flag isOnline
               return (
                   <ListItem
                       key={user.uid}
@@ -251,7 +252,7 @@ export const Users = () => {
                     />
                   </ListItem>
               )
-            }
+            // }
           })}
         </List>
         <UserModal

@@ -78,10 +78,12 @@ export const UserModal = ({selectedUser, openModal, setOpenModal}) => {
     getDistanceToTarget,
     showSelectedUser,
     wroteUsersIds,
-    removeIdFromWroteUsers
+    removeIdFromWroteUsers,
+    useScreenSize
   } = useContext(FirebaseContext)
   // todo Cannot destructure property 'location' of 'JSON.parse(...)' as it is null. возможно потому что я добавил новое поле ['not empty array']
-  const {location} = JSON.parse(localStorage.getItem('user'))
+  const {location} = JSON.parse(localStorage.getItem('user')) || {}
+
   const handleClose = () => {
     setOpenModal(false);
   };
@@ -110,7 +112,7 @@ export const UserModal = ({selectedUser, openModal, setOpenModal}) => {
           {/*<DialogTitle className={classes.dialogTitle} id="max-width-dialog-title"><b>Information about user</b></DialogTitle>*/}
 
           <Grid container>
-            <Grid item sm={6} style={{height: '100%'}}>
+            <Grid item sm={5} style={{height: '100%'}}>
               <DialogContent className='px-0 py-0 px-sm-2 py-sm-2'>
                 <Card>
                   <CardActionArea>
@@ -120,7 +122,7 @@ export const UserModal = ({selectedUser, openModal, setOpenModal}) => {
                 </Card>
               </DialogContent>
             </Grid>
-            <Grid item sm={6} style={{width: '100%'}}>
+            <Grid item sm={7} style={{width: '100%'}}>
               <DialogContent className='px-2 py-0 px-sm-2 py-sm-2'>
                 <Typography component={'span'} variant={'body2'} className={classes.padding}>
                   <b>Name</b> - {selectedUser?.name}

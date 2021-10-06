@@ -213,7 +213,6 @@ export const FirebaseState = ({children}) => {
       unsubscribe = db.collection("conversations")
       unsubscribe.where('user_uid_1', '==', uid_2).where('user_uid_2', '==', uid_1)
           .onSnapshot((querySnapshot) => {
-            console.log('empty', querySnapshot.empty)
             if (!querySnapshot.empty) return;
 
             let active = db.collection('users').doc(uid_1).get()
