@@ -3,7 +3,7 @@ import {Card, Button, Form, Alert, Container} from "react-bootstrap";
 import {Link, useHistory} from "react-router-dom";
 import 'firebase/auth'
 import 'firebase/app'
-import {useDispatch} from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
 import {signup} from "../actions";
 
 function Signup() {
@@ -15,6 +15,8 @@ function Signup() {
   const [loading, setLoading] = useState(false)
   const history = useHistory()
   const dispatch = useDispatch()
+
+  const {auth} = useSelector(state => state)
 
   const handleSubmit = (e) => {
     e.preventDefault()
@@ -50,6 +52,7 @@ function Signup() {
           <Card>
             <Card.Body>
               <h2 className="text-center mb-4">Signup</h2>
+              {auth?.error && <Alert variant="danger">{auth.error}</Alert>}
               {error && <Alert variant="danger">{error}</Alert>}
               <Form onSubmit={handleSubmit}>
                 <Form.Group id="email">

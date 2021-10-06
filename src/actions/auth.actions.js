@@ -84,7 +84,14 @@ export const signup = (user) => {
                 })
               })
         })
-        .catch(error => console.log(error.message))
+        .catch(error => {
+          console.error(error.message)
+          dispatch({
+            type: `${authConstant.USER_LOGIN}_FAILURE`,
+            payload: {error: error.message ? error.message : error}
+          })
+
+        })
   }
 }
 
@@ -116,7 +123,7 @@ export const signin = (user) => {
               })
         })
         .catch(error => {
-          console.log(error)
+          console.log(error.message)
           dispatch({
             type: `${authConstant.USER_LOGIN}_FAILURE`,
             payload: {error: error.message ? error.message : error}
@@ -135,10 +142,10 @@ export const isLoggedInUser = () => {
         payload: {user}
       })
     } else {
-      dispatch({
-        type: `${authConstant.USER_LOGIN}_FAILURE`,
-        payload: {error: 'Login again please'}
-      })
+      // dispatch({
+      //   type: `${authConstant.USER_LOGIN}_FAILURE`,
+      //   payload: {error: 'Login again please'}
+      // })
     }
 
   }
