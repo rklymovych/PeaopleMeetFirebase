@@ -17,6 +17,7 @@ import SwipeableDrawer from "@material-ui/core/SwipeableDrawer";
 import Drawer from "./Drawer";
 import {TopBar} from "./TopBar";
 import {makeStyles} from "@material-ui/core/styles";
+import Theme from "./theme/Theme";
 
 const useStyles = makeStyles((theme) => ({
   drawerWrapper: {
@@ -59,6 +60,7 @@ export function RouteComponent() {
             <PrivateRoute exact path="/" component={Account}/>
             <PrivateRoute path="/map" component={Map}/>
             <PrivateRoute exact path="/users" component={Users}/>
+            <PrivateRoute exact path="/theme" component={Theme}/>
             <PrivateRoute exact path="/update-profile" component={UpdateProfile}/>
             {/*<PrivateRoute exact path='/chat/:id' component={ChatPage}/>*/}
             {/*<PrivateRoute exact path='/map/chat/:id' component={ChatPage}/>*/}

@@ -15,6 +15,7 @@ import {makeStyles} from "@material-ui/core/styles";
 import {useHistory} from "react-router-dom";
 import {db} from "../firebase";
 import {useAuth} from "../context/AuthContext";
+import Brightness6Icon from '@material-ui/icons/Brightness6';
 
 const useStyles = makeStyles((theme) => ({
   drawerHeader: {
@@ -91,6 +92,10 @@ const Drawer = () => {
             <ListItemIcon><SupervisorAccountRoundedIcon/></ListItemIcon>
             <ListItemText primary={'Users'}/>
           </ListItem>
+          <ListItem button onClick={() => history.push('/theme')}>
+            <ListItemIcon><Brightness6Icon/></ListItemIcon>
+            <ListItemText primary={'My Theme'}/>
+          </ListItem>
         </List>
         <Divider/>
         <List>
@@ -98,6 +103,7 @@ const Drawer = () => {
             <ListItemIcon><AccountCircleRoundedIcon/></ListItemIcon>
             <ListItemText primary={'My account'}/>
           </ListItem>
+
 
         </List>
         <ListItem button className={classes.feedback}>
