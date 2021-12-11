@@ -1,10 +1,13 @@
-import {unstable_createMuiStrictModeTheme} from "@material-ui/core/styles";
+import { unstable_createMuiStrictModeTheme } from "@material-ui/core/styles";
 import green from "@material-ui/core/colors/green";
+import {colorBgGlobal} from '../context/firebaseContext/FirebaseState'
+console.log('colorBgGlobal' ,colorBgGlobal);
 
+// todo закончить кастомизацию стилей
 export const theme = unstable_createMuiStrictModeTheme({
   palette: {
     primary: {
-      main: '#3d5afe',
+      main: '#fff',
     },
     secondary: {
       main: green[500],

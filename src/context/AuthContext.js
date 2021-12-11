@@ -65,12 +65,16 @@ export function AuthProvider({ children }) {
 
 
   useEffect(() => {
-    const unsubscribe = auth.onAuthStateChanged(user => {
-      setCurrentUser(user)
-      setLoading(false)
-    })
-
-    return unsubscribe
+    try {
+      const unsubscribe = auth.onAuthStateChanged(user => {
+        setCurrentUser(user)
+        setLoading(false)
+      
+      })
+      return unsubscribe
+    } catch (e) {
+      console.error(e.message);
+    }
   }, [])
 
   const value = {
@@ -86,7 +90,7 @@ export function AuthProvider({ children }) {
   }
   return (
     <AuthContext.Provider value={value}>
-        {!loading && children}
+      {!loading && children}
     </AuthContext.Provider>
   )
 }
