@@ -3,7 +3,8 @@ import {userConstants} from "../actions/constants";
 const initialState = {
   users: [],
   conversations: [],
-  loading: false
+  loading: false,
+  isDarkMode: false
 }
 
 
@@ -29,6 +30,12 @@ export default (state = initialState, action) => {
       state = {
         ...state,
         conversations: []
+      }
+      break;
+    case 'SWITCH_DARK_MODE':
+      state = {
+        ...state,
+        isDarkMode: action.payload
       }
       break;
     case 'GET_REALTIME_MESSAGES_REQUEST':

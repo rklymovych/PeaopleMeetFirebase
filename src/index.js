@@ -4,12 +4,15 @@ import './index.css';
 import App from './components/App';
 import reportWebVitals from './reportWebVitals';
 import {AuthProvider} from "./context/AuthContext";
-import {ThemeProvider} from '@material-ui/core/styles';
-import {theme} from './theme/theme'
+import {createMuiTheme, ThemeProvider, unstable_createMuiStrictModeTheme} from '@material-ui/core/styles';
+// import {theme} from './theme/theme'
 import {UserContextProvider} from './context/UserContext'
 import {Provider} from 'react-redux'
 import store from './store/store'
 import {FirebaseState} from "./context/firebaseContext/FirebaseState";
+import green from "@material-ui/core/colors/green";
+import {grey} from "@material-ui/core/colors";
+import {ThemeWrapper} from "./components/ThemeWrapper";
 
 if (typeof window !== 'undefined') {
   window.React = React;
@@ -22,13 +25,13 @@ ReactDOM.render(
     <FirebaseState>
       <Provider store={store}>
         <React.StrictMode>
-          {/*<UserContextProvider>*/}
-            <ThemeProvider theme={theme}>
-              <AuthProvider>
-                <App/>
-              </AuthProvider>
-            </ThemeProvider>
-          {/*</UserContextProvider>*/}
+         <ThemeWrapper />
+          {/*  <ThemeProvider theme={theme}>*/}
+          {/*    <AuthProvider>*/}
+          {/*      <App/>*/}
+          {/*    </AuthProvider>*/}
+          {/*  </ThemeProvider>*/}
+          {/*/!*</UserContextProvider>*!/*/}
         </React.StrictMode>
       </Provider>
     </FirebaseState>

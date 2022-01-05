@@ -6,6 +6,8 @@ import {UserModal} from "./UserModal";
 import {useDispatch, useSelector} from "react-redux";
 import {getRealtimeUsers} from "../actions";
 import {FirebaseContext} from "../context/firebaseContext/firebaseContext";
+import {grey} from "@material-ui/core/colors";
+import {theme} from "../theme/theme";
 
 
 const useStyles = makeStyles((theme) => ({
@@ -42,7 +44,7 @@ const useStyles = makeStyles((theme) => ({
       top: '50%',
       width: '9999px',
       height: '1px',
-      background: theme.palette.grey[300],
+      background: theme.palette.divider,
       right: '100%',
       marginRight: '15px',
     },
@@ -52,7 +54,7 @@ const useStyles = makeStyles((theme) => ({
       top: '50%',
       width: '9999px',
       height: '1px',
-      background: theme.palette.grey[300],
+      background:  theme.palette.divider,
       left: '100%',
       marginLeft: '15px',
     }

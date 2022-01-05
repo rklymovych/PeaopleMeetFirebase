@@ -23,9 +23,28 @@ import Snackbar from '@material-ui/core/Snackbar';
 import {useHistory} from "react-router-dom";
 import {validationSchema} from "../validation";
 import {useDispatch} from "react-redux";
+import { withStyles } from '@material-ui/core/styles';
+import { purple } from '@material-ui/core/colors';
 
 
-const useStyles = makeStyles(() => ({
+const PurpleSwitch = withStyles((theme)=>({
+
+    switchBase: {
+        color: purple[300],
+        '&$checked': {
+            transform: 'translateX(16px)',
+            color: purple[500],
+        },
+        '&$checked + $track': {
+            backgroundColor: theme.palette.action.active,
+        },
+    },
+    checked: {},
+    track: {},
+}))(Switch);
+
+
+const useStyles = makeStyles((theme) => ({
   root: {},
   changeEmail: {},
   paper: {
@@ -43,7 +62,11 @@ const useStyles = makeStyles(() => ({
   error: {
     border: '1px solid red',
     borderRadius: '5px'
-  }
+  },
+    topAndButtons: theme.palette.topAndButtons,
+    switchBase: theme.palette.switchBase,
+    checked: theme.palette.checked,
+    track: theme.palette.track,
 }));
 
 const ProfileDetails = ({className, ...rest}) => {
@@ -354,18 +377,26 @@ const ProfileDetails = ({className, ...rest}) => {
                     p={2}
                 >
                   <FormControlLabel
+                      // className={classes.switcher}
                       control={
                         <Switch
+                            classes={{
+                                root: classes.root1,
+                                switchBase: classes.switchBase,
+                                thumb: classes.thumb,
+                                track: classes.track,
+                                checked: classes.checked,
+                            }}
                             checked={values.isOnline}
+                            // color='primary'
                             onChange={onlineHandler}
                             name="isonline"
-                            color="primary"
                         />
                       }
                       label="Online"
                   />
                   <Button
-                      color="primary"
+                      className={classes.topAndButtons}
                       variant="contained"
                       onClick={formik.handleSubmit}
                   >
