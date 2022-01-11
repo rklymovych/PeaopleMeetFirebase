@@ -24,7 +24,8 @@ const useStyles = makeStyles((theme) => ({
   center: {
     textAlign: 'center'
   },
-  topAndButtons: theme.palette.topAndButtons
+  topAndButtons: theme.palette.topAndButtons,
+  activeButtons: theme.palette.activeButtons
 
 }));
 
@@ -107,7 +108,7 @@ const Profile = ({ className, ...rest }) => {
       <Divider />
       <CardActions>
         <Button
-          className={classes.topAndButtons}
+          className={classes.activeButtons}
           variant="contained"
           component="label"
           // color="secondary"

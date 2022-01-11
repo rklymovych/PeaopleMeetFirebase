@@ -7,29 +7,30 @@ import {useDispatch, useSelector} from "react-redux";
 import {getRealtimeUsers} from "../actions";
 import {FirebaseContext} from "../context/firebaseContext/firebaseContext";
 import {grey} from "@material-ui/core/colors";
-import {theme} from "../theme/theme";
+// import {theme} from "../theme/theme";
 
 
 const useStyles = makeStyles((theme) => ({
   root: {
     width: '100%',
     padding: '5px',
-    backgroundColor: theme.palette.background.paper,
+    // backgroundColor: theme.palette.background.paper,
   },
   inline: {
     display: 'inline',
   },
-  listItem: {
-    boxShadow: theme.palette.shadow.boxShadow,
-    cursor: 'pointer',
-    border: '1px solid #80808038',
-    borderRadius: '6px',
-    marginTop: '5px',
-    '&:hover': {
-      backgroundColor: '#e6dff0'
-    }
-  },
-  srtike: {
+  listItem: theme.listItem,
+  // listItem: {
+  //   boxShadow: theme.palette.shadow.boxShadow,
+  //   cursor: 'pointer',
+  //   border: '1px solid #80808038',
+  //   borderRadius: '6px',
+  //   marginTop: '5px',
+  //   '&:hover': {
+  //     backgroundColor: '#e6dff0'
+  //   }
+  // },
+  strike: {
     display: 'block',
     textAlign: 'center',
     overflow: 'hidden',
@@ -58,7 +59,9 @@ const useStyles = makeStyles((theme) => ({
       left: '100%',
       marginLeft: '15px',
     }
-  }
+  },
+  userPageWrapper: theme.userPageWrapper,
+  text: theme.palette.text.primary,
 }));
 
 export const Users = () => {
@@ -130,11 +133,11 @@ export const Users = () => {
   }, [openModal])
 
   return (
-      <>
+      <div className={classes.userPageWrapper}>
         <List
             className={classes.root}
         >
-          <div className={classes.srtike}>
+          <div className={classes.strike}>
             <span>Unread Chat</span>
           </div>
           {wroteUsers.length === 0 ? <div>No unread messages</div> : ''}
@@ -201,6 +204,7 @@ export const Users = () => {
                       />
                     </ListItemAvatar>
                     <ListItemText
+                        className={classes.text}
                         primary={user.name}
                         secondary={
                           <React.Fragment>
@@ -208,7 +212,7 @@ export const Users = () => {
                                 component="span"
                                 variant="body2"
                                 className={classes.inline}
-                                color="textPrimary"
+                                // color="textPrimary"
                             >
                             </Typography>
                             {user.description}
@@ -261,7 +265,7 @@ export const Users = () => {
             openModal={openModal}
             setOpenModal={setOpenModal}
             selectedUser={selectedUser}/>
-      </>
+      </div>
       // </SideNav>
   )
 }

@@ -22,8 +22,6 @@ import Brightness7Icon from '@material-ui/icons/Brightness7';
 
 
 export const TopBar = ({setState}) => {
-  const {isDarkMode} = useSelector(state => state.user)
-
   const useStyles = makeStyles((theme) => {
     return {
       root: {
@@ -32,6 +30,7 @@ export const TopBar = ({setState}) => {
         // backgroundColor: theme.palette.action.active,
         boxShadow: theme.shadows[4]
       },
+      topAndButtons: theme.palette.topAndButtons,
       icons: theme.palette.icons,
     }
   })
@@ -92,7 +91,7 @@ export const TopBar = ({setState}) => {
 
 
   return (
-      <AppBar className={classes.root}>
+      <AppBar className={classes.topAndButtons}>
         <Toolbar>
           <IconButton
               className={classes.icons}

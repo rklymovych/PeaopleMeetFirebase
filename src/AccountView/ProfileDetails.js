@@ -63,6 +63,7 @@ const useStyles = makeStyles((theme) => ({
     border: '1px solid red',
     borderRadius: '5px'
   },
+    activeButtons: theme.palette.activeButtons,
     topAndButtons: theme.palette.topAndButtons,
     switchBase: theme.palette.switchBase,
     checked: theme.palette.checked,
@@ -396,7 +397,7 @@ const ProfileDetails = ({className, ...rest}) => {
                       label="Online"
                   />
                   <Button
-                      className={classes.topAndButtons}
+                      className={classes.activeButtons}
                       variant="contained"
                       onClick={formik.handleSubmit}
                   >

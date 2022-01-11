@@ -31,6 +31,10 @@ export const ThemeWrapper = () => {
                     },
                 },
             },
+            activeButtons: {
+                background: '#3d5afe',
+                color: '#fff',
+            },
             checked: { // radius around circle
                 color: '#3d5afe',
             },
@@ -55,6 +59,23 @@ export const ThemeWrapper = () => {
                 boxShadow: '0px 2px 1px -1px rgb(0, 0, 0, .2), 0px 1px 1px 0px rgb(0, 0, 0, 0.14), 0px 1px 3px 0px rgb(0, 0, 0, 0.12)',
             }
         },
+        userPageWrapper: {
+            minHeight: 'calc(100vh - 60px)',
+            background: '#fff',
+            overflow: 'hidden'
+        },
+        listItem: {
+            // boxShadow: theme.palette.shadow.boxShadow,
+            cursor: 'pointer',
+            background: '#fff',
+            // color: '#000',
+            border: '1px solid #80808038',
+            borderRadius: '6px',
+            marginTop: '5px',
+            '&:hover': {
+                backgroundColor: '#e6dff0'
+            }
+        },
 
     })
 
@@ -62,7 +83,7 @@ export const ThemeWrapper = () => {
         palette: {
             type: 'dark',
             topAndButtons: {
-                background: '#3d5afe',
+                background: '#424242',
                 color: '#fff',
             },
             icons: {
@@ -79,6 +100,10 @@ export const ThemeWrapper = () => {
                         border: 'none',
                     },
                 },
+            },
+            activeButtons: {
+                background: '#bb86fc',
+                color: '#000',
             },
             checked: { // radius around circle
                 color: '#bb86fc',
@@ -104,9 +129,26 @@ export const ThemeWrapper = () => {
                 boxShadow: '0px 2px 1px -1px rgb(0, 0, 0, .2), 0px 1px 1px 0px rgb(0, 0, 0, 0.14), 0px 1px 3px 0px rgb(0, 0, 0, 0.12)',
             }
         },
+        userPageWrapper: {
+            minHeight: 'calc(100vh - 60px)',
+            background: '#000',
+            overflow: 'hidden'
+        },
+        listItem: {
+            // boxShadow: theme.palette.shadow.boxShadow,
+            cursor: 'pointer',
+            background: '#242424',
+            // color: '#fff',
+            border: '1px solid #80808038',
+            borderRadius: '6px',
+            marginTop: '5px',
+            '&:hover': {
+                backgroundColor: '#e6dff0'
+            }
+        },
 
     })
-    console.log('theme',isDarkMode, darkTheme.palette)
+
     return (
         <ThemeProvider theme={isDarkMode ? darkTheme : lightTheme}>
             <AuthProvider>
