@@ -15,7 +15,8 @@ const useStyles = makeStyles((theme) => ({
     backgroundColor: theme.palette.background.dark,
     minHeight: '100%',
     paddingBottom: theme.spacing(3)
-  }
+  },
+  userPageWrapper: theme.userPageWrapper
 }));
 
 const Account = () => {
@@ -23,7 +24,7 @@ const Account = () => {
 
   return (
       <>
-        <div className="wrapper-profile">
+        <div className={classes.userPageWrapper}>
           <Container maxWidth="lg">
             <Grid
                 container

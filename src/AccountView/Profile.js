@@ -15,7 +15,7 @@ import {
 import { useAuth } from "../context/AuthContext";
 import { db, storage } from "../firebase";
 
-const useStyles = makeStyles(() => ({
+const useStyles = makeStyles((theme) => ({
   root: {},
   avatar: {
     height: 100,
@@ -23,7 +23,10 @@ const useStyles = makeStyles(() => ({
   },
   center: {
     textAlign: 'center'
-  }
+  },
+  topAndButtons: theme.palette.topAndButtons,
+  activeButtons: theme.palette.activeButtons
+
 }));
 
 const Profile = ({ className, ...rest }) => {
@@ -105,9 +108,10 @@ const Profile = ({ className, ...rest }) => {
       <Divider />
       <CardActions>
         <Button
+          className={classes.activeButtons}
           variant="contained"
           component="label"
-          color="primary"
+          // color="secondary"
           fullWidth
           onChange={uploadPhotoHandler}
         >

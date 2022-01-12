@@ -66,7 +66,8 @@ const useStyles = makeStyles((theme) => {
     },
     divider: {
       marginBottom: '10px'
-    }
+    },
+    activeButtons: theme.palette.activeButtons
   }
 });
 
@@ -173,10 +174,16 @@ export const UserModal = ({selectedUser, openModal, setOpenModal}) => {
             </Grid>
           </Grid>
           <DialogActions className={classes.dialogAction}>
-            <Button onClick={handleClose} className={classes.colorError}>
+            <Button
+                onClick={handleClose}
+                color="secondary"
+            >
               <b>Close</b>
             </Button>
-            <Button onClick={writeHandler} color='primary'>
+            <Button
+                variant="contained"
+                className={classes.activeButtons}
+                onClick={writeHandler} color='secondary'>
               <b>Write</b>
             </Button>
 
