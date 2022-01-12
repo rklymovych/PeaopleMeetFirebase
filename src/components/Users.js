@@ -1,12 +1,11 @@
 import React, {useEffect, useState, useContext} from 'react'
-import {Avatar, ListItem, ListItemAvatar, ListItemText, makeStyles} from "@material-ui/core";
+import {Avatar, Box, ListItem, ListItemAvatar, ListItemText, makeStyles} from "@material-ui/core";
 import Typography from "@material-ui/core/Typography";
 import List from "@material-ui/core/List";
 import {UserModal} from "./UserModal";
 import {useDispatch, useSelector} from "react-redux";
 import {getRealtimeUsers} from "../actions";
 import {FirebaseContext} from "../context/firebaseContext/firebaseContext";
-import {grey} from "@material-ui/core/colors";
 // import {theme} from "../theme/theme";
 
 
@@ -19,47 +18,16 @@ const useStyles = makeStyles((theme) => ({
   inline: {
     display: 'inline',
   },
-  listItem: theme.listItem,
-  // listItem: {
-  //   boxShadow: theme.palette.shadow.boxShadow,
-  //   cursor: 'pointer',
-  //   border: '1px solid #80808038',
-  //   borderRadius: '6px',
-  //   marginTop: '5px',
-  //   '&:hover': {
-  //     backgroundColor: '#e6dff0'
-  //   }
-  // },
-  strike: {
-    display: 'block',
-    textAlign: 'center',
-    overflow: 'hidden',
-    whiteSpace: 'nowrap',
-    '& > span': {
-      position: 'relative',
-      display: 'inline-block',
-    },
-    '& > span:before': {
-      content: "''",
-      position: 'absolute',
-      top: '50%',
-      width: '9999px',
-      height: '1px',
-      background: theme.palette.divider,
-      right: '100%',
-      marginRight: '15px',
-    },
-    '& > span:after': {
-      content: "''",
-      position: 'absolute',
-      top: '50%',
-      width: '9999px',
-      height: '1px',
-      background:  theme.palette.divider,
-      left: '100%',
-      marginLeft: '15px',
-    }
+  large: {
+    width: theme.spacing(8),
+    height: theme.spacing(8),
   },
+  listItemAvatar : {
+    minWidth: '80px',
+    marginTop: 0
+  },
+  listItem: theme.listItem,
+  customDivider: theme.customDivider,
   userPageWrapper: theme.userPageWrapper,
   text: theme.palette.text.primary,
 }));
@@ -137,10 +105,16 @@ export const Users = () => {
         <List
             className={classes.root}
         >
-          <div className={classes.strike}>
-            <span>Unread Chat</span>
+          <div className={classes.customDivider}>
+            <Typography
+                component='span'
+                variant='body1'
+                color="textPrimary"
+            >
+              Unread Chat
+            </Typography>
           </div>
-          {wroteUsers.length === 0 ? <div>No unread messages</div> : ''}
+          {wroteUsers.length === 0 ? <Typography component='div' color='textPrimary'>No unread messages</Typography> : ''}
           {/* eslint-disable-next-line array-callback-return */}
           {wroteUsers && wroteUsers.map(user => {
             // if (user.isOnline) {    // flag isOnline
@@ -151,14 +125,16 @@ export const Users = () => {
                       className={classes.listItem}
                       onClick={() => handleOpenUserModal(user)}
                   >
-                    <ListItemAvatar>
+                    <ListItemAvatar className={classes.listItemAvatar}>
                       <Avatar
+                          className={classes.large}
                           alt={user.avatar}
                           src={user.avatar}
                       />
                     </ListItemAvatar>
                     <ListItemText
-                        primary={user.name}
+                        className={classes.text}
+                        primary={<Typography  color="textPrimary" variant='subtitle1'>{user.name}</Typography>}
                         secondary={
                           <React.Fragment>
                             <Typography
@@ -177,12 +153,19 @@ export const Users = () => {
               )
             // }
           })}
-          <div className={classes.srtike}>
-            <span>Existed Chat</span>
+          <div className={classes.customDivider}>
+            <Typography
+                component='span'
+                variant='body1'
+                color="textPrimary"
+            >
+              Existed Chat
+            </Typography>
+            {/*<span>Unread Chat</span>*/}
           </div>
           {getActiveChatWithUsers.length === 0 && firstMessageToUserFromServer.length === 0
               ?
-              <div>No existed Chat</div>
+              <Typography component='div' color='textPrimary'>No existed Chat</Typography>
               :
               ''
           }
@@ -197,15 +180,16 @@ export const Users = () => {
                       className={classes.listItem}
                       onClick={() => handleOpenUserModal(user)}
                   >
-                    <ListItemAvatar>
+                    <ListItemAvatar className={classes.listItemAvatar}>
                       <Avatar
+                          className={classes.large}
                           alt={user.avatar}
                           src={user.avatar}
                       />
                     </ListItemAvatar>
                     <ListItemText
                         className={classes.text}
-                        primary={user.name}
+                        primary={<Typography  color="textPrimary" variant='subtitle1'>{user.name}</Typography>}
                         secondary={
                           <React.Fragment>
                             <Typography

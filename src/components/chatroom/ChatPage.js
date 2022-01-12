@@ -124,7 +124,8 @@ const useStyles = makeStyles((theme) => ({
     display: 'inline-block',
     padding: '0 10px',
     fontSize: '13px',
-  }
+  },
+  activeButtons: theme.palette.activeButtons
 }));
 
 export const ChatPage = ({selected, chatStarted}) => {
@@ -240,7 +241,10 @@ export const ChatPage = ({selected, chatStarted}) => {
               onChange={(e) => setMessage(e.target.value)}
               placeholder="Write Message"
           />
-          <Button variant="contained" color="primary" onClick={submitMessage}>
+          <Button
+              className={classes.activeButtons}
+              variant="contained" onClick={submitMessage}>
+
             Send
           </Button>
         </Paper>

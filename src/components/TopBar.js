@@ -46,7 +46,9 @@ export const TopBar = ({setState}) => {
   };
   const auth = useSelector(state => state.auth)
   const dispatch = useDispatch()
-  const [darkMode, setDarkMode] = React.useState(false)
+  const localStorageDarkMode = JSON.parse(localStorage.getItem('darkMode'))
+
+  const [darkMode, setDarkMode] = React.useState(localStorageDarkMode || false)
   //  make offline Users/
   const userStatusDatabaseRef = database.ref('/status/' + auth.uid);
   const isOnlineForDatabase = {
@@ -82,13 +84,12 @@ export const TopBar = ({setState}) => {
   }, [auth.uid]);
 
    useEffect(()=> {
+     localStorage.setItem('darkMode', JSON.stringify(darkMode))
      dispatch({
        type: 'SWITCH_DARK_MODE',
        payload: darkMode
      })
    },[darkMode])
-
-
 
   return (
       <AppBar className={classes.topAndButtons}>

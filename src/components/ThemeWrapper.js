@@ -34,6 +34,11 @@ export const ThemeWrapper = () => {
             activeButtons: {
                 background: '#3d5afe',
                 color: '#fff',
+                transition: '.41s 0s',
+                '&:hover': {
+                    backgroundColor: 'rgb(17, 82, 147)',
+                    boxShadow: '0 1px 3px 0 rgb(60 64 67 / 30%), 0 4px 8px 3px rgb(60 64 67 / 15%)',
+                },
             },
             checked: { // radius around circle
                 color: '#3d5afe',
@@ -41,10 +46,7 @@ export const ThemeWrapper = () => {
             track: {},
 
             primary: {
-                main: '#03700B3',
-            },
-            secondary: {
-                main: green[500],
+                main: '#3d5afe',
             },
             error: {
                 main: '#f71324',
@@ -76,7 +78,37 @@ export const ThemeWrapper = () => {
                 backgroundColor: '#e6dff0'
             }
         },
-
+        customDivider: {
+            margin: '.5rem 0',
+            display: 'block',
+            textAlign: 'center',
+            overflow: 'hidden',
+            whiteSpace: 'nowrap',
+            '& > span': {
+                position: 'relative',
+                display: 'inline-block',
+            },
+            '& > span:before': {
+                content: "''",
+                position: 'absolute',
+                top: '50%',
+                width: '9999px',
+                height: '1px',
+                background: '#80808038',
+                right: '100%',
+                marginRight: '15px',
+            },
+            '& > span:after': {
+                content: "''",
+                position: 'absolute',
+                top: '50%',
+                width: '9999px',
+                height: '1px',
+                background: '#80808038',
+                left: '100%',
+                marginLeft: '15px',
+            }
+        },
     })
 
     const darkTheme = createMuiTheme({
@@ -93,7 +125,7 @@ export const ThemeWrapper = () => {
                 color: '#fafafa',
                 '&$checked': {
                     transform: 'translateX(16px)',
-                    color: '#bb86fc',
+                    color: '#a65cffb3',
                     '& + $track': {
                         backgroundColor: '#664b86',
                         opacity: 1,
@@ -102,11 +134,15 @@ export const ThemeWrapper = () => {
                 },
             },
             activeButtons: {
-                background: '#bb86fc',
-                color: '#000',
+                background: '#a65cffb3',
+                color: '#fff',
+                transition: '.41s 0s',
+                    '&:hover': {
+                        background: '#bb86fc',
+                    }
             },
             checked: { // radius around circle
-                color: '#bb86fc',
+                color: '#a65cffb3',
             },
             track: {},
 
@@ -114,7 +150,7 @@ export const ThemeWrapper = () => {
                 main: '#03700B3',
             },
             secondary: {
-                main: green[500],
+                main: '#f48fb1',
             },
             error: {
                 main: '#f71324',
@@ -137,16 +173,46 @@ export const ThemeWrapper = () => {
         listItem: {
             // boxShadow: theme.palette.shadow.boxShadow,
             cursor: 'pointer',
-            background: '#242424',
+            backgroundColor: '#323232',
             // color: '#fff',
             border: '1px solid #80808038',
             borderRadius: '6px',
             marginTop: '5px',
             '&:hover': {
-                backgroundColor: '#e6dff0'
+                backgroundColor: '#424242',
             }
         },
-
+        customDivider: {
+            display: 'block',
+            margin: '.5rem 0',
+            textAlign: 'center',
+            overflow: 'hidden',
+            whiteSpace: 'nowrap',
+            '& > span': {
+                position: 'relative',
+                display: 'inline-block',
+            },
+            '& > span:before': {
+                content: "''",
+                position: 'absolute',
+                top: '50%',
+                width: '9999px',
+                height: '2px',
+                background: 'rgba(255, 255, 255, 0.08)',
+                right: '100%',
+                marginRight: '15px',
+            },
+            '& > span:after': {
+                content: "''",
+                position: 'absolute',
+                top: '50%',
+                width: '9999px',
+                height: '2px',
+                background: 'rgba(255, 255, 255, 0.08)',
+                left: '100%',
+                marginLeft: '15px',
+            }
+        },
     })
 
     return (
