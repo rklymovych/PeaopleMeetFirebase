@@ -161,7 +161,6 @@ export const Users = () => {
             >
               Existed Chat
             </Typography>
-            {/*<span>Unread Chat</span>*/}
           </div>
           {getActiveChatWithUsers.length === 0 && firstMessageToUserFromServer.length === 0
               ?
@@ -225,7 +224,7 @@ export const Users = () => {
                       />
                     </ListItemAvatar>
                     <ListItemText
-                        primary={user.name}
+                        primary={<Typography  color="textPrimary" variant='subtitle1'>{user.name}</Typography>}
                         secondary={
                           <React.Fragment>
                             <Typography
