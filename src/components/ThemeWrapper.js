@@ -1,7 +1,6 @@
 import React from 'react'
 import {useSelector} from 'react-redux'
 import {createMuiTheme, ThemeProvider} from "@material-ui/core/styles";
-import green from "@material-ui/core/colors/green";
 import {AuthProvider} from "../context/AuthContext";
 import App from './App';
 

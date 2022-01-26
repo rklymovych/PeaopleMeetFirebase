@@ -9,13 +9,13 @@ import {ForgotPassword} from "./ForgotPassword";
 import Account from "../AccountView";
 import {Map} from "./Map";
 import {Users} from "./Users";
-import {ChatPage} from "./chatroom/ChatPage";
 import Join from "./Join/Join";
 import {isLoggedInUser} from "../actions";
 import {useDispatch, useSelector} from "react-redux";
 import SwipeableDrawer from "@material-ui/core/SwipeableDrawer";
 import Drawer from "./Drawer";
-import {TopBar} from "./TopBar";
+import TopBar from "./TopBar";
+// import {TopBar} from "./TopBar";
 import {makeStyles} from "@material-ui/core/styles";
 
 const useStyles = makeStyles((theme) => ({

@@ -7,7 +7,6 @@ export function useAuth() {
   return useContext(AuthContext)
 }
 
-
 export function AuthProvider({ children }) {
   const [currentUser, setCurrentUser] = useState()
   const [loading, setLoading] = useState(true)
@@ -17,34 +16,6 @@ export function AuthProvider({ children }) {
     const user = auth.currentUser
     return user ? user.uid : null
   }
-
-  // async function signup(email, password, name) {
-  //   return auth.createUserWithEmailAndPassword(email, password)
-  //     .then(cred => {
-  //       return db.collection('users').doc(cred?.user?.uid).set({
-  //         id: cred?.user?.uid,
-  //         name: name,
-  //         isOnline: false,
-  //         description: '',
-  //         sex:'',
-  //         avatar:'',
-  //         email: '',
-  //         age:''
-  //       })
-  //     })
-  //     .then(() => console.log('success'))
-  //     .catch(error => setError(error.message))
-  // }
-
-
-  // function login(email, password) {
-  //   return auth.signInWithEmailAndPassword(email, password)
-  //
-  // }
-
-  // function logout() {
-  //   return auth.signOut()
-  // }
 
   function resetPassword(email) {
     return auth.sendPasswordResetEmail(email)
@@ -56,7 +27,6 @@ export function AuthProvider({ children }) {
     } catch (e) {
       setError(e.message)
     }
-
   }
 
   function updatePassword(password) {
@@ -75,9 +45,6 @@ export function AuthProvider({ children }) {
 
   const value = {
     currentUser,
-    // signup,
-    // login,
-    // logout,
     resetPassword,
     updateEmail,
     updatePassword,

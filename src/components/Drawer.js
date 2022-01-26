@@ -102,7 +102,7 @@ const Drawer = () => {
         </List>
         <ListItem button className={classes.feedback}>
           <ListItemIcon><FeedbackIcon/></ListItemIcon>
-          <ListItemText primary={'v: 2.202.10.21'}/>
+          <ListItemText primary={'v: 2.202.10.62'}/>
         </ListItem>
       </>
   )

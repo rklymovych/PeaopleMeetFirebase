@@ -1,19 +1,16 @@
 import React, {useEffect, useState, useContext} from 'react'
-import {Avatar, Box, ListItem, ListItemAvatar, ListItemText, makeStyles} from "@material-ui/core";
+import {Avatar, ListItem, ListItemAvatar, ListItemText, makeStyles} from "@material-ui/core";
 import Typography from "@material-ui/core/Typography";
 import List from "@material-ui/core/List";
 import {UserModal} from "./UserModal";
 import {useDispatch, useSelector} from "react-redux";
 import {getRealtimeUsers} from "../actions";
 import {FirebaseContext} from "../context/firebaseContext/firebaseContext";
-// import {theme} from "../theme/theme";
-
 
 const useStyles = makeStyles((theme) => ({
   root: {
     width: '100%',
     padding: '5px',
-    // backgroundColor: theme.palette.background.paper,
   },
   inline: {
     display: 'inline',
@@ -168,8 +165,7 @@ export const Users = () => {
               :
               ''
           }
-          {/* eslint-disable-next-line array-callback-return */}
-          {/*{ getActiveChatWithUsers && [...new Set([...firstMessageToUserFromServer, ...getActiveChatWithUsers])].map(user => {*/}
+
           {getActiveChatWithUsers && getActiveChatWithUsers.map(user => {
             // if (user.isOnline) {    // flag isOnline
               return (
@@ -217,8 +213,9 @@ export const Users = () => {
                       className={classes.listItem}
                       onClick={() => handleOpenUserModal(user)}
                   >
-                    <ListItemAvatar>
+                    <ListItemAvatar className={classes.listItemAvatar}>
                       <Avatar
+                          className={classes.large}
                           alt={user.avatar}
                           src={user.avatar}
                       />
