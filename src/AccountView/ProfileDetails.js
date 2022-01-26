@@ -1,4 +1,4 @@
-import React, {useContext, useEffect, useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import clsx from 'clsx';
 import {useFormik} from 'formik';
 import PropTypes from 'prop-types';
@@ -23,26 +23,6 @@ import Snackbar from '@material-ui/core/Snackbar';
 import {useHistory} from "react-router-dom";
 import {validationSchema} from "../validation";
 import {useDispatch} from "react-redux";
-import { withStyles } from '@material-ui/core/styles';
-import { purple } from '@material-ui/core/colors';
-
-
-const PurpleSwitch = withStyles((theme)=>({
-
-    switchBase: {
-        color: purple[300],
-        '&$checked': {
-            transform: 'translateX(16px)',
-            color: purple[500],
-        },
-        '&$checked + $track': {
-            backgroundColor: theme.palette.action.active,
-        },
-    },
-    checked: {},
-    track: {},
-}))(Switch);
-
 
 const useStyles = makeStyles((theme) => ({
   root: {},
@@ -103,7 +83,6 @@ const ProfileDetails = ({className, ...rest}) => {
       const handleClose = () => {
         setOpen(false);
       };
-
 
       const handleCloseSnackbar = (event, reason) => {
         console.log(reason)

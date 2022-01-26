@@ -1,4 +1,4 @@
-import React, {useContext, useEffect, useState} from 'react';
+import React, {useContext, useEffect} from 'react';
 import {makeStyles} from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
 import clsx from 'clsx'
@@ -79,8 +79,7 @@ export const UserModal = ({selectedUser, openModal, setOpenModal}) => {
     getDistanceToTarget,
     showSelectedUser,
     wroteUsersIds,
-    removeIdFromWroteUsers,
-    useScreenSize
+    removeIdFromWroteUsers
   } = useContext(FirebaseContext)
   // todo Cannot destructure property 'location' of 'JSON.parse(...)' as it is null. возможно потому что я добавил новое поле ['not empty array']
   const {location} = JSON.parse(localStorage.getItem('user')) || {}
@@ -90,6 +89,12 @@ export const UserModal = ({selectedUser, openModal, setOpenModal}) => {
   };
 
   const writeHandler = () => {
+    if(!selectedUser.isOnline) {
+      // todo create something if current user is offline
+      alert('current User is Offline, temporary you can\'t write to him : ( ');
+      return
+    }
+
     removeIdFromWroteUsers(selectedUser, wroteUsersIds)
     showSelectedUser(selectedUser)
     history.push(`map/chat/${selectedUser.uid}`)
@@ -183,7 +188,8 @@ export const UserModal = ({selectedUser, openModal, setOpenModal}) => {
             <Button
                 variant="contained"
                 className={classes.activeButtons}
-                onClick={writeHandler} color='secondary'>
+                onClick={writeHandler}
+                color='secondary'>
               <b>Write</b>
             </Button>
 

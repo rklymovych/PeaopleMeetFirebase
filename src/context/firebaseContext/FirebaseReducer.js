@@ -8,7 +8,6 @@ import {
   SET_SELECTED_USER_NULL,
   GET_WROTE_USERS,
   SET_DISTANCE_TO_TARGET,
-  GET_WROTE_USERS_AND_READ,
   GET_ACTIVE_CHAT_WITH_USERS,
   GET_ACTIVE_CONVERSATION
 } from "../../actions/constants";
@@ -28,7 +27,6 @@ const handlers = {
   [SET_SELECTED_USER_NULL]: (state, {payload}) => ({...state, selectedUserState: payload}),
   [GET_WROTE_USERS]: (state, {payload}) => ({...state, wroteUsers: payload}),
   [SET_DISTANCE_TO_TARGET]: (state, {payload}) => ({...state, distance: payload}),
-  [GET_WROTE_USERS_AND_READ]: (state, {payload})=>({state, wroteUsersAndRead: payload}),
   [GET_ACTIVE_CHAT_WITH_USERS]: (state, {payload}) => ({...state, getActiveChatWithUsers:payload}),
   [GET_ACTIVE_CONVERSATION]: (state, {payload}) => ({...state, firstMessageToUserFromServer:payload}),
   DEFAULT: state => state

@@ -16,7 +16,7 @@
     "bootstrap": "^4.6.0",
     "date-fns": "^2.21.3",
     "dotenv": "^8.2.0",
-    "firebase": "^8.2.10",
+    "firebase": "^8.10.0",
     "formik": "^2.2.6",
     "moment": "^2.29.1",
     "prop-types": "^15.7.2",

@@ -1,4 +1,4 @@
-import React, {useContext, useEffect, useCallback} from 'react';
+import React, {useContext, useEffect} from 'react';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
@@ -10,24 +10,19 @@ import InputIcon from "@material-ui/icons/Input";
 import {database} from "../firebase";
 import {useDispatch, useSelector} from "react-redux";
 import {logout} from "../actions";
-import {Badge, Box, MenuItem} from "@material-ui/core";
+import {Badge, MenuItem} from "@material-ui/core";
 import firebase from "firebase";
 import {FirebaseContext} from "../context/firebaseContext/firebaseContext";
 import {makeStyles} from "@material-ui/core/styles";
-import {red} from "@material-ui/core/colors";
-import {authConstant} from "../actions/constants";
 import Brightness4Icon from '@material-ui/icons/Brightness4';
 import Brightness7Icon from '@material-ui/icons/Brightness7';
 
-
-
-export const TopBar = ({setState}) => {
+const TopBar = ({ setState }) => {
+// export const TopBar  = ({setState}) =>{
   const useStyles = makeStyles((theme) => {
     return {
       root: {
-        // backgroundColor: !isDarkMode ? '#3d5afe' : '#ffffff',
         backgroundColor: '#3d5afe',
-        // backgroundColor: theme.palette.action.active,
         boxShadow: theme.shadows[4]
       },
       topAndButtons: theme.palette.topAndButtons,
@@ -39,7 +34,6 @@ export const TopBar = ({setState}) => {
   const {
     getWroteUsersIds,
     wroteUsersIds,
-    wroteUsersAndRead
   } = useContext(FirebaseContext)
   const handleDrawerOpen = () => {
     setState({'left': true});
@@ -122,13 +116,13 @@ export const TopBar = ({setState}) => {
               {darkMode ? (
                   <IconButton
                       className={classes.icons}
-                               onClick={()=> setDarkMode(!darkMode)}>
+                      onClick={()=> setDarkMode(!darkMode)}>
                 <Brightness4Icon color="inherit"/>
               </IconButton>
               ):(
                   <IconButton
                       className={classes.icons}
-                              onClick={()=> setDarkMode(!darkMode)}>
+                      onClick={()=> setDarkMode(!darkMode)}>
                     <Brightness7Icon color="inherit"/>
                   </IconButton>
               )}
@@ -146,3 +140,5 @@ export const TopBar = ({setState}) => {
       </AppBar>
   )
 }
+
+export default React.memo(TopBar)
