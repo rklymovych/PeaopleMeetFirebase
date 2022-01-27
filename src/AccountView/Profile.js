@@ -111,7 +111,6 @@ const Profile = ({ className, ...rest }) => {
           className={classes.activeButtons}
           variant="contained"
           component="label"
-          // color="secondary"
           fullWidth
           onChange={uploadPhotoHandler}
         >

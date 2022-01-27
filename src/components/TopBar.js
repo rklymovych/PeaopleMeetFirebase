@@ -7,7 +7,7 @@ import MenuIcon from '@material-ui/icons/Menu';
 import MailIcon from '@material-ui/icons/Mail';
 import {useHistory} from "react-router-dom";
 import InputIcon from "@material-ui/icons/Input";
-import {database} from "../firebase";
+import {database, db} from "../firebase";
 import {useDispatch, useSelector} from "react-redux";
 import {logout} from "../actions";
 import {Badge, MenuItem} from "@material-ui/core";
@@ -16,6 +16,7 @@ import {FirebaseContext} from "../context/firebaseContext/firebaseContext";
 import {makeStyles} from "@material-ui/core/styles";
 import Brightness4Icon from '@material-ui/icons/Brightness4';
 import Brightness7Icon from '@material-ui/icons/Brightness7';
+import {useAuth} from "../context/AuthContext";
 
 const TopBar = ({ setState }) => {
 // export const TopBar  = ({setState}) =>{
@@ -31,6 +32,7 @@ const TopBar = ({ setState }) => {
   })
   const classes = useStyles();
   const history = useHistory()
+  const {getUid} = useAuth()
   const {
     getWroteUsersIds,
     wroteUsersIds,
@@ -66,10 +68,6 @@ const TopBar = ({ setState }) => {
   }, [auth.uid])
 //  make offline Users END****/
 
-
-  const showUsers = () => {
-    history.push('/users')
-  }
   useEffect(() => {
     if (auth.uid) {
       const unsubscribe = getWroteUsersIds(auth.uid)
@@ -85,6 +83,40 @@ const TopBar = ({ setState }) => {
      })
    },[darkMode])
 
+  useEffect(() => {
+    let interval;
+    const myAccount = db.collection('users').doc(getUid())
+    document.addEventListener('visibilitychange',(e) =>{
+      if(document.hidden){
+        interval = setTimeout(() => {
+          firebase.database().goOffline();
+          myAccount
+              .update({
+                location: {
+                  lat: null,
+                  lng: null,
+                },
+                isOnline: false
+              })
+          let localStorageData = JSON.parse(localStorage.getItem('user'))
+          let newData = {
+            ...localStorageData,
+            location: {
+              lat: null,
+              lng: null,
+            },
+            isOnline: false
+          }
+          // todo make one method set localstorage online user and offline user
+          localStorage.setItem('user', JSON.stringify(newData))
+          }, 60000)
+      }
+      else {
+        clearInterval(interval)
+        firebase.database().goOnline();
+      }
+    })
+  },[])
   return (
       <AppBar className={classes.topAndButtons}>
         <Toolbar>
@@ -98,7 +130,7 @@ const TopBar = ({ setState }) => {
           </IconButton>
 
           <div style={{display: 'flex', justifyContent: 'space-between', width: '100%', alignItems: 'center'}}>
-            <MenuItem onClick={showUsers}>
+            <MenuItem onClick={() => history.push('/users')}>
               <IconButton aria-label="show 4 new mails"
                           className={classes.icons}
               >
