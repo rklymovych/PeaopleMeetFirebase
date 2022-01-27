@@ -19,7 +19,7 @@ const useStyles = makeStyles((theme) => ({
     width: theme.spacing(8),
     height: theme.spacing(8),
   },
-  listItemAvatar : {
+  listItemAvatar: {
     minWidth: '80px',
     marginTop: 0
   },
@@ -28,6 +28,10 @@ const useStyles = makeStyles((theme) => ({
   userPageWrapper: theme.userPageWrapper,
   text: theme.palette.text.primary,
 }));
+
+const OnlineDot = (arg) => {
+  return <span style={{background: arg.arg ? '#44b700' : 'red'}} className="circle"></span>
+}
 
 export const Users = () => {
   const dispatch = useDispatch()
@@ -131,7 +135,9 @@ export const Users = () => {
                     </ListItemAvatar>
                     <ListItemText
                         className={classes.text}
-                        primary={<Typography  color="textPrimary" variant='subtitle1'>{user.name}</Typography>}
+                        primary={<Typography color="textPrimary" variant='subtitle1'>{user.name} {<OnlineDot
+                            arg={user.isOnline}
+                        />}</Typography>}
                         secondary={
                           <React.Fragment>
                             <Typography
@@ -184,7 +190,10 @@ export const Users = () => {
                     </ListItemAvatar>
                     <ListItemText
                         className={classes.text}
-                        primary={<Typography  color="textPrimary" variant='subtitle1'>{user.name}</Typography>}
+                        primary={<Typography color="textPrimary"
+                                             variant='subtitle1'>{user.name} {<OnlineDot
+                            arg={user.isOnline}
+                        />}</Typography>}
                         secondary={
                           <React.Fragment>
                             <Typography
@@ -221,7 +230,9 @@ export const Users = () => {
                       />
                     </ListItemAvatar>
                     <ListItemText
-                        primary={<Typography  color="textPrimary" variant='subtitle1'>{user.name}</Typography>}
+                        primary={<Typography color="textPrimary" variant='subtitle1'>{user.name} {<OnlineDot
+                            arg={user.isOnline}
+                        />}</Typography>}
                         secondary={
                           <React.Fragment>
                             <Typography

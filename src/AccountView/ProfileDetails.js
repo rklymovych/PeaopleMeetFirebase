@@ -16,8 +16,6 @@ import {
 import {useAuth} from "../context/AuthContext";
 import {db} from "../firebase";
 import {UpdateProfile} from "../components/UpdateProfile";
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import Switch from '@material-ui/core/Switch';
 import Alert from '@material-ui/lab/Alert';
 import Snackbar from '@material-ui/core/Snackbar';
 import {useHistory} from "react-router-dom";
@@ -32,16 +30,12 @@ const useStyles = makeStyles((theme) => ({
     width: 400,
     backgroundColor: 'white',
     border: '2px solid #000',
-    // boxShadow: theme.shadows[5],
+    boxShadow: theme.shadows[5],
     paddingBottom: '10px',
     borderRadius: '5px',
     top: '50%',
     left: `50%`,
     transform: 'translate(-50%, -50%)',
-  },
-  error: {
-    border: '1px solid red',
-    borderRadius: '5px'
   },
     activeButtons: theme.palette.activeButtons,
     topAndButtons: theme.palette.topAndButtons,
@@ -149,71 +143,6 @@ const ProfileDetails = ({className, ...rest}) => {
         onSubmit: _updateDateHandler,
         enableReinitialize: true,
       })
-
-      const getCurrentPosition = (successCb) => {
-        if ("geolocation" in navigator) {
-          navigator.geolocation.getCurrentPosition(function (position) {
-            if (typeof successCb === "function") {
-              successCb(position);
-            }
-          })
-        }
-      }
-
-      const onlineHandler = ({target: {checked}}) => {
-
-        if (checked) {
-          getCurrentPosition((position) => {
-            db.collection('users').doc(getUid())
-                .update({
-                  // ...values,
-                  location: {
-                    lat: position.coords.latitude,
-                    lng: position.coords.longitude,
-                  },
-                  isOnline: checked
-                })
-            db.collection('users').doc(getUid())
-                .get().then((doc) => {
-              localStorage.setItem('user', JSON.stringify(
-                  {
-                    email: doc.data().email,
-                    isOnline: doc.data().isOnline,
-                    location: {lat: doc.data().location.lat, lng: doc.data().location.lng},
-                    name: doc.data().name,
-                    uid: doc.data().uid,
-                  }
-              ))
-            })
-          })
-          dispatch({
-            type: 'GET_STATUS_CURRENT_USER',
-            payload: {checked: true}
-          })
-        } else {
-          db.collection('users').doc(getUid())
-              .update({
-                location: {lat: null, lng: null},
-                isOnline: checked
-              })
-          db.collection('users').doc(getUid())
-              .get().then((doc) => {
-            localStorage.setItem('user', JSON.stringify(
-                {
-                  email: doc.data().email,
-                  isOnline: doc.data().isOnline,
-                  location: {lat: null, lng: null},
-                  name: doc.data().name,
-                  uid: doc.data().uid,
-                }
-            ))
-          })
-          dispatch({
-            type: 'GET_STATUS_CURRENT_USER',
-            payload: {checked: false}
-          })
-        }
-      }
 
       return (
           <div style={{position: 'relative', zIndex: 123}}>
@@ -353,28 +282,9 @@ const ProfileDetails = ({className, ...rest}) => {
                 <Divider/>
                 <Box
                     display="flex"
-                    justifyContent="space-between"
+                    justifyContent="flex-end"
                     p={2}
                 >
-                  <FormControlLabel
-                      // className={classes.switcher}
-                      control={
-                        <Switch
-                            classes={{
-                                root: classes.root1,
-                                switchBase: classes.switchBase,
-                                thumb: classes.thumb,
-                                track: classes.track,
-                                checked: classes.checked,
-                            }}
-                            checked={values.isOnline}
-                            // color='primary'
-                            onChange={onlineHandler}
-                            name="isonline"
-                        />
-                      }
-                      label="Online"
-                  />
                   <Button
                       className={classes.activeButtons}
                       variant="contained"

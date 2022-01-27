@@ -50,6 +50,7 @@ export default (state = initialState, action) => {
       }
       break;
     case userConstants.GET_STATUS_CURRENT_USER:
+      // todo here make on/offline users
       state ={
         ...state,
         isOnline: action.payload.checked

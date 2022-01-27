@@ -30,9 +30,6 @@
 }
 .chatControls{
     display: flex;
-
-
-
     bottom: 0;
 }
 .chatControls textarea{
