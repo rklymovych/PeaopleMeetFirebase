@@ -37,11 +37,7 @@ const useStyles = makeStyles((theme) => ({
     left: `50%`,
     transform: 'translate(-50%, -50%)',
   },
-    activeButtons: theme.palette.activeButtons,
-    topAndButtons: theme.palette.topAndButtons,
-    switchBase: theme.palette.switchBase,
-    checked: theme.palette.checked,
-    track: theme.palette.track,
+    activeButtons: theme.palette.activeButtons
 }));
 
 const ProfileDetails = ({className, ...rest}) => {

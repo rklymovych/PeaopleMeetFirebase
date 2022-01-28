@@ -15,6 +15,12 @@ import {makeStyles} from "@material-ui/core/styles";
 import {useHistory} from "react-router-dom";
 import {db} from "../firebase";
 import {useAuth} from "../context/AuthContext";
+import {logout} from "../actions";
+import InputIcon from "@material-ui/icons/Input";
+import {useDispatch, useSelector} from "react-redux";
+import Brightness4Icon from "@material-ui/icons/Brightness4";
+import Brightness7Icon from "@material-ui/icons/Brightness7";
+
 
 const useStyles = makeStyles((theme) => ({
   drawerHeader: {
@@ -33,12 +39,17 @@ const useStyles = makeStyles((theme) => ({
     color: theme.palette.common.white
   },
   feedback : {
-    alignSelf: 'flex-end',
     marginTop: 'auto'
   }
 }))
 
 const Drawer = () => {
+  const localStorageDarkMode = JSON.parse(localStorage.getItem('darkMode'))
+  const [darkMode, setDarkMode] = React.useState(localStorageDarkMode || false)
+
+  const dispatch = useDispatch()
+  const auth = useSelector(state => state.auth)
+
   const classes = useStyles()
   const history = useHistory()
   const {getUid} = useAuth()
@@ -57,6 +68,14 @@ const Drawer = () => {
         })
     return avatar
   }, [])
+
+  useEffect(() => {
+    localStorage.setItem('darkMode', JSON.stringify(darkMode))
+    dispatch({
+      type: 'SWITCH_DARK_MODE',
+      payload: darkMode
+    })
+  }, [darkMode])
 
   return (
       <>
@@ -87,6 +106,12 @@ const Drawer = () => {
             <ListItemIcon><MailIcon/></ListItemIcon>
             <ListItemText primary={'Join'}/>
           </ListItem>
+          <ListItem button
+                    onClick={() => setDarkMode(!darkMode)}
+          >
+            <ListItemIcon>{!darkMode ? <Brightness4Icon/> : <Brightness7Icon/>}</ListItemIcon>
+            <ListItemText primary={'Dark Theme'}/>
+          </ListItem>
           <ListItem button onClick={() => history.push('/users')}>
             <ListItemIcon><SupervisorAccountRoundedIcon/></ListItemIcon>
             <ListItemText primary={'Users'}/>
@@ -100,10 +125,25 @@ const Drawer = () => {
           </ListItem>
 
         </List>
-        <ListItem button className={classes.feedback}>
-          <ListItemIcon><FeedbackIcon/></ListItemIcon>
-          <ListItemText primary={'v: 2.202.10.72'}/>
-        </ListItem>
+
+
+        <List className={classes.feedback}>
+          <ListItem button  onClick={() => dispatch(logout(auth.uid))}>
+            <ListItemIcon
+                className={classes.icons}
+
+            >
+              <InputIcon/>
+            </ListItemIcon>
+            <ListItemText primary={'Logout'}/>
+          </ListItem>
+
+          <ListItem button >
+            <ListItemIcon><FeedbackIcon/></ListItemIcon>
+            <ListItemText primary={'v: 2.202.10.82'}/>
+          </ListItem>
+        </List>
+
       </>
   )
 }

@@ -61,12 +61,12 @@ code {
 }
 
 .locate {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    color: white;
     border: none;
     background: transparent;
-}
-.locate img {
-    width: 30px;
-    cursor: pointer;
 }
 
 .gm-ui-hover-effect {

@@ -22,9 +22,9 @@ export const ThemeWrapper = () => {
                 color: '#fafafa',
                 '&$checked': {
                     transform: 'translateX(16px)',
-                    color: '#3d5afe',
+                    color: '#3aa85a',
                     '& + $track': {
-                        backgroundColor: '#3d5afe94',
+                        backgroundColor: '#26389e',
                         opacity: 1,
                         border: 'none',
                     },
@@ -40,7 +40,7 @@ export const ThemeWrapper = () => {
                 },
             },
             checked: { // radius around circle
-                color: '#3d5afe',
+                color: 'green',
             },
             track: {},
 
