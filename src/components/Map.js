@@ -16,11 +16,7 @@ import {FirebaseContext} from "../context/firebaseContext/firebaseContext";
 import Loader from "./loader/Loader";
 import {useHistory} from "react-router-dom";
 import Divider from "@material-ui/core/Divider";
-import FormControlLabel from "@material-ui/core/FormControlLabel";
-import Switch from "@material-ui/core/Switch";
-import {db} from "../firebase";
-import {useAuth} from "../context/AuthContext";
-import {useDispatch} from "react-redux";
+import LocationSearchingIcon from '@material-ui/icons/LocationSearching';
 import {getCurrentPosition} from "../utils/utils";
 
 const useStyles = makeStyles((theme)=>({
@@ -85,18 +81,15 @@ export const Map = () => {
     googleMapsApiKey: process.env.REACT_APP_GOOGLE_KEY,
     libraries
   })
-  const {getUid} = useAuth()
+
   const [chatStarted, setChatStarted] = useState(false)
   const [selectedUser, setSelectedUser] = useState(null)
   const [location, setLocation] = useState(getCurrentPosition())
   const [openDrawer, setOpenDrawer] = useState(false)
 
-  const dispatch = useDispatch()
-
   const authFromState = useSelector(state => state.auth)
   const storageUser = JSON.parse(localStorage.getItem('user'))
   const isOnline = storageUser?.isOnline
-  const [valueOnline, setValueOnline] = useState(false)
 
   const getCurrentPositionForLocalPurpose = async () => {
     await navigator.geolocation.getCurrentPosition((position) => {
@@ -130,81 +123,13 @@ export const Map = () => {
   if (loadError) return 'Error loading maps'
   if (!isLoaded) return <div className="loader-wrapper-map-page"><Loader/></div>
 
-  const onlineHandler = ({target: {checked}}) =>{
-    const myAccount = db.collection('users').doc(getUid())
-    const meFromLocal = JSON.parse(localStorage.getItem('user'))
-
-    setValueOnline(!valueOnline)
-    if(checked) {
-      getCurrentPosition((position) => {
-        myAccount
-            .update({
-              location: {
-                lat: position.coords.latitude,
-                lng: position.coords.longitude,
-              },
-              isOnline: true
-            })
-
-        localStorage.setItem('user', JSON.stringify({
-          ...meFromLocal,
-          isOnline: true,
-          location: {lat: position.coords.latitude, lng: position.coords.longitude}
-        }))
-      })
-
-      dispatch({
-        type: 'GET_STATUS_CURRENT_USER',
-        payload: {checked: true}
-      })
-    } else {
-      myAccount
-          .update({
-            location: {lat: null, lng: null},
-            isOnline: false
-          })
-      localStorage.setItem('user', JSON.stringify({
-        ...meFromLocal,
-        isOnline: false,
-        location: {lat: null, lng: null}
-      }))
-      dispatch({
-        type: 'GET_STATUS_CURRENT_USER',
-        payload: {checked: false}
-      })
-    }
-  }
-
   function Locate() {
     return (
-        <>
-          <FormControlLabel
-              className='switcher'
-              control={
-                <Switch
-                    style={{margin: 0}}
-                    classes={{
-                      root: classes.root1,
-                      switchBase: classes.switchBase,
-                      thumb: classes.thumb,
-                      track: classes.track,
-                      checked: classes.checked,
-                    }}
-                    checked={isOnline}
-                    // color='primary'
-                    onChange={onlineHandler}
-                    name="isonline"
-                />
-              }
-              label="Online"
-          />
           <button
               className="locate"
               onClick={getCurrentPositionForLocalPurpose}>
-            <img src={compass} alt={'compass'}/>
+            <LocationSearchingIcon fontSize="large" />
           </button>
-        </>
-
     )
   }
 
