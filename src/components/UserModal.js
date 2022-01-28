@@ -122,7 +122,7 @@ export const UserModal = ({selectedUser, openModal, setOpenModal}) => {
               <DialogContent className='px-0 py-0 px-sm-2 py-sm-2'>
                 <Card>
                   <CardActionArea>
-                    <img className={classes.media} src={selectedUser?.avatar ?? defaultAvatar}
+                    <img className={classes.media} src={selectedUser?.avatar ? selectedUser?.avatar : defaultAvatar}
                          alt={selectedUser?.avatar}/>
                   </CardActionArea>
                 </Card>

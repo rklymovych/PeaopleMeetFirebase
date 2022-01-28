@@ -46,6 +46,22 @@ export const FirebaseState = ({children}) => {
     );
   }
 
+  const  deleteOldMessages = async (conversations, uid_1, uid_2) => {
+    let firstMessage = []
+    db.collection('conversations')
+        .where('user_uid_1', 'in', [uid_1, uid_2])
+        .onSnapshot((querySnapshot)=> {
+          querySnapshot.forEach(doc => {
+            // todo  make this sheeeeeeeeeet
+            doc.ref.delete()
+          })
+          // await deleteDoc(doc(db, "conversations", "Xm2fxFqiRyT06Pdx8Be1"));
+
+        })
+
+    console.log('firstMessage', firstMessage)
+  }
+
   const getConversations = (uid_1, uid_2) => {
     let unsubscribe;
     try {
@@ -64,12 +80,17 @@ export const FirebaseState = ({children}) => {
 
               }
             })
-
-            dispatch({
-              type: GET_CONVERSATIONS,
-              payload: conversations
+            console.log('conversations', conversations)
+            deleteOldMessages(conversations, uid_1, uid_2).then((con)=>{
+              console.log('con', con)
+              dispatch({
+                type: GET_CONVERSATIONS,
+                payload: conversations
+              })
+              dispatch({type: IS_LOADED, payload: false})
             })
-            dispatch({type: IS_LOADED, payload: false})
+
+
           })
     } catch (e) {
       throw new Error(e.message)
@@ -196,15 +217,8 @@ export const FirebaseState = ({children}) => {
               .update({
                 activeConversation: collection
               })
-          // console.log('active Chat With Users Ids', activeChatWithUsersIds)
-          // console.log('first message to user Ids', collection)
-          // console.log('unread Users Ids', state.wroteUsersIds)
         })
   }
-
-
-  // todo: переназвать срочно все функции по человечески
-
 
   const setIdFirstActiveConversationOnServer = (uid_1, uid_2) => {
     let unsubscribe;

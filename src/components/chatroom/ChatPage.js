@@ -4,7 +4,7 @@ import clsx from 'clsx';
 import {makeStyles} from '@material-ui/core/styles';
 import {Paper, TextField} from "@material-ui/core";
 import Button from "@material-ui/core/Button";
-import 'firebase/firestore'
+// import 'firebase/firestore'
 import {useSelector} from "react-redux";
 import {FirebaseContext} from "../../context/firebaseContext/firebaseContext";
 import Loader from "../loader/Loader";
