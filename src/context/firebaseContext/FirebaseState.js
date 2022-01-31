@@ -67,7 +67,7 @@ export const FirebaseState = ({children}) => {
             }
           })
 
-          if (conversationIds.length === 5) {
+          if (conversationIds.length === 10) {
             let a = db.collection("conversations").doc(conversationIds[0])
             a.delete()
           }
