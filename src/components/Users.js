@@ -112,7 +112,7 @@ export const Users = () => {
                 variant='body1'
                 color="textPrimary"
             >
-              Unread Chat
+              Unread Messages
             </Typography>
           </div>
           {wroteUsers.length === 0 ? <Typography component='div' color='textPrimary'>No unread messages</Typography> : ''}
@@ -162,7 +162,7 @@ export const Users = () => {
                 variant='body1'
                 color="textPrimary"
             >
-              Existed Chat
+              Read Messages
             </Typography>
           </div>
           {getActiveChatWithUsers.length === 0 && firstMessageToUserFromServer.length === 0

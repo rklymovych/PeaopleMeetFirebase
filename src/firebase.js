@@ -14,6 +14,16 @@ const app = firebase.initializeApp({
   appId: "1:687580881213:web:360b8a37e9dfc8db202554"
 })
 
+// const app = firebase.initializeApp({
+//   apiKey: "AIzaSyCGgMf5pJYmz91Kojii6HcEoFFySu26P_U",
+//   authDomain: "radio-aba5d.firebaseapp.com",
+//   databaseURL: "https://radio-aba5d.firebaseio.com",
+//   projectId: "radio-aba5d",
+//   storageBucket: "radio-aba5d.appspot.com",
+//   messagingSenderId: "380476704164",
+//   appId: "1:380476704164:web:723df3b8852bb831552d31"
+// });
+
 export const auth = app.auth()
 export const db = app.firestore()
 export const storage = app.storage()
