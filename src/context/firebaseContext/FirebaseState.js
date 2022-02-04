@@ -58,7 +58,6 @@ export const FirebaseState = ({children}) => {
           const conversations = []
           let conversationIds = []
           querySnapshot.forEach(doc => {
-            console.log('id', doc.id);
             if ((doc.data().user_uid_1 === uid_1 && doc.data().user_uid_2 === uid_2)
               ||
               (doc.data().user_uid_1 === uid_2 && doc.data().user_uid_2 === uid_1)) {

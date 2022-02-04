@@ -85,6 +85,7 @@ export const UserModal = ({selectedUser, openModal, setOpenModal}) => {
   const {location} = JSON.parse(localStorage.getItem('user')) || {}
 
   const handleClose = () => {
+    console.log('qwe')
     setOpenModal(false);
   };
 
@@ -118,7 +119,7 @@ export const UserModal = ({selectedUser, openModal, setOpenModal}) => {
           {/*<DialogTitle className={classes.dialogTitle} id="max-width-dialog-title"><b>Information about user</b></DialogTitle>*/}
 
           <Grid container>
-            <Grid item sm={5} style={{height: '100%'}}>
+            <Grid item sm={5} style={{height: '100%', margin: 'auto'}}>
               <DialogContent className='px-0 py-0 px-sm-2 py-sm-2'>
                 <Card>
                   <CardActionArea>

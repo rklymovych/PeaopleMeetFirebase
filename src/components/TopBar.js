@@ -19,6 +19,9 @@ import {getCurrentPosition} from "../utils/utils";
 
 const TopBar = ({ setState }) => {
 // export const TopBar  = ({setState}) =>{
+  const localStorageDarkMode = JSON.parse(localStorage.getItem('darkMode'))
+  let darkMode = localStorageDarkMode || false
+
   const useStyles = makeStyles((theme) => {
     return {
       root: {
@@ -35,6 +38,7 @@ const TopBar = ({ setState }) => {
   })
   const storageUser = JSON.parse(localStorage.getItem('user'))
   const isOnline = storageUser?.isOnline
+  const [valueOnline, setValueOnline] = useState(isOnline)
 
   const classes = useStyles();
   const history = useHistory()
@@ -46,12 +50,10 @@ const TopBar = ({ setState }) => {
   const handleDrawerOpen = () => {
     setState({'left': true});
   };
-  const [valueOnline, setValueOnline] = useState(false)
+
   const auth = useSelector(state => state.auth)
   const dispatch = useDispatch()
-  const localStorageDarkMode = JSON.parse(localStorage.getItem('darkMode'))
 
-  let darkMode = localStorageDarkMode || false
   //  make offline Users/
   const userStatusDatabaseRef = database.ref('/status/' + auth.uid);
   const isOnlineForDatabase = {
@@ -64,7 +66,7 @@ const TopBar = ({ setState }) => {
     const meFromLocal = JSON.parse(localStorage.getItem('user'))
 
 
-    setValueOnline(!valueOnline)
+    setValueOnline((prevState) => !prevState)
     if(checked) {
       getCurrentPosition((position) => {
         myAccount
@@ -85,7 +87,7 @@ const TopBar = ({ setState }) => {
 
       dispatch({
         type: 'GET_STATUS_CURRENT_USER',
-        payload: {checked: true}
+        payload: {checked: checked}
       })
     } else {
       myAccount
@@ -100,7 +102,7 @@ const TopBar = ({ setState }) => {
       }))
       dispatch({
         type: 'GET_STATUS_CURRENT_USER',
-        payload: {checked: false}
+        payload: {checked: checked}
       })
     }
   }
@@ -161,6 +163,7 @@ const TopBar = ({ setState }) => {
             isOnline: false
           }
           // todo make one method set localstorage online user and offline user
+          setValueOnline((prevState) => !prevState)
           localStorage.setItem('user', JSON.stringify(newData))
           }, 600000)
       }
@@ -199,20 +202,18 @@ const TopBar = ({ setState }) => {
 
             <div>
               <FormControlLabel
-                  label={isOnline ? 'Online' : 'Offline'}
+                  label={valueOnline ? 'Online' : 'Offline'}
                   labelPlacement="start"
                   className='switcher'
                   control={
                     <Switch
                         style={{margin: 0}}
                         classes={{
-                          root: classes.root1,
                           switchBase: classes.switchBase,
-                          thumb: classes.thumb,
                           track: classes.track,
                           checked: classes.checked,
                         }}
-                        checked={isOnline}
+                        checked={valueOnline}
                         // color='primary'
                         onChange={onlineHandler}
                         name="isonline"

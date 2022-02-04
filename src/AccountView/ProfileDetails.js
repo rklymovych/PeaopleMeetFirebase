@@ -87,8 +87,10 @@ const ProfileDetails = ({className, ...rest}) => {
           setSnackbar(true)
         }
       }, [error])
+
       useEffect(() => {
-        const unsubscribe = db.collection('users').doc(getUid())
+        let unsubscribe
+        unsubscribe = db.collection('users').doc(getUid())
             .onSnapshot((doc) => {
               doc?.exists && setValues({
                 ...values,
@@ -133,7 +135,6 @@ const ProfileDetails = ({className, ...rest}) => {
           sex: values.sex || '',
           name: values.name || '',
           description: values.description || '',
-          // location: {lat: values.location.lat, lng: values.location.lng} || {}
         },
         validationSchema,
         onSubmit: _updateDateHandler,

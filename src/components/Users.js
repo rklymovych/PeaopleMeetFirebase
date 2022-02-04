@@ -165,7 +165,8 @@ export const Users = () => {
               Read Messages
             </Typography>
           </div>
-          {getActiveChatWithUsers.length === 0 && firstMessageToUserFromServer.length === 0
+          {getActiveChatWithUsers.length === 0
+          // && firstMessageToUserFromServer.length === 0 не понятно зачем это надо было!
               ?
               <Typography component='div' color='textPrimary'>No existed Chat</Typography>
               :
