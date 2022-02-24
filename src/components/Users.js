@@ -6,6 +6,7 @@ import {UserModal} from "./UserModal";
 import {useDispatch, useSelector} from "react-redux";
 import {getRealtimeUsers} from "../actions";
 import {FirebaseContext} from "../context/firebaseContext/firebaseContext";
+import {db} from "../firebase";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -115,7 +116,8 @@ export const Users = () => {
               Unread Messages
             </Typography>
           </div>
-          {wroteUsers.length === 0 ? <Typography component='div' color='textPrimary'>No unread messages</Typography> : ''}
+          {wroteUsers.length === 0 ?
+              <Typography component='div' color='textPrimary'>No unread messages</Typography> : ''}
           {/* eslint-disable-next-line array-callback-return */}
           {wroteUsers && wroteUsers.map(user => {
             // if (user.isOnline) {    // flag isOnline
@@ -166,7 +168,7 @@ export const Users = () => {
             </Typography>
           </div>
           {getActiveChatWithUsers.length === 0
-          // && firstMessageToUserFromServer.length === 0 не понятно зачем это надо было!
+              // && firstMessageToUserFromServer.length === 0 не понятно зачем это надо было!
               ?
               <Typography component='div' color='textPrimary'>No existed Chat</Typography>
               :

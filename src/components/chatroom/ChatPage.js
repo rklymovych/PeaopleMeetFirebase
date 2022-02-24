@@ -128,7 +128,7 @@ const useStyles = makeStyles((theme) => ({
   activeButtons: theme.palette.activeButtons
 }));
 
-export const ChatPage = ({selected, chatStarted}) => {
+const ChatPage = ({selected, chatStarted}) => {
 
   const {
     filterOwnMessagesDrawerIsOpen,
@@ -251,3 +251,5 @@ export const ChatPage = ({selected, chatStarted}) => {
       </div>
   );
 }
+
+export default ChatPage

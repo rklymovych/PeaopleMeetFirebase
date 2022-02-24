@@ -15,7 +15,7 @@ import {
 } from '@material-ui/core';
 import {useAuth} from "../context/AuthContext";
 import {db} from "../firebase";
-import {UpdateProfile} from "../components/UpdateProfile";
+import {UpdateProfile} from "../components/login.logout";
 import Alert from '@material-ui/lab/Alert';
 import Snackbar from '@material-ui/core/Snackbar';
 import {useHistory} from "react-router-dom";

@@ -1,16 +1,17 @@
-import React, {useRef, useState} from 'react'
+import React, {useRef, useState, useEffect} from 'react'
 import {Card, Button, Form, Alert, Container} from "react-bootstrap";
-import {Link, useHistory} from "react-router-dom";
-import 'firebase/auth'
-import 'firebase/app'
-import {useDispatch, useSelector} from "react-redux";
-import {signup} from "../actions";
 
-function Signup() {
+import {Link, useHistory} from "react-router-dom";
+import {useDispatch} from "react-redux";
+import {signin} from "../../actions";
+import {useSelector} from 'react-redux'
+import {db} from "../../firebase";
+import {useAuth} from "../../context/AuthContext";
+
+export function Login() {
+  const {getUid} = useAuth()
   const emailRef = useRef()
-  const nameRef = useRef()
   const passwordRef = useRef()
-  const passwordConfirmRef = useRef()
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
   const history = useHistory()
@@ -18,31 +19,32 @@ function Signup() {
 
   const {auth} = useSelector(state => state)
 
-  const handleSubmit = (e) => {
+  function handleSubmit(e) {
     e.preventDefault()
-    if(passwordRef.current.value.length < 6){
-      return setError('Password should be at least 6 characters')
-    }
-    if (passwordRef.current.value !== passwordConfirmRef.current.value) {
-      return setError('Passwords do not match')
-    }
 
     try {
       setError('')
       setLoading(true)
-      const email = emailRef.current.value // сделать локальный стейт к этому всему
+      const email = emailRef.current.value
       const password = passwordRef.current.value
-      const name = nameRef.current.value
-      const user = {email, password, name}
-      dispatch(signup(user))
+      // await login(emailRef.current.value, passwordRef.current.value)
+      dispatch(signin({email, password}))
       history.push('/')
     } catch (e) {
-      setError('Failed to create an account')
+      setError('Failed to log in')
     }
     setLoading(false)
-
   }
 
+  useEffect(() => {
+    if (getUid()) {
+      db.collection('users').doc(getUid())
+          .update({
+            location: {lat: null, lng: null},
+            isOnline: false
+          })
+    }
+  }, [getUid()])
   return (
       <Container
           className='d-flex align-items-center justify-content-center'
@@ -51,7 +53,7 @@ function Signup() {
         <div className="w-100" style={{maxWidth: '400px'}}>
           <Card>
             <Card.Body>
-              <h2 className="text-center mb-4">Signup</h2>
+              <h2 className="text-center mb-4">Log In</h2>
               {auth?.error && <Alert variant="danger">{auth.error}</Alert>}
               {error && <Alert variant="danger">{error}</Alert>}
               <Form onSubmit={handleSubmit}>
@@ -59,39 +61,24 @@ function Signup() {
                   <Form.Label>Email</Form.Label>
                   <Form.Control type="email" ref={emailRef} required/>
                 </Form.Group>
-
-                <Form.Group id="name">
-                  <Form.Label>Name</Form.Label>
-                  <Form.Control
-                      type="text"
-                      ref={nameRef}
-                      required
-                  />
-                </Form.Group>
-
                 <Form.Group id="password">
                   <Form.Label>Password</Form.Label>
                   <Form.Control type="password" ref={passwordRef} required/>
                 </Form.Group>
-
-                <Form.Group id="password-confirm">
-                  <Form.Label>Password Confirmation</Form.Label>
-                  <Form.Control type="password" ref={passwordConfirmRef} required/>
-                </Form.Group>
-
-                <Button disabled={loading} type="submit" className="w-100">Sign up</Button>
-
+                <Button disabled={loading} type="submit" className="w-100">Log in</Button>
               </Form>
+              <div className="w-100 text-center mt-3">
+                <Link to='/forgot-password'>Forgot Password</Link>
+              </div>
             </Card.Body>
           </Card>
           <div className="w-100 text-center mt-2">
-            Or <Link to='/login'>Sign In</Link>
+            Or <Link to="/signup">Sign Up</Link>
           </div>
+
         </div>
       </Container>
-
-
   );
 }
 
-export default Signup;
+export default Login

@@ -1,20 +1,20 @@
 import React, {useEffect} from 'react'
 import {Redirect, Route, Switch} from "react-router-dom";
-import {useAuth} from "../context/AuthContext";
+import {useAuth} from "../../context/AuthContext";
 import PrivateRoute from "./PrivateRoute";
-import {UpdateProfile} from "./UpdateProfile";
-import Signup from "./Signup";
-import {Login} from "./Login";
-import {ForgotPassword} from "./ForgotPassword";
-import Account from "../AccountView";
-import {Map} from "./Map";
-import {Users} from "./Users";
-import Join from "./Join/Join";
-import {isLoggedInUser} from "../actions";
+import {UpdateProfile} from "../login.logout";
+import Signup from "../login.logout/Signup";
+import {Login} from "../login.logout/Login";
+import {ForgotPassword} from "../login.logout";
+import Account from "../../AccountView";
+import {Map} from "../maps";
+import {Users} from "../Users";
+import Join from "../Join/Join";
+import {isLoggedInUser} from "../../actions";
 import {useDispatch, useSelector} from "react-redux";
 import SwipeableDrawer from "@material-ui/core/SwipeableDrawer";
-import Drawer from "./Drawer";
-import TopBar from "./TopBar";
+import Drawer from "../Drawer";
+import TopBar from "../TopBar";
 // import {TopBar} from "./TopBar";
 import {makeStyles} from "@material-ui/core/styles";
 
@@ -27,7 +27,7 @@ const useStyles = makeStyles((theme) => ({
   }
 }))
 
-export function RouteComponent() {
+function RouteComponent() {
   const classes = useStyles()
   const auth = useSelector(state => state.auth);
   const dispatch = useDispatch()
@@ -91,5 +91,7 @@ export function RouteComponent() {
       </Switch>
   )
 }
+
+export default RouteComponent
 
 
