@@ -5,12 +5,12 @@ import clsx from 'clsx'
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
-import defaultAvatar from '../assets/avatars/avatar.jpg'
+import defaultAvatar from '../../assets/avatars/avatar.jpg'
 import Typography from "@material-ui/core/Typography";
 import {Card, CardActionArea, Grid} from "@material-ui/core";
 import Divider from "@material-ui/core/Divider";
 import {useHistory} from "react-router-dom";
-import {FirebaseContext} from "../context/firebaseContext/firebaseContext";
+import {FirebaseContext} from "../../context/firebaseContext/firebaseContext";
 
 const useStyles = makeStyles((theme) => {
   return {
@@ -71,7 +71,7 @@ const useStyles = makeStyles((theme) => {
   }
 });
 
-export const UserModal = ({selectedUser, openModal, setOpenModal}) => {
+const UserModal = ({selectedUser, openModal, setOpenModal}) => {
   const classes = useStyles();
   const history = useHistory()
   const {
@@ -199,3 +199,5 @@ export const UserModal = ({selectedUser, openModal, setOpenModal}) => {
       </React.Fragment>
   );
 }
+
+export default UserModal

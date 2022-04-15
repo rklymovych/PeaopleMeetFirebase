@@ -2,11 +2,10 @@ import React, {useEffect, useState, useContext} from 'react'
 import {Avatar, ListItem, ListItemAvatar, ListItemText, makeStyles} from "@material-ui/core";
 import Typography from "@material-ui/core/Typography";
 import List from "@material-ui/core/List";
-import {UserModal} from "./UserModal";
 import {useDispatch, useSelector} from "react-redux";
-import {getRealtimeUsers} from "../actions";
-import {FirebaseContext} from "../context/firebaseContext/firebaseContext";
-import {db} from "../firebase";
+import {getRealtimeUsers} from "../../actions";
+import {FirebaseContext} from "../../context/firebaseContext/firebaseContext";
+import UserModal from "./UserModal";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -34,7 +33,7 @@ const OnlineDot = (arg) => {
   return <span style={{background: arg.arg ? '#44b700' : 'red'}} className="circle"></span>
 }
 
-export const Users = () => {
+const Users = () => {
   const dispatch = useDispatch()
   const classes = useStyles()
   const auth = useSelector(state => state.auth)
@@ -264,5 +263,6 @@ export const Users = () => {
   )
 }
 
+export default Users
 
 
