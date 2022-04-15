@@ -165,7 +165,7 @@ const TopBar = ({ setState }) => {
           // todo make one method set localstorage online user and offline user
           setValueOnline((prevState) => !prevState)
           localStorage.setItem('user', JSON.stringify(newData))
-          }, 600000)
+          }, 60000)
       }
       else {
         clearInterval(interval)

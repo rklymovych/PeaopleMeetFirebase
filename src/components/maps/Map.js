@@ -1,23 +1,23 @@
 import React, {useCallback, useEffect, useState, useRef, useContext} from 'react'
 import {GoogleMap, InfoWindow, Marker, useLoadScript} from '@react-google-maps/api';
-import mapStyles from "../components/maps/MapStyles";
-import compass from '../assets/2277999_map-compass-compass-svg-hd-png-download.png'
+import mapStyles from "./MapStyles";
+import compass from '../../assets/2277999_map-compass-compass-svg-hd-png-download.png'
 import {useSelector} from 'react-redux'
-import defUser from '../assets/def-user.jpg'
-import chatBackground from '../assets/chatBachground.jpg'
+import defUser from '../../assets/def-user.jpg'
+import chatBackground from '../../assets/chatBachground.jpg'
 
 import '@reach/combobox/styles.css'
 import {Card, CardActionArea, CardActions, CardContent, CardMedia, Drawer, Grid} from "@material-ui/core";
 import Typography from "@material-ui/core/Typography";
 import Button from "@material-ui/core/Button";
 import {makeStyles} from "@material-ui/core/styles";
-import {ChatPage} from "./chatroom/ChatPage";
-import {FirebaseContext} from "../context/firebaseContext/firebaseContext";
-import Loader from "./loader/Loader";
+import {ChatPage} from "../chatroom";
+import {FirebaseContext} from "../../context/firebaseContext/firebaseContext";
+import Loader from "../loader/Loader";
 import {useHistory} from "react-router-dom";
 import Divider from "@material-ui/core/Divider";
 import LocationSearchingIcon from '@material-ui/icons/LocationSearching';
-import {getCurrentPosition} from "../utils/utils";
+import {getCurrentPosition} from "../../utils/utils";
 
 const useStyles = makeStyles((theme)=>({
   root: {
@@ -63,7 +63,7 @@ const options = {
   zoomControl: true
 }
 
-export const Map = () => {
+const Map = () => {
   const history = useHistory()
   const {
     distance,
@@ -289,3 +289,5 @@ export const Map = () => {
       </>
   )
 }
+
+export default Map

@@ -1,9 +1,9 @@
 import React, {useRef, useState} from 'react'
 import {Card, Button, Form, Alert} from "react-bootstrap";
-import {useAuth} from "../context/AuthContext";
+import {useAuth} from "../../context/AuthContext";
 import { useHistory} from "react-router-dom";
 
-export function UpdateProfile() {
+function UpdateProfile() {
   const emailRef = useRef()
   const passwordRef = useRef()
   const passwordConfirmRef = useRef()
@@ -92,3 +92,5 @@ export function UpdateProfile() {
       </>
   );
 }
+
+export default UpdateProfile
