@@ -1,11 +1,8 @@
 import React from 'react'
 import {useSelector} from 'react-redux'
 import {createMuiTheme, ThemeProvider} from "@material-ui/core/styles";
-import {AuthProvider} from "../context/AuthContext";
-import App from './App';
 
-
-export const ThemeWrapper = () => {
+export const ThemeWrapper = ({children}) => {
     const {isDarkMode} = useSelector(state => state.user)
 
     const lightTheme = createMuiTheme({
@@ -216,9 +213,7 @@ export const ThemeWrapper = () => {
 
     return (
         <ThemeProvider theme={isDarkMode ? darkTheme : lightTheme}>
-            <AuthProvider>
-                <App/>
-            </AuthProvider>
+            {children}
         </ThemeProvider>
     )
 

@@ -8,14 +8,13 @@ import {Login} from "../login.logout/Login";
 import {ForgotPassword} from "../login.logout";
 import Account from "../../AccountView";
 import {Map} from "../maps";
-import {Users} from "../Users";
+import {Users} from "../users";
 import Join from "../Join/Join";
 import {isLoggedInUser} from "../../actions";
 import {useDispatch, useSelector} from "react-redux";
 import SwipeableDrawer from "@material-ui/core/SwipeableDrawer";
 import Drawer from "../Drawer";
 import TopBar from "../TopBar";
-// import {TopBar} from "./TopBar";
 import {makeStyles} from "@material-ui/core/styles";
 
 const useStyles = makeStyles((theme) => ({
