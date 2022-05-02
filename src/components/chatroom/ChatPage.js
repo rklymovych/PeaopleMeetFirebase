@@ -7,7 +7,7 @@ import Button from "@material-ui/core/Button";
 // import 'firebase/firestore'
 import {useSelector} from "react-redux";
 import {FirebaseContext} from "../../context/firebaseContext/firebaseContext";
-import Loader from "../loader/Loader";
+import {Loader} from "../loader";
 import moment from 'moment'
 import Typography from "@material-ui/core/Typography";
 

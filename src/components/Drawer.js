@@ -52,23 +52,8 @@ const Drawer = () => {
 
   const classes = useStyles()
   const history = useHistory()
-  const {getUid} = useAuth()
-  const [avatar, setAvatar] = React.useState(null)
-  const [userName, setUserName] = React.useState('')
-
-  useEffect(() => {
-    const avatar = db.collection("users").doc(getUid())
-        .onSnapshot(doc => {
-          if (doc?.exists) {
-            setAvatar(doc.data().avatar)
-            setUserName(doc.data().name)
-          }
-        }, error => {
-          console.log('sidenavPage', error.message)
-        })
-    return avatar
-  }, [])
-
+  const {getUid, myAccount} = useAuth()
+ 
   useEffect(() => {
     localStorage.setItem('darkMode', JSON.stringify(darkMode))
     dispatch({
@@ -82,7 +67,7 @@ const Drawer = () => {
         <div className={classes.drawerHeader}
              style={{
                position: 'relative',
-               backgroundImage: `url(${avatar ? avatar : defaultAvatar})`,
+               backgroundImage: `url(${auth.avatar ? auth.avatar : defaultAvatar})`,
                backgroundRepeat: 'no-repeat',
                backgroundPosition: 'center center',
                backgroundSize: 'cover',
@@ -91,7 +76,7 @@ const Drawer = () => {
 
         >
           <Typography variant="h4" align='center' className={classes.userName}>
-            {userName}
+            {auth.name}
           </Typography>
 
 
@@ -140,7 +125,7 @@ const Drawer = () => {
 
           <ListItem button >
             <ListItemIcon><FeedbackIcon/></ListItemIcon>
-            <ListItemText primary={'v: 2.202.40.51'}/>
+            <ListItemText primary={'v: 2.202.50.20'}/>
           </ListItem>
         </List>
 

@@ -31,12 +31,12 @@ const useStyles = makeStyles((theme) => ({
 
 const Profile = ({ className, ...rest }) => {
   const classes = useStyles();
-  const { getUid } = useAuth()
+  const { getUid, myAccount } = useAuth()
   const [name, setName] = useState('')
   const [avatar, setAvatar] = useState(null)
 
   useEffect(() => {
-    const unsubscribe = db.collection('users').doc(getUid())
+    const unsubscribe = myAccount()
       .onSnapshot((doc) => {
         doc?.exists && setName(doc.data().name)
       });
@@ -49,14 +49,14 @@ const Profile = ({ className, ...rest }) => {
     const fileRef = storageRef.child(file.name)
     await fileRef.put(file)
     const fileUrl = await fileRef.getDownloadURL()
-    db.collection('users').doc(getUid())
+    myAccount()
       .set({ avatar: fileUrl }, { merge: true })
     setAvatar(fileUrl)
   }
 
   useEffect(() => {
     const fetchUsers = async () => {
-      db.collection("users").doc(getUid())
+      await myAccount()
         .get()
         .then((doc) => {
           setAvatar(doc?.data()?.avatar ?? '');
@@ -115,7 +115,7 @@ const Profile = ({ className, ...rest }) => {
           onChange={uploadPhotoHandler}
         >
           Upload Photo
-            <input
+          <input
             type="file"
             hidden
           />

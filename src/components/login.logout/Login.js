@@ -9,7 +9,7 @@ import {db} from "../../firebase";
 import {useAuth} from "../../context/AuthContext";
 
 export function Login() {
-  const {getUid} = useAuth()
+  const {getUid, myAccount} = useAuth()
   const emailRef = useRef()
   const passwordRef = useRef()
   const [error, setError] = useState('')
@@ -38,7 +38,7 @@ export function Login() {
 
   useEffect(() => {
     if (getUid()) {
-      db.collection('users').doc(getUid())
+      myAccount()
           .update({
             location: {lat: null, lng: null},
             isOnline: false

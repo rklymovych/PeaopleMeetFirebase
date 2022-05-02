@@ -6,7 +6,8 @@ const initialState = {
   authenticating: false,
   authenticated: false,
   error: null,
-  isOnline: null
+  isOnline: false,
+  sex: ''
 }
 
 
@@ -29,6 +30,7 @@ export default (state = initialState, action) => {
       }
       break;
     case `${authConstant.USER_LOGIN}_FAILURE`:
+   
       state = {
         ...state,
         authenticated: false,
@@ -53,13 +55,13 @@ export default (state = initialState, action) => {
       // todo here make on/offline users
       state ={
         ...state,
-        isOnline: action.payload.checked
+        ...action.payload
       }
       break;
     case userConstants.SET_DATA_CURRENT_USER:
       state ={
         ...state,
-        ...action.payload.values.name
+        ...action.payload.values
       }
       break;
   }
