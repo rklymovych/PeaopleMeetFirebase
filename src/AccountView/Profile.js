@@ -14,6 +14,7 @@ import {
 } from '@material-ui/core';
 import { useAuth } from "../context/AuthContext";
 import { db, storage } from "../firebase";
+import {useDispatch} from "react-redux";
 
 const useStyles = makeStyles((theme) => ({
   root: {},
@@ -29,19 +30,10 @@ const useStyles = makeStyles((theme) => ({
 
 }));
 
-const Profile = ({ className, ...rest }) => {
+const Profile = ({ className, auth, ...rest }) => {
+  const dispatch = useDispatch()
   const classes = useStyles();
   const { getUid, myAccount } = useAuth()
-  const [name, setName] = useState('')
-  const [avatar, setAvatar] = useState(null)
-
-  useEffect(() => {
-    const unsubscribe = myAccount()
-      .onSnapshot((doc) => {
-        doc?.exists && setName(doc.data().name)
-      });
-    return unsubscribe;
-  }, []);
 
   const uploadPhotoHandler = async (e) => {
     const file = e.target.files[0]
@@ -51,21 +43,11 @@ const Profile = ({ className, ...rest }) => {
     const fileUrl = await fileRef.getDownloadURL()
     myAccount()
       .set({ avatar: fileUrl }, { merge: true })
-    setAvatar(fileUrl)
+      dispatch({
+        type: 'SET_AVATAR_CURRENT_USER',
+        payload: fileUrl
+      })
   }
-
-  useEffect(() => {
-    const fetchUsers = async () => {
-      await myAccount()
-        .get()
-        .then((doc) => {
-          setAvatar(doc?.data()?.avatar ?? '');
-        }, error => {
-          console.log('Profile', error.message);
-        })
-    }
-    fetchUsers()
-  }, [])
 
   return (
     <Card
@@ -80,7 +62,7 @@ const Profile = ({ className, ...rest }) => {
         >
           <Avatar
             className={classes.avatar}
-            src={avatar}
+            src={auth.avatar}
           />
           <Typography
             color="textPrimary"
@@ -88,7 +70,7 @@ const Profile = ({ className, ...rest }) => {
             variant="h3"
             className={classes.center}
           >
-            {name}
+            {auth.name}
           </Typography>
           <Typography
             color="textSecondary"

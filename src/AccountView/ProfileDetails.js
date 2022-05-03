@@ -20,7 +20,7 @@ import Alert from '@material-ui/lab/Alert';
 import Snackbar from '@material-ui/core/Snackbar';
 import {useHistory} from "react-router-dom";
 import {validationSchema} from "../validation";
-import {useDispatch, useSelector} from "react-redux";
+import {useDispatch} from "react-redux";
 
 const useStyles = makeStyles((theme) => ({
   root: {},
@@ -40,9 +40,7 @@ const useStyles = makeStyles((theme) => ({
   activeButtons: theme.palette.activeButtons
 }));
 
-const ProfileDetails = ({className, ...rest}) => {
-  const auth = useSelector(state => state.auth)
-  console.log(45, auth);
+const ProfileDetails = ({className, auth, ...rest}) => {
   const dispatch = useDispatch()
   const {currentUser, getUid, error, myAccount} = useAuth()
 
@@ -56,7 +54,7 @@ const ProfileDetails = ({className, ...rest}) => {
     description: '',
     age: '',
     sex: '',
-    email: currentUser.email,
+    email: '',
     location: {lat: null, lng: null},
     isOnline: false,
   });
@@ -91,24 +89,36 @@ const ProfileDetails = ({className, ...rest}) => {
     }
   }, [error])
 
-  useEffect(() => {
-    // todo лишнее обращение на бекенд... нужно брать с ауз
-    let unsubscribe
-    unsubscribe = myAccount()
-      .onSnapshot((doc) => {
-        doc?.exists && setValues({
-          ...values,
-          name: doc.data().name,
-          description: doc.data().description,
-          age: doc.data().age,
-          sex: doc.data().sex,
-          location: {lat: doc.data().location.lat, lng: doc.data().location.lng},
-          isOnline: doc.data().isOnline
-        })
-      })
+  // useEffect(() => {
+  //   // todo лишнее обращение на бекенд... нужно брать с ауз
+  //   let unsubscribe
+  //   unsubscribe = myAccount()
+  //     .onSnapshot((doc) => {
+  //       doc?.exists && setValues({
+  //         ...values,
+  //         name: doc.data().name,
+  //         description: doc.data().description,
+  //         age: doc.data().age,
+  //         sex: doc.data().sex,
+  //         location: {lat: doc.data().location.lat, lng: doc.data().location.lng},
+  //         isOnline: doc.data().isOnline
+  //       })
+  //     })
+  //
+  //   return unsubscribe;
+  // }, []);
 
-    return unsubscribe;
-  }, []);
+  useEffect(()=>{
+      setValues({
+        name: auth.name,
+        description: auth.description,
+        age: auth.age,
+        sex: auth.sex,
+        email: auth.email,
+        location: auth.location,
+        isOnline: auth.isOnline,
+      })
+  },[auth]);
 
   const handleChange = (event) => {
     setValues({
@@ -244,7 +254,7 @@ const ProfileDetails = ({className, ...rest}) => {
                   name="sex"
                   required
                   onChange={handleChange}
-                  value={values.sex ? values.sex : ""}
+                  value={values.sex ? values.sex : ''}
                   variant="outlined"
                   error={!!formik.errors.sex && formik.touched.sex}
                 >

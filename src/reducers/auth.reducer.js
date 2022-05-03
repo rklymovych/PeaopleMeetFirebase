@@ -64,6 +64,11 @@ export default (state = initialState, action) => {
         ...action.payload.values
       }
       break;
+    case userConstants.SET_AVATAR_CURRENT_USER:
+      state ={
+        ...state,
+        avatar: action.payload
+      }
   }
   return state
 }

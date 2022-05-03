@@ -48,11 +48,10 @@ const Drawer = () => {
   const [darkMode, setDarkMode] = React.useState(localStorageDarkMode || false)
 
   const dispatch = useDispatch()
-  const auth = useSelector(state => state.auth)
+  const {name, avatar, uid} = useSelector(state => state.auth)
 
   const classes = useStyles()
   const history = useHistory()
-  const {getUid, myAccount} = useAuth()
  
   useEffect(() => {
     localStorage.setItem('darkMode', JSON.stringify(darkMode))
@@ -67,7 +66,7 @@ const Drawer = () => {
         <div className={classes.drawerHeader}
              style={{
                position: 'relative',
-               backgroundImage: `url(${auth.avatar ? auth.avatar : defaultAvatar})`,
+               backgroundImage: `url(${avatar ? avatar : defaultAvatar})`,
                backgroundRepeat: 'no-repeat',
                backgroundPosition: 'center center',
                backgroundSize: 'cover',
@@ -76,7 +75,7 @@ const Drawer = () => {
 
         >
           <Typography variant="h4" align='center' className={classes.userName}>
-            {auth.name}
+            {name}
           </Typography>
 
 
@@ -113,7 +112,7 @@ const Drawer = () => {
 
 
         <List className={classes.feedback}>
-          <ListItem button  onClick={() => dispatch(logout(auth.uid))}>
+          <ListItem button  onClick={() => dispatch(logout(uid))}>
             <ListItemIcon
                 className={classes.icons}
 
@@ -125,7 +124,7 @@ const Drawer = () => {
 
           <ListItem button >
             <ListItemIcon><FeedbackIcon/></ListItemIcon>
-            <ListItemText primary={'v: 2.202.50.20'}/>
+            <ListItemText primary={'v: 2.202.50.30'}/>
           </ListItem>
         </List>
 

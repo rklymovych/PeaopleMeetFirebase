@@ -140,21 +140,23 @@ export const isLoggedInUser = () => {
   return async dispatch => {
     // todo localstorage
     // const user = localStorage.getItem('user') ? JSON.parse(localStorage.getItem('user')) : null;
-    db.collection('users').doc(auth.currentUser.uid).get()
-      .then(snapshot => {
-        dispatch({
-          type: `${authConstant.USER_LOGIN}_SUCCESS`,
-          payload: { user: snapshot.data() }
-        })
-        // } else {
-        // dispatch({
-        //   type: `${authConstant.USER_LOGIN}_FAILURE`,
-        //   payload: {error: 'Login again please'}
-        // })
-        // }
-      }).catch((e) => {
+    if(auth.currentUser){
+      db.collection('users').doc(auth.currentUser.uid).get()
+          .then(snapshot => {
+            dispatch({
+              type: `${authConstant.USER_LOGIN}_SUCCESS`,
+              payload: { user: snapshot.data() }
+            })
+            // } else {
+            // dispatch({
+            //   type: `${authConstant.USER_LOGIN}_FAILURE`,
+            //   payload: {error: 'Login again please'}
+            // })
+            // }
+          }).catch((e) => {
         console.error(158, e.message);
       })
+    }
   }
 }
 

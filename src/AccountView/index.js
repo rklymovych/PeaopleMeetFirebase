@@ -6,6 +6,7 @@ import {
 } from '@material-ui/core';
 import Profile from './Profile';
 import ProfileDetails from './ProfileDetails';
+import {useSelector} from "react-redux";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -19,6 +20,7 @@ const useStyles = makeStyles((theme) => ({
 
 const Account = () => {
   const classes = useStyles();
+  const auth = useSelector(state => state.auth)
 
   return (
       <>
@@ -35,7 +37,7 @@ const Account = () => {
                   md={6}
                   xs={12}
               >
-                <Profile/>
+                <Profile auth={auth} />
               </Grid>
               <Grid
                   item
@@ -43,7 +45,7 @@ const Account = () => {
                   md={6}
                   xs={12}
               >
-                <ProfileDetails/>
+                <ProfileDetails auth={auth} />
               </Grid>
             </Grid>
           </Container>

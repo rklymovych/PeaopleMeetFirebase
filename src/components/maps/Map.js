@@ -125,11 +125,11 @@ const Map = () => {
 
   function Locate() {
     return (
-          <button
-              className="locate"
-              onClick={getCurrentPositionForLocalPurpose}>
-            <LocationSearchingIcon fontSize="large" />
-          </button>
+        <button
+            className="locate"
+            onClick={getCurrentPositionForLocalPurpose}>
+          <LocationSearchingIcon fontSize="large"/>
+        </button>
     )
   }
 
@@ -138,7 +138,7 @@ const Map = () => {
     makeReadMessages(selectedUser.uid)
     history.push(`/map/chat/${selectedUser.uid}`)
     setOpenDrawer(!openDrawer)
-    setChatStarted(!chatStarted)
+    setChatStarted(prev => !prev)
   }
 
   const justifyCenter = (truly) => {
@@ -266,7 +266,7 @@ const Map = () => {
                 </Card>
 
               </InfoWindow>) : null}
-        </GoogleMap>) : null}
+        </GoogleMap>) : 'Turn on geolocation on browser'}
         <Drawer
             anchor='bottom'
             open={openDrawer}
