@@ -38,8 +38,6 @@ const TopBar = ({ setState }) => {
 
   })
 
-  const [valueOnline, setValueOnline] = useState(auth.isOnline)
-
   const classes = useStyles();
   const history = useHistory()
   const { getUid, myAccount } = useAuth()
@@ -55,17 +53,27 @@ const TopBar = ({ setState }) => {
 
   //  make offline Users/
   const userStatusDatabaseRef = database.ref('/status/' + auth.uid);
+  // myAccount().get()
+  //     .then((r) => {
+  //       // console.log(58, r.data());
+  //     })
+
   const isOnlineForDatabase = {
-    state: 'online',
+    isOnline: true, // todo visible
+    isActive: auth.isOnline,
     last_changed: firebase.database.ServerValue.TIMESTAMP,
   };
 
-  const onlineHandler = ({ target: { checked } }) => {
+  const isOfflineForDatabase = {
+    isOnline: false,
+    isActive: auth.isOnline,
+    last_changed: firebase.database.ServerValue.TIMESTAMP,
+  };
+
+  const onlineHandler = ({target: {checked}}) => {
     const meFromLocal = JSON.parse(localStorage.getItem('user'))
 
     if (checked) {
-      setValueOnline(prev => !prev)
-
       getCurrentPosition((position) => {
         myAccount()
           .update({
@@ -91,8 +99,6 @@ const TopBar = ({ setState }) => {
         })
       })
     } else {
-      setValueOnline(prev => !prev)
-
       myAccount()
         .update({
           location: { lat: null, lng: null },
@@ -118,11 +124,37 @@ const TopBar = ({ setState }) => {
       database.ref('.info/connected').on('value', function (snapshot) {
         if (snapshot.val() === true) {
           userStatusDatabaseRef.set(isOnlineForDatabase);
-        }
-        if (snapshot.val() === false) {
-          userStatusDatabaseRef.onDisconnect().remove(() => {
-            // console.log('status off')
-          })
+        } else {
+          console.log(1)
+          userStatusDatabaseRef.onDisconnect().remove()
+                                                              // ТУТ КАКАЯ-ТО ДИЧЬ
+          // userStatusDatabaseRef.set();
+          // myAccount().update({
+          //   location: {
+          //     lat: null,
+          //     lng: null,
+          //   },
+          //   isOnline: false
+          // });
+          // не получается надо сделать что бы не удалялось поле из реалтайм, а делалось оффлайн
+          // userStatusDatabaseRef.onDisconnect().remove(()=>{
+          //   firebase.database().ref(`status/${getUid()}/`).update({
+          //     leaved: true
+          //   })
+          // // })
+          // // firebase.database().goOffline();
+          // console.log('что за чепуха')
+          //
+          //
+          // userStatusDatabaseRef.onDisconnect().set({
+          //   leaved: true
+          // })
+          // .then(()=>{
+          //
+          //   myAccount().update({
+          //     location: false
+          //   })
+          // })
         }
       });
     }
@@ -156,37 +188,38 @@ const TopBar = ({ setState }) => {
         isOnline: false
       }
       if (document.hidden) {
-        interval = setTimeout(() => {
-          firebase.database().goOffline();
-          myAccount().update(turnOffline);
-
-          dispatch({
-            type: 'GET_STATUS_CURRENT_USER',
-            payload: {
-              location: {
-                lat: null,
-                lng: null,
-              },
-              isOnline: false
-            }
-          })
-          let localStorageData = JSON.parse(localStorage.getItem('user'))
-          let newData = {
-            ...localStorageData,
-            location: {
-              lat: null,
-              lng: null,
-            },
-            isOnline: false
-          }
-          // todo make one method set localstorage online user and offline user
-          setValueOnline(false)
-          localStorage.setItem('user', JSON.stringify(newData))
-        }, 60000)
-      }
-      else {
+        // interval = setTimeout(() => {
+        //   console.log(4)
+        //   firebase.database().goOffline();
+        //   firebase.database().ref(`status/${getUid()}/`).update(isOfflineForDatabase)
+        //   console.log('here paste func to set isOnline')
+        //   myAccount().update(turnOffline);
+        //
+        //   dispatch({
+        //     type: 'GET_STATUS_CURRENT_USER',
+        //     payload: {
+        //       location: {
+        //         lat: null,
+        //         lng: null,
+        //       },
+        //       isOnline: false
+        //     }
+        //   })
+        //   let localStorageData = JSON.parse(localStorage.getItem('user'))
+        //   let newData = {
+        //     ...localStorageData,
+        //     location: {
+        //       lat: null,
+        //       lng: null,
+        //     },
+        //     isOnline: false
+        //   }
+        //   // todo make one method set localstorage online user and offline user
+        //   localStorage.setItem('user', JSON.stringify(newData))
+        // }, 3000)
+      } else {
         clearInterval(interval)
-        firebase.database().goOnline();
+        firebase.database().goOnline(); // todo 1
       }
     })
   }, [])

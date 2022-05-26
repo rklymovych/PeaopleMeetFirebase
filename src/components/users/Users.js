@@ -42,8 +42,8 @@ const Users = () => {
 
   let unsubscribe;
   const {
-    wroteUsers,
-    wroteUsersIds,
+    wroteUsers, // юзеры которые написали и сообщение еще не прочитанны
+    wroteUsersIds, // id юзеров которые написали и сообщение еще не прочитанны
     getIdsActiveChat,
     showWroteUsers,
     getActiveChatWithUsers,
