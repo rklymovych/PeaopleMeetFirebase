@@ -136,13 +136,14 @@ export const signin = (user) => {
   }
 }
 
+// After reloading page we set user data in redux
 export const isLoggedInUser = () => {
   return async dispatch => {
-    // todo localstorage
     // const user = localStorage.getItem('user') ? JSON.parse(localStorage.getItem('user')) : null;
     if(auth.currentUser){
       db.collection('users').doc(auth.currentUser.uid).get()
           .then(snapshot => {
+            console.log('tut!!!')
             dispatch({
               type: `${authConstant.USER_LOGIN}_SUCCESS`,
               payload: { user: snapshot.data() }
@@ -154,7 +155,7 @@ export const isLoggedInUser = () => {
             // })
             // }
           }).catch((e) => {
-        console.error(158, e.message);
+        console.error('isLoggedInUser', e.message);
       })
     }
   }

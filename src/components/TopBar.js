@@ -40,7 +40,7 @@ const TopBar = ({ setState }) => {
 
   const classes = useStyles();
   const history = useHistory()
-  const { getUid, myAccount } = useAuth()
+  const { getUid, myAccount, getUserRealTimeDatabase } = useAuth()
   const {
     getWroteUsersIds,
     wroteUsersIds,
@@ -52,23 +52,13 @@ const TopBar = ({ setState }) => {
   const dispatch = useDispatch()
 
   //  make offline Users/
-  const userStatusDatabaseRef = database.ref('/status/' + auth.uid);
+
   // myAccount().get()
   //     .then((r) => {
   //       // console.log(58, r.data());
   //     })
 
-  const isOnlineForDatabase = {
-    isOnline: true, // todo visible
-    isActive: auth.isOnline,
-    last_changed: firebase.database.ServerValue.TIMESTAMP,
-  };
 
-  const isOfflineForDatabase = {
-    isOnline: false,
-    isActive: auth.isOnline,
-    last_changed: firebase.database.ServerValue.TIMESTAMP,
-  };
 
   const onlineHandler = ({target: {checked}}) => {
     const meFromLocal = JSON.parse(localStorage.getItem('user'))
@@ -119,14 +109,27 @@ const TopBar = ({ setState }) => {
     }
   }
   useEffect(() => {
-    if (auth.uid) {
+    const isOnlineForDatabase = {
+      isOnline: true,
+      visible: auth.isOnline,
+      last_changed: firebase.database.ServerValue.TIMESTAMP,
+    };
 
+    const isOfflineForDatabase = {
+      isOnline: false,
+      visible: auth.isOnline,
+      last_changed: firebase.database.ServerValue.TIMESTAMP,
+    };
+    if (auth.uid) {
       database.ref('.info/connected').on('value', function (snapshot) {
         if (snapshot.val() === true) {
-          userStatusDatabaseRef.set(isOnlineForDatabase);
+          if(auth.uid){
+            getUserRealTimeDatabase().set(isOnlineForDatabase);
+          }
         } else {
           console.log(1)
-          userStatusDatabaseRef.onDisconnect().remove()
+          getUserRealTimeDatabase().onDisconnect().remove()
+          console.log('така ось сталося хуйня')
                                                               // ТУТ КАКАЯ-ТО ДИЧЬ
           // userStatusDatabaseRef.set();
           // myAccount().update({
@@ -179,7 +182,18 @@ const TopBar = ({ setState }) => {
   useEffect(() => {
     let interval;
 
-    document.addEventListener('visibilitychange', (e) => {
+    const listener = document.addEventListener('visibilitychange', () => {
+      const isOnlineForDatabase = {
+        isOnline: true,
+        visible: auth.isOnline,
+        last_changed: firebase.database.ServerValue.TIMESTAMP,
+      };
+
+      const isOfflineForDatabase = {
+        isOnline: false,
+        visible: auth.isOnline,
+        last_changed: firebase.database.ServerValue.TIMESTAMP,
+      };
       const turnOffline = {
         location: {
           lat: null,
@@ -191,7 +205,11 @@ const TopBar = ({ setState }) => {
         // interval = setTimeout(() => {
         //   console.log(4)
         //   firebase.database().goOffline();
-        //   firebase.database().ref(`status/${getUid()}/`).update(isOfflineForDatabase)
+
+          console.log(199, auth)
+          getUserRealTimeDatabase().update(isOfflineForDatabase)
+
+
         //   console.log('here paste func to set isOnline')
         //   myAccount().update(turnOffline);
         //
@@ -219,10 +237,15 @@ const TopBar = ({ setState }) => {
         // }, 3000)
       } else {
         clearInterval(interval)
-        firebase.database().goOnline(); // todo 1
+        // firebase.database().goOnline(); // todo 1
+        getUserRealTimeDatabase().update(isOnlineForDatabase)
+        // getUserRealTimeDatabase().update(isOnlineForDatabase)
       }
     })
-  }, [])
+    return () => {
+      document.removeEventListener('visibilitychange', listener); //todo сдесь гдето зарыта правда )) надо пробовать
+    }
+  }, [auth.uid, auth.isOnline])
 
   return (
     <AppBar className={classes.topAndButtons}>
