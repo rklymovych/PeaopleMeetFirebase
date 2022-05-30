@@ -85,7 +85,6 @@ const UserModal = ({selectedUser, openModal, setOpenModal}) => {
   const {location} = JSON.parse(localStorage.getItem('user')) || {}
 
   const handleClose = () => {
-    console.log('qwe')
     setOpenModal(false);
   };
 

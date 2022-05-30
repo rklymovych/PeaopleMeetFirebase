@@ -15,7 +15,7 @@ import { makeStyles } from "@material-ui/core/styles";
 import { useAuth } from "../context/AuthContext";
 import Switch from "@material-ui/core/Switch";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
-import { getCurrentPosition } from "../utils/utils";
+import { getCurrentPosition, toggleStatusOnLineRealTime } from "../utils/utils";
 
 const TopBar = ({ setState }) => {
   // export const TopBar  = ({setState}) =>{
@@ -39,7 +39,8 @@ const TopBar = ({ setState }) => {
   })
 
   const classes = useStyles();
-  const history = useHistory()
+  const history = useHistory();
+  const dispatch = useDispatch();
   const { getUid, myAccount, getUserRealTimeDatabase } = useAuth()
   const {
     getWroteUsersIds,
@@ -49,7 +50,7 @@ const TopBar = ({ setState }) => {
     setState({ 'left': true });
   };
 
-  const dispatch = useDispatch()
+
 
   //  make offline Users/
 
@@ -60,26 +61,13 @@ const TopBar = ({ setState }) => {
 
 
 
-  const onlineHandler = ({target: {checked}}) => {
-    const meFromLocal = JSON.parse(localStorage.getItem('user'))
-
+  const onlineHandler = ({ target: { checked } }) => {
     if (checked) {
       getCurrentPosition((position) => {
-        myAccount()
-          .update({
-            location: {
-              lat: position.coords.latitude,
-              lng: position.coords.longitude,
-            },
-            isOnline: true
-          })
-
-        localStorage.setItem('user', JSON.stringify({
-          ...meFromLocal,
+        toggleStatusOnLineRealTime({ 
           isOnline: true,
           location: { lat: position.coords.latitude, lng: position.coords.longitude }
-        }))
-
+        })
         dispatch({
           type: 'GET_STATUS_CURRENT_USER',
           payload: {
@@ -89,16 +77,10 @@ const TopBar = ({ setState }) => {
         })
       })
     } else {
-      myAccount()
-        .update({
-          location: { lat: null, lng: null },
-          isOnline: false
-        })
-      localStorage.setItem('user', JSON.stringify({
-        ...meFromLocal,
+      toggleStatusOnLineRealTime( {
         isOnline: false,
         location: { lat: null, lng: null }
-      }))
+      })
       dispatch({
         type: 'GET_STATUS_CURRENT_USER',
         payload: {
@@ -108,29 +90,25 @@ const TopBar = ({ setState }) => {
       })
     }
   }
-  useEffect(() => {
-    const isOnlineForDatabase = {
-      isOnline: true,
-      visible: auth.isOnline,
-      last_changed: firebase.database.ServerValue.TIMESTAMP,
-    };
 
-    const isOfflineForDatabase = {
-      isOnline: false,
-      visible: auth.isOnline,
-      last_changed: firebase.database.ServerValue.TIMESTAMP,
-    };
+  useEffect(() => {
+
     if (auth.uid) {
       database.ref('.info/connected').on('value', function (snapshot) {
         if (snapshot.val() === true) {
-          if(auth.uid){
-            getUserRealTimeDatabase().set(isOnlineForDatabase);
-          }
+          console.log('if', firebase.database.ServerValue.TIMESTAMP)
+          console.log('така ось сталося хуйня', new Date().getTime())
+          getUserRealTimeDatabase().set({
+            isOnline: true,
+            visible: auth.isOnline,
+            last_changed: firebase.database.ServerValue.TIMESTAMP,
+          });
+
         } else {
-          console.log(1)
+          console.log('else', snapshot.val())
           getUserRealTimeDatabase().onDisconnect().remove()
-          console.log('така ось сталося хуйня')
-                                                              // ТУТ КАКАЯ-ТО ДИЧЬ
+        
+          // ТУТ КАКАЯ-ТО ДИЧЬ
           // userStatusDatabaseRef.set();
           // myAccount().update({
           //   location: {
@@ -183,63 +161,27 @@ const TopBar = ({ setState }) => {
     let interval;
 
     const listener = document.addEventListener('visibilitychange', () => {
-      const isOnlineForDatabase = {
-        isOnline: true,
-        visible: auth.isOnline,
-        last_changed: firebase.database.ServerValue.TIMESTAMP,
-      };
 
-      const isOfflineForDatabase = {
-        isOnline: false,
-        visible: auth.isOnline,
-        last_changed: firebase.database.ServerValue.TIMESTAMP,
-      };
-      const turnOffline = {
-        location: {
-          lat: null,
-          lng: null,
-        },
-        isOnline: false
-      }
       if (document.hidden) {
-        // interval = setTimeout(() => {
-        //   console.log(4)
-        //   firebase.database().goOffline();
 
-          console.log(199, auth)
-          getUserRealTimeDatabase().update(isOfflineForDatabase)
-
-
-        //   console.log('here paste func to set isOnline')
-        //   myAccount().update(turnOffline);
-        //
-        //   dispatch({
-        //     type: 'GET_STATUS_CURRENT_USER',
-        //     payload: {
-        //       location: {
-        //         lat: null,
-        //         lng: null,
-        //       },
-        //       isOnline: false
-        //     }
-        //   })
-        //   let localStorageData = JSON.parse(localStorage.getItem('user'))
-        //   let newData = {
-        //     ...localStorageData,
-        //     location: {
-        //       lat: null,
-        //       lng: null,
-        //     },
-        //     isOnline: false
-        //   }
-        //   // todo make one method set localstorage online user and offline user
-        //   localStorage.setItem('user', JSON.stringify(newData))
-        // }, 3000)
+        interval = setTimeout(() => {
+          getUserRealTimeDatabase().update({ isOnline: false, visible: false })
+          dispatch({
+            type: 'GET_STATUS_CURRENT_USER',
+            payload: {
+              location: {
+                lat: null,
+                lng: null,
+              },
+              isOnline: false
+            }
+          })
+          // firebase.database().goOffline();
+        }, 1000)
       } else {
         clearInterval(interval)
+        getUserRealTimeDatabase().update({ isOnline: true })
         // firebase.database().goOnline(); // todo 1
-        getUserRealTimeDatabase().update(isOnlineForDatabase)
-        // getUserRealTimeDatabase().update(isOnlineForDatabase)
       }
     })
     return () => {

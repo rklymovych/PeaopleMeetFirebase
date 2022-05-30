@@ -1,4 +1,6 @@
-import {authConstant, userConstants} from "../actions/constants";
+import { authConstant, userConstants } from "../actions/constants";
+import { setDataToLocalStorage, setDataToRedux, toggleStatusOnLineRealTime } from '../utils/utils';
+import {db} from '../firebase';
 
 const initialState = {
   name: '',
@@ -30,7 +32,7 @@ export default (state = initialState, action) => {
       }
       break;
     case `${authConstant.USER_LOGIN}_FAILURE`:
-   
+
       state = {
         ...state,
         authenticated: false,
@@ -46,26 +48,27 @@ export default (state = initialState, action) => {
       }
       break;
     case `${authConstant.USER_LOGOUT}_FAILURE`:
-      state ={
+      state = {
         ...state,
         error: action.payload.error
       }
       break;
     case userConstants.GET_STATUS_CURRENT_USER:
-      // todo here make on/offline users
-      state ={
+      setDataToLocalStorage(action.payload);
+      setDataToRedux(action.payload);
+      state = {
         ...state,
         ...action.payload
       }
       break;
     case userConstants.SET_DATA_CURRENT_USER:
-      state ={
+      state = {
         ...state,
         ...action.payload.values
       }
       break;
     case userConstants.SET_AVATAR_CURRENT_USER:
-      state ={
+      state = {
         ...state,
         avatar: action.payload
       }
