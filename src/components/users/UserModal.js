@@ -93,7 +93,7 @@ const UserModal = ({selectedUser, openModal, setOpenModal}) => {
       // todo create something if current user is offline
       alert('current User is Offline, temporary you can\'t write to him : ( ');
       return
-    }
+    } // todo Надо сделать чтобы открывался чат, когда юзер не онлайн.
 
     removeIdFromWroteUsers(selectedUser, wroteUsersIds)
     showSelectedUser(selectedUser)

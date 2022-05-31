@@ -96,8 +96,6 @@ const TopBar = ({ setState }) => {
     if (auth.uid) {
       database.ref('.info/connected').on('value', function (snapshot) {
         if (snapshot.val() === true) {
-          console.log('if', firebase.database.ServerValue.TIMESTAMP)
-          console.log('така ось сталося хуйня', new Date().getTime())
           getUserRealTimeDatabase().set({
             isOnline: true,
             visible: auth.isOnline,
@@ -105,7 +103,6 @@ const TopBar = ({ setState }) => {
           });
 
         } else {
-          console.log('else', snapshot.val())
           getUserRealTimeDatabase().onDisconnect().remove()
         
           // ТУТ КАКАЯ-ТО ДИЧЬ
@@ -177,7 +174,7 @@ const TopBar = ({ setState }) => {
             }
           })
           // firebase.database().goOffline();
-        }, 1000)
+        }, 60000)
       } else {
         clearInterval(interval)
         getUserRealTimeDatabase().update({ isOnline: true })

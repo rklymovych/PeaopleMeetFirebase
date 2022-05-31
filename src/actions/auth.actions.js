@@ -143,7 +143,6 @@ export const isLoggedInUser = () => {
     if(auth.currentUser){
       db.collection('users').doc(auth.currentUser.uid).get()
           .then(snapshot => {
-            console.log('tut!!!')
             dispatch({
               type: `${authConstant.USER_LOGIN}_SUCCESS`,
               payload: { user: snapshot.data() }
