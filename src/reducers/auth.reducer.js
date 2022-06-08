@@ -1,4 +1,5 @@
-import {authConstant, userConstants} from "../actions/constants";
+import { authConstant, userConstants } from "../actions/constants";
+import { setDataToLocalStorage, setDataToRedux } from '../utils/utils';
 
 const initialState = {
   name: '',
@@ -6,7 +7,9 @@ const initialState = {
   authenticating: false,
   authenticated: false,
   error: null,
-  isOnline: null
+  isOnline: false,
+  location: {lat: null, lng: null},
+  sex: ''
 }
 
 
@@ -29,6 +32,7 @@ export default (state = initialState, action) => {
       }
       break;
     case `${authConstant.USER_LOGIN}_FAILURE`:
+
       state = {
         ...state,
         authenticated: false,
@@ -44,24 +48,30 @@ export default (state = initialState, action) => {
       }
       break;
     case `${authConstant.USER_LOGOUT}_FAILURE`:
-      state ={
+      state = {
         ...state,
         error: action.payload.error
       }
       break;
     case userConstants.GET_STATUS_CURRENT_USER:
-      // todo here make on/offline users
-      state ={
+      setDataToLocalStorage(action.payload);
+      setDataToRedux(action.payload);
+      state = {
         ...state,
-        isOnline: action.payload.checked
+        ...action.payload
       }
       break;
     case userConstants.SET_DATA_CURRENT_USER:
-      state ={
+      state = {
         ...state,
-        ...action.payload.values.name
+        ...action.payload.values
       }
       break;
+    case userConstants.SET_AVATAR_CURRENT_USER:
+      state = {
+        ...state,
+        avatar: action.payload
+      }
   }
   return state
 }

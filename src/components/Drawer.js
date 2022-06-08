@@ -48,27 +48,11 @@ const Drawer = () => {
   const [darkMode, setDarkMode] = React.useState(localStorageDarkMode || false)
 
   const dispatch = useDispatch()
-  const auth = useSelector(state => state.auth)
+  const {name, avatar, uid} = useSelector(state => state.auth)
 
   const classes = useStyles()
   const history = useHistory()
-  const {getUid} = useAuth()
-  const [avatar, setAvatar] = React.useState(null)
-  const [userName, setUserName] = React.useState('')
-
-  useEffect(() => {
-    const avatar = db.collection("users").doc(getUid())
-        .onSnapshot(doc => {
-          if (doc?.exists) {
-            setAvatar(doc.data().avatar)
-            setUserName(doc.data().name)
-          }
-        }, error => {
-          console.log('sidenavPage', error.message)
-        })
-    return avatar
-  }, [])
-
+ 
   useEffect(() => {
     localStorage.setItem('darkMode', JSON.stringify(darkMode))
     dispatch({
@@ -91,7 +75,7 @@ const Drawer = () => {
 
         >
           <Typography variant="h4" align='center' className={classes.userName}>
-            {userName}
+            {name}
           </Typography>
 
 
@@ -128,7 +112,7 @@ const Drawer = () => {
 
 
         <List className={classes.feedback}>
-          <ListItem button  onClick={() => dispatch(logout(auth.uid))}>
+          <ListItem button  onClick={() => dispatch(logout(uid))}>
             <ListItemIcon
                 className={classes.icons}
 
@@ -140,7 +124,7 @@ const Drawer = () => {
 
           <ListItem button >
             <ListItemIcon><FeedbackIcon/></ListItemIcon>
-            <ListItemText primary={'v: 2.202.40.51'}/>
+            <ListItemText primary={'v: 2.202.60.80'}/>
           </ListItem>
         </List>
 

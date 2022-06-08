@@ -3,13 +3,12 @@ import {Card, Button, Form, Alert} from "react-bootstrap";
 import {useAuth} from "../../context/AuthContext";
 import { useHistory} from "react-router-dom";
 
-function UpdateProfile() {
+function UpdateProfile({handleClose}) {
   const emailRef = useRef()
   const passwordRef = useRef()
   const passwordConfirmRef = useRef()
   const {currentUser, updatePassword, updateEmail} = useAuth()
   const [error, setError] = useState('')
-  // const [loading, setLoading] = useState(false)
   const history = useHistory()
 
   function handleSubmit(e) {
@@ -32,9 +31,10 @@ function UpdateProfile() {
 
     Promise.all(promises).then(() => {
       history.push('/')
-    }).catch((e) => {
+      handleClose(false)
+    }).catch((err) => {
       // setError('Failed to update account')
-      setError(e.message)
+      setError(err.message)
     }).finally(() => {
       // setLoading(false)
     })

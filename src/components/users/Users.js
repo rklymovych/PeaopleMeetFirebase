@@ -1,11 +1,14 @@
-import React, {useEffect, useState, useContext} from 'react'
-import {Avatar, ListItem, ListItemAvatar, ListItemText, makeStyles} from "@material-ui/core";
+import React, { useEffect, useState, useContext } from 'react'
+import { makeStyles } from "@material-ui/core";
 import Typography from "@material-ui/core/Typography";
 import List from "@material-ui/core/List";
-import {useDispatch, useSelector} from "react-redux";
-import {getRealtimeUsers} from "../../actions";
-import {FirebaseContext} from "../../context/firebaseContext/firebaseContext";
+import { useDispatch, useSelector } from "react-redux";
+import { getRealtimeUsers } from "../../actions";
+import { FirebaseContext } from "../../context/firebaseContext/firebaseContext";
 import UserModal from "./UserModal";
+import WroteUsers from "./WroteUsers";
+import ActiveChatWithUsers from "./ActiveChatWithUsers";
+import FirstMessageFromUser from "./FirstMessageFromUSer";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -42,14 +45,21 @@ const Users = () => {
 
   let unsubscribe;
   const {
-    wroteUsers,
-    wroteUsersIds,
+    wroteUsers, // юзеры которые написали и сообщение еще не прочитанны
+    wroteUsersIds, // id юзеров которые написали и сообщение еще не прочитанны
     getIdsActiveChat,
     showWroteUsers,
     getActiveChatWithUsers,
     getActiveConversationWithoutAnswer,
     firstMessageToUserFromServer // users
   } = useContext(FirebaseContext)
+
+  useEffect(() => {
+    return () => {
+      //cleanup
+      unsubscribe.then(f => f()).catch(error => console.log(error))
+    }
+  }, [])
 
   useEffect(() => {
     if (auth.uid) {
@@ -70,26 +80,14 @@ const Users = () => {
   useEffect(() => {
 
     unsubscribe = dispatch(getRealtimeUsers(auth.uid))
-        .then(unsubscribe => {
-          return unsubscribe;
-        })
-        .catch(error => console.log(error))
+      .then(unsubscribe => {
+        return unsubscribe;
+      })
+      .catch(error => console.log(error))
 
 
   }, [auth.uid])
 
-
-  useEffect(() => {
-    return () => {
-      //cleanup
-      unsubscribe.then(f => f()).catch(error => console.log(error))
-    }
-  }, [])
-
-  const handleOpenUserModal = (user) => {
-    setSelectedUser(user)
-    setOpenModal(!openModal)
-  }
   useEffect(() => {
     const unsubscribe = showWroteUsers(wroteUsersIds);
     return unsubscribe;
@@ -101,168 +99,63 @@ const Users = () => {
     }
   }, [openModal])
 
+  const handleOpenUserModal = (user) => {
+    setSelectedUser(user)
+    setOpenModal(!openModal)
+  }
+
   return (
-      <div className={classes.userPageWrapper}>
-        <List
-            className={classes.root}
-        >
-          <div className={classes.customDivider}>
-            <Typography
-                component='span'
-                variant='body1'
-                color="textPrimary"
-            >
-              Unread Messages
-            </Typography>
-          </div>
-          {wroteUsers.length === 0 ?
-              <Typography component='div' color='textPrimary'>No unread messages</Typography> : ''}
-          {/* eslint-disable-next-line array-callback-return */}
-          {wroteUsers && wroteUsers.map(user => {
-            // if (user.isOnline) {    // flag isOnline
-              return (
-                  <ListItem
-                      key={user.uid}
-                      alignItems="flex-start"
-                      className={classes.listItem}
-                      onClick={() => handleOpenUserModal(user)}
-                  >
-                    <ListItemAvatar className={classes.listItemAvatar}>
-                      <Avatar
-                          className={classes.large}
-                          alt={user.avatar}
-                          src={user.avatar}
-                      />
-                    </ListItemAvatar>
-                    <ListItemText
-                        className={classes.text}
-                        primary={<Typography color="textPrimary" variant='subtitle1'>{user.name} {<OnlineDot
-                            arg={user.isOnline}
-                        />}</Typography>}
-                        secondary={
-                          <React.Fragment>
-                            <Typography
-                                component="span"
-                                variant="body2"
-                                className={classes.inline}
-                                color="textPrimary"
-                            >
-                            </Typography>
-                            {user.description}
-                            {user.id}
-                          </React.Fragment>
-                        }
-                    />
-                  </ListItem>
-              )
-            // }
-          })}
-          <div className={classes.customDivider}>
-            <Typography
-                component='span'
-                variant='body1'
-                color="textPrimary"
-            >
-              Read Messages
-            </Typography>
-          </div>
-          {getActiveChatWithUsers.length === 0
-              // && firstMessageToUserFromServer.length === 0 не понятно зачем это надо было!
-              ?
-              <Typography component='div' color='textPrimary'>No existed Chat</Typography>
-              :
-              ''
-          }
+    <div className={classes.userPageWrapper}>
+      <List
+        className={classes.root}
+      >
+        <div className={classes.customDivider}>
+          <Typography
+            component='span'
+            variant='body1'
+            color="textPrimary"
+          >
+            Unread Messages
+          </Typography>
+        </div>
+        {wroteUsers.length === 0 ?
+            <Typography component='div' color='textPrimary'>No Unread Messages</Typography> : ''}
+        {wroteUsers && wroteUsers.map(user => {
+          return <WroteUsers key={user.uid} user={user} handleOpenUserModal={handleOpenUserModal} OnlineDot={OnlineDot} classes={classes} />
+          })
+        }
 
-          {getActiveChatWithUsers && getActiveChatWithUsers.map(user => {
-            // if (user.isOnline) {    // flag isOnline
-              return (
-                  <ListItem
-                      key={user.uid}
-                      alignItems="flex-start"
-                      className={classes.listItem}
-                      onClick={() => handleOpenUserModal(user)}
-                  >
-                    <ListItemAvatar className={classes.listItemAvatar}>
-                      <Avatar
-                          className={classes.large}
-                          alt={user.avatar}
-                          src={user.avatar}
-                      />
-                    </ListItemAvatar>
-                    <ListItemText
-                        className={classes.text}
-                        primary={<Typography color="textPrimary"
-                                             variant='subtitle1'>{user.name} {<OnlineDot
-                            arg={user.isOnline}
-                        />}</Typography>}
-                        secondary={
-                          <React.Fragment>
-                            <Typography
-                                component="span"
-                                variant="body2"
-                                className={classes.inline}
-                                // color="textPrimary"
-                            >
-                            </Typography>
-                            {user.description}
-                            {user.id}
-                          </React.Fragment>
-                        }
-                    />
-                  </ListItem>
-              )
-            // }
-          })}
+        <div className={classes.customDivider}>
+          <Typography
+            component='span'
+            variant='body1'
+            color="textPrimary"
+          >
+            Read Messages
+          </Typography>
+        </div>
+        {getActiveChatWithUsers.length === 0
+          ?
+          <Typography component='div' color='textPrimary'>No Existed Chat</Typography>
+          :
+          ''
+        }
 
-          {firstMessageToUserFromServer && firstMessageToUserFromServer.map(user => {
-            // if (user.isOnline) {    // flag isOnline
-              return (
-                  <ListItem
-                      key={user.uid}
-                      alignItems="flex-start"
-                      className={classes.listItem}
-                      onClick={() => handleOpenUserModal(user)}
-                  >
-                    <ListItemAvatar className={classes.listItemAvatar}>
-                      <Avatar
-                          className={classes.large}
-                          alt={user.avatar}
-                          src={user.avatar}
-                      />
-                    </ListItemAvatar>
-                    <ListItemText
-                        primary={<Typography color="textPrimary" variant='subtitle1'>{user.name} {<OnlineDot
-                            arg={user.isOnline}
-                        />}</Typography>}
-                        secondary={
-                          <React.Fragment>
-                            <Typography
-                                component="span"
-                                variant="body2"
-                                className={classes.inline}
-                                color="textPrimary"
-                            >
-                            </Typography>
-                            {user.description}
-                            {user.id}
-                          </React.Fragment>
-                        }
-                    />
-                  </ListItem>
-              )
-            // }
-          })}
-        </List>
-        <UserModal
-            openModal={openModal}
-            setOpenModal={setOpenModal}
-            selectedUser={selectedUser}/>
-      </div>
-      // </SideNav>
+        {getActiveChatWithUsers && getActiveChatWithUsers.map((user) => {
+          return <ActiveChatWithUsers key={user.uid} user={user} handleOpenUserModal={handleOpenUserModal} OnlineDot={OnlineDot} classes={classes} />
+        })}
+
+        {firstMessageToUserFromServer && firstMessageToUserFromServer.map(user => {
+          return <FirstMessageFromUser key={user.uid} user={user} handleOpenUserModal={handleOpenUserModal} OnlineDot={OnlineDot} classes={classes} />
+        })}
+      </List>
+      <UserModal
+        openModal={openModal}
+        setOpenModal={setOpenModal}
+        selectedUser={selectedUser} />
+    </div>
+    // </SideNav>
   )
 }
 
 export default Users
-
-

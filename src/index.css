@@ -72,6 +72,9 @@ code {
 .gm-ui-hover-effect {
     /*display: none!important;*/
 }
+.gm-style .gm-style-iw-t::after {
+    display: none;
+}
 .gm-style-iw-c{
     padding:0!important;
     max-width: 345px!important;

@@ -81,11 +81,9 @@ const UserModal = ({selectedUser, openModal, setOpenModal}) => {
     wroteUsersIds,
     removeIdFromWroteUsers
   } = useContext(FirebaseContext)
-  // todo Cannot destructure property 'location' of 'JSON.parse(...)' as it is null. возможно потому что я добавил новое поле ['not empty array']
   const {location} = JSON.parse(localStorage.getItem('user')) || {}
 
   const handleClose = () => {
-    console.log('qwe')
     setOpenModal(false);
   };
 
@@ -99,7 +97,6 @@ const UserModal = ({selectedUser, openModal, setOpenModal}) => {
     removeIdFromWroteUsers(selectedUser, wroteUsersIds)
     showSelectedUser(selectedUser)
     history.push(`map/chat/${selectedUser.uid}`)
-    // history.push('/map')
   }
 
   useEffect(() => {

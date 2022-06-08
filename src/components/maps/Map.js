@@ -1,7 +1,6 @@
 import React, {useCallback, useEffect, useState, useRef, useContext} from 'react'
 import {GoogleMap, InfoWindow, Marker, useLoadScript} from '@react-google-maps/api';
 import mapStyles from "./MapStyles";
-import compass from '../../assets/2277999_map-compass-compass-svg-hd-png-download.png'
 import {useSelector} from 'react-redux'
 import defUser from '../../assets/def-user.jpg'
 import chatBackground from '../../assets/chatBachground.jpg'
@@ -19,7 +18,7 @@ import Divider from "@material-ui/core/Divider";
 import LocationSearchingIcon from '@material-ui/icons/LocationSearching';
 import {getCurrentPosition} from "../../utils/utils";
 
-const useStyles = makeStyles((theme)=>({
+const useStyles = makeStyles((theme) => ({
   root: {
     paddingTop: '0px',
     paddingBottom: '0px'
@@ -111,7 +110,7 @@ const Map = () => {
   }, [])
 
 
-  const onMapClick = useCallback((event) => {
+  const onMapClick = useCallback((_) => {
     setSelectedUser(null)
   }, [])
 
@@ -125,11 +124,11 @@ const Map = () => {
 
   function Locate() {
     return (
-          <button
-              className="locate"
-              onClick={getCurrentPositionForLocalPurpose}>
-            <LocationSearchingIcon fontSize="large" />
-          </button>
+        <button
+            className="locate"
+            onClick={getCurrentPositionForLocalPurpose}>
+          <LocationSearchingIcon fontSize="large"/>
+        </button>
     )
   }
 
@@ -138,7 +137,7 @@ const Map = () => {
     makeReadMessages(selectedUser.uid)
     history.push(`/map/chat/${selectedUser.uid}`)
     setOpenDrawer(!openDrawer)
-    setChatStarted(!chatStarted)
+    setChatStarted(prev => !prev)
   }
 
   const justifyCenter = (truly) => {
@@ -148,6 +147,23 @@ const Map = () => {
 
   const MapHeader = () => {
     return <div className="headerMap"><Locate/></div>
+  }
+
+  const RenderDistance = () => {
+    return (
+        <>
+          {distance && authFromState.uid !== selectedUser.uid
+              ?
+              <>
+                <Typography variant="body2" color="textSecondary" component="p" className={classes.padding}>
+                  Distance - {distance} m
+                </Typography>
+                <Divider/>
+              </>
+              : ''
+          }
+        </>
+    )
   }
 
   return (
@@ -192,7 +208,7 @@ const Map = () => {
           })
           }
 
-          {selectedUser ? (
+          {selectedUser && (
               <InfoWindow
                   className={classes.root}
                   position={
@@ -227,17 +243,7 @@ const Map = () => {
                         Sex - {selectedUser?.sex}
                       </Typography>
                       <Divider/>
-                      {distance && authFromState.uid !== selectedUser.uid
-                          ?
-                          <>
-                            <Typography variant="body2" color="textSecondary" component="p" className={classes.padding}>
-                              Distance - {distance} m
-                            </Typography>
-                            <Divider/>
-                          </>
-                          : ''
-                      }
-
+                      <RenderDistance />
                       <div className={classes.padding}>
                         <Typography variant="body2" color="textSecondary" component="p"
                                     className={classes.paddingForDescription}>
@@ -265,8 +271,8 @@ const Map = () => {
                   </CardActions>
                 </Card>
 
-              </InfoWindow>) : null}
-        </GoogleMap>) : null}
+              </InfoWindow>)}
+        </GoogleMap>) : 'Turn on geolocation on browser'}
         <Drawer
             anchor='bottom'
             open={openDrawer}

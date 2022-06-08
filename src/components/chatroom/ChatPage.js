@@ -4,10 +4,9 @@ import clsx from 'clsx';
 import {makeStyles} from '@material-ui/core/styles';
 import {Paper, TextField} from "@material-ui/core";
 import Button from "@material-ui/core/Button";
-// import 'firebase/firestore'
 import {useSelector} from "react-redux";
 import {FirebaseContext} from "../../context/firebaseContext/firebaseContext";
-import Loader from "../loader/Loader";
+import {Loader} from "../loader";
 import moment from 'moment'
 import Typography from "@material-ui/core/Typography";
 
@@ -128,7 +127,7 @@ const useStyles = makeStyles((theme) => ({
   activeButtons: theme.palette.activeButtons
 }));
 
-const ChatPage = ({selected, chatStarted}) => {
+const ChatPage = ({selected}) => {
 
   const {
     filterOwnMessagesDrawerIsOpen,
@@ -152,7 +151,7 @@ const ChatPage = ({selected, chatStarted}) => {
     // eslint-disable-next-line
   }, [])
 
-  const submitMessage = (e) => {
+  const submitMessage = (_) => {
     if (message !== '') {
       const msgObj = {
         timeStamp: Date.now(),

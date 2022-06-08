@@ -1,5 +1,5 @@
 import React, { useContext, useState, useEffect } from "react"
-import { auth } from "../firebase"
+import { auth, database, db } from "../firebase"
 
 const AuthContext = React.createContext()
 
@@ -15,6 +15,14 @@ export function AuthProvider({ children }) {
   function getUid() {
     const user = auth.currentUser
     return user ? user.uid : null
+  }
+
+  function myAccount() {
+    return db.collection('users').doc(getUid())
+  }
+
+  function getUserRealTimeDatabase() {
+    return database.ref('/status/' + getUid());
   }
 
   function resetPassword(email) {
@@ -49,11 +57,13 @@ export function AuthProvider({ children }) {
     updateEmail,
     updatePassword,
     getUid,
-    error
+    error,
+    myAccount,
+    getUserRealTimeDatabase
   }
   return (
     <AuthContext.Provider value={value}>
-        {!loading && children}
+      {!loading && children}
     </AuthContext.Provider>
   )
 }

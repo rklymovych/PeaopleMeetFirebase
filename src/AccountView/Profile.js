@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import clsx from 'clsx';
 import {
@@ -13,7 +13,8 @@ import {
   makeStyles
 } from '@material-ui/core';
 import { useAuth } from "../context/AuthContext";
-import { db, storage } from "../firebase";
+import { storage } from "../firebase";
+import {useDispatch} from "react-redux";
 
 const useStyles = makeStyles((theme) => ({
   root: {},
@@ -29,19 +30,10 @@ const useStyles = makeStyles((theme) => ({
 
 }));
 
-const Profile = ({ className, ...rest }) => {
+const Profile = ({ className, auth, ...rest }) => {
+  const dispatch = useDispatch()
   const classes = useStyles();
-  const { getUid } = useAuth()
-  const [name, setName] = useState('')
-  const [avatar, setAvatar] = useState(null)
-
-  useEffect(() => {
-    const unsubscribe = db.collection('users').doc(getUid())
-      .onSnapshot((doc) => {
-        doc?.exists && setName(doc.data().name)
-      });
-    return unsubscribe;
-  }, []);
+  const { getUid, myAccount } = useAuth()
 
   const uploadPhotoHandler = async (e) => {
     const file = e.target.files[0]
@@ -49,23 +41,13 @@ const Profile = ({ className, ...rest }) => {
     const fileRef = storageRef.child(file.name)
     await fileRef.put(file)
     const fileUrl = await fileRef.getDownloadURL()
-    db.collection('users').doc(getUid())
+    myAccount()
       .set({ avatar: fileUrl }, { merge: true })
-    setAvatar(fileUrl)
+      dispatch({
+        type: 'SET_AVATAR_CURRENT_USER',
+        payload: fileUrl
+      })
   }
-
-  useEffect(() => {
-    const fetchUsers = async () => {
-      db.collection("users").doc(getUid())
-        .get()
-        .then((doc) => {
-          setAvatar(doc?.data()?.avatar ?? '');
-        }, error => {
-          console.log('Profile', error.message);
-        })
-    }
-    fetchUsers()
-  }, [])
 
   return (
     <Card
@@ -80,7 +62,7 @@ const Profile = ({ className, ...rest }) => {
         >
           <Avatar
             className={classes.avatar}
-            src={avatar}
+            src={auth.avatar}
           />
           <Typography
             color="textPrimary"
@@ -88,20 +70,18 @@ const Profile = ({ className, ...rest }) => {
             variant="h3"
             className={classes.center}
           >
-            {name}
+            {auth.name}
           </Typography>
           <Typography
             color="textSecondary"
             variant="body1"
           >
-            {/*{`${user.city} ${user.country}`}*/}
           </Typography>
           <Typography
             className={classes.dateText}
             color="textSecondary"
             variant="body1"
           >
-            {/*{`${moment().format('hh:mm A')} ${user.timezone}`}*/}
           </Typography>
         </Box>
       </CardContent>
@@ -115,7 +95,7 @@ const Profile = ({ className, ...rest }) => {
           onChange={uploadPhotoHandler}
         >
           Upload Photo
-            <input
+          <input
             type="file"
             hidden
           />
