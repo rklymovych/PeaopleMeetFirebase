@@ -32,6 +32,9 @@ const useStyles = makeStyles((theme) => ({
   text: theme.palette.text.primary,
 }));
 
+const OnlineDot = (arg) => {
+  return <span style={{background: arg.arg ? '#44b700' : 'red'}} className="circle"></span>
+}
 
 const Users = () => {
   const dispatch = useDispatch()
@@ -50,6 +53,13 @@ const Users = () => {
     getActiveConversationWithoutAnswer,
     firstMessageToUserFromServer // users
   } = useContext(FirebaseContext)
+
+  useEffect(() => {
+    return () => {
+      //cleanup
+      unsubscribe.then(f => f()).catch(error => console.log(error))
+    }
+  }, [])
 
   useEffect(() => {
     if (auth.uid) {
@@ -78,18 +88,6 @@ const Users = () => {
 
   }, [auth.uid])
 
-
-  useEffect(() => {
-    return () => {
-      //cleanup
-      unsubscribe.then(f => f()).catch(error => console.log(error))
-    }
-  }, [])
-
-  const handleOpenUserModal = (user) => {
-    setSelectedUser(user)
-    setOpenModal(!openModal)
-  }
   useEffect(() => {
     const unsubscribe = showWroteUsers(wroteUsersIds);
     return unsubscribe;
@@ -100,6 +98,11 @@ const Users = () => {
       setSelectedUser(null)
     }
   }, [openModal])
+
+  const handleOpenUserModal = (user) => {
+    setSelectedUser(user)
+    setOpenModal(!openModal)
+  }
 
   return (
     <div className={classes.userPageWrapper}>
@@ -116,9 +119,9 @@ const Users = () => {
           </Typography>
         </div>
         {wroteUsers.length === 0 ?
-            <Typography component='div' color='textPrimary'>No unread messages</Typography> : ''}
+            <Typography component='div' color='textPrimary'>No Unread Messages</Typography> : ''}
         {wroteUsers && wroteUsers.map(user => {
-          return <WroteUsers key={user.uid} user={user} handleOpenUserModal={handleOpenUserModal} />
+          return <WroteUsers key={user.uid} user={user} handleOpenUserModal={handleOpenUserModal} OnlineDot={OnlineDot} classes={classes} />
           })
         }
 
@@ -133,17 +136,17 @@ const Users = () => {
         </div>
         {getActiveChatWithUsers.length === 0
           ?
-          <Typography component='div' color='textPrimary'>No existed Chat</Typography>
+          <Typography component='div' color='textPrimary'>No Existed Chat</Typography>
           :
           ''
         }
 
         {getActiveChatWithUsers && getActiveChatWithUsers.map((user) => {
-          return <ActiveChatWithUsers key={user.uid} user={user} handleOpenUserModal={handleOpenUserModal}/>
+          return <ActiveChatWithUsers key={user.uid} user={user} handleOpenUserModal={handleOpenUserModal} OnlineDot={OnlineDot} classes={classes} />
         })}
 
         {firstMessageToUserFromServer && firstMessageToUserFromServer.map(user => {
-          return <FirstMessageFromUser key={user.uid} user={user} handleOpenUserModal={handleOpenUserModal} />
+          return <FirstMessageFromUser key={user.uid} user={user} handleOpenUserModal={handleOpenUserModal} OnlineDot={OnlineDot} classes={classes} />
         })}
       </List>
       <UserModal

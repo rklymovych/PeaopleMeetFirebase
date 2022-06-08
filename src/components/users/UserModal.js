@@ -81,7 +81,6 @@ const UserModal = ({selectedUser, openModal, setOpenModal}) => {
     wroteUsersIds,
     removeIdFromWroteUsers
   } = useContext(FirebaseContext)
-  // todo Cannot destructure property 'location' of 'JSON.parse(...)' as it is null. возможно потому что я добавил новое поле ['not empty array']
   const {location} = JSON.parse(localStorage.getItem('user')) || {}
 
   const handleClose = () => {
@@ -93,12 +92,11 @@ const UserModal = ({selectedUser, openModal, setOpenModal}) => {
       // todo create something if current user is offline
       alert('current User is Offline, temporary you can\'t write to him : ( ');
       return
-    } // todo Надо сделать чтобы открывался чат, когда юзер не онлайн.
+    }
 
     removeIdFromWroteUsers(selectedUser, wroteUsersIds)
     showSelectedUser(selectedUser)
     history.push(`map/chat/${selectedUser.uid}`)
-    // history.push('/map')
   }
 
   useEffect(() => {

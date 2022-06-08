@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import clsx from 'clsx';
 import {
@@ -13,7 +13,7 @@ import {
   makeStyles
 } from '@material-ui/core';
 import { useAuth } from "../context/AuthContext";
-import { db, storage } from "../firebase";
+import { storage } from "../firebase";
 import {useDispatch} from "react-redux";
 
 const useStyles = makeStyles((theme) => ({
@@ -76,14 +76,12 @@ const Profile = ({ className, auth, ...rest }) => {
             color="textSecondary"
             variant="body1"
           >
-            {/*{`${user.city} ${user.country}`}*/}
           </Typography>
           <Typography
             className={classes.dateText}
             color="textSecondary"
             variant="body1"
           >
-            {/*{`${moment().format('hh:mm A')} ${user.timezone}`}*/}
           </Typography>
         </Box>
       </CardContent>

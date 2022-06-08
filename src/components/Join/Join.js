@@ -14,8 +14,8 @@ const Join = () => {
     try {
       await axios.post(`${url}/status.json`, note)
 
-    } catch (e) {
-      console.log(e.message)
+    } catch (err) {
+      console.log(err.message)
     }
   }
   const test2Axios = async () => {
@@ -26,8 +26,8 @@ const Join = () => {
     try {
       await axios.post(`${url}/test.json`, note)
 
-    } catch (e) {
-      console.log(e.message)
+    } catch (err) {
+      console.log(err.message)
     }
   }
 
@@ -44,8 +44,8 @@ const Join = () => {
       //   }
 
 
-    } catch (e) {
-      console.log(e.message)
+    } catch (err) {
+      console.log(err.message)
     }
   }
   const putLastStatus = async () => {
@@ -65,8 +65,8 @@ const Join = () => {
       //   }
 
 
-    } catch (e) {
-      console.log(e.message)
+    } catch (err) {
+      console.log(err.message)
     }
   }
 

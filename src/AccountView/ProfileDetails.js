@@ -14,7 +14,6 @@ import {
   makeStyles, Tooltip, Modal, MenuItem
 } from '@material-ui/core';
 import {useAuth} from "../context/AuthContext";
-import {db} from "../firebase";
 import {UpdateProfile} from "../components/login.logout";
 import Alert from '@material-ui/lab/Alert';
 import Snackbar from '@material-ui/core/Snackbar';
@@ -75,7 +74,7 @@ const ProfileDetails = ({className, auth, ...rest}) => {
     setOpen(false);
   };
 
-  const handleCloseSnackbar = (event, reason) => {
+  const handleCloseSnackbar = (_, reason) => {
     console.log(reason)
     if (reason === 'clickaway') {
       return;
@@ -88,25 +87,6 @@ const ProfileDetails = ({className, auth, ...rest}) => {
       setSnackbar(true)
     }
   }, [error])
-
-  // useEffect(() => {
-  //   // todo лишнее обращение на бекенд... нужно брать с ауз
-  //   let unsubscribe
-  //   unsubscribe = myAccount()
-  //     .onSnapshot((doc) => {
-  //       doc?.exists && setValues({
-  //         ...values,
-  //         name: doc.data().name,
-  //         description: doc.data().description,
-  //         age: doc.data().age,
-  //         sex: doc.data().sex,
-  //         location: {lat: doc.data().location.lat, lng: doc.data().location.lng},
-  //         isOnline: doc.data().isOnline
-  //       })
-  //     })
-  //
-  //   return unsubscribe;
-  // }, []);
 
   useEffect(()=>{
       setValues({
@@ -130,7 +110,7 @@ const ProfileDetails = ({className, auth, ...rest}) => {
   const _updateDateHandler = () => {
     let data = myAccount()
 
-    if (!values.age || !values.description || !values.sex || !values.name || !values.email) return
+    if (!values.age || !values.description || !values.sex || !values.name) return
     data.set(values, {merge: true})
     dispatch({type: 'SET_DATA_CURRENT_USER', payload: {values}})
     const loggedInUSer = {
@@ -315,7 +295,7 @@ const ProfileDetails = ({className, auth, ...rest}) => {
         aria-describedby="simple-modal-description"
       >
         <div className={classes.paper}>
-          <UpdateProfile/>
+          <UpdateProfile handleClose={handleClose} />
         </div>
       </Modal>
       <Snackbar open={snackbar} autoHideDuration={6000} onClose={handleCloseSnackbar}>

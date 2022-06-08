@@ -1,16 +1,5 @@
 import {userConstants} from "./constants";
-import {db} from '../firebase'
-
-export const updateCurrentUser = (uid, data) => {
-  return async dispatch => {
-    const unsubscribe = db.collection('users')
-        .doc(uid)
-        .onSnapshot((querySnapshot) => {
-          console.log('updateCurrentUser', querySnapshot)
-        })
-    return unsubscribe
-  }
-}
+import {db} from '../firebase';
 
 
 export const getRealtimeUsers = (uid) => {
@@ -39,19 +28,13 @@ export const getRealtimeUsers = (uid) => {
 }
 
 export const updateMessage = (msgObj) => {
-  return async dispatch => {
+  return async () => {
     db.collection('conversations')
         .add({
           ...msgObj,
           isView: false,
           isRead: false,
           createdAt: new Date()
-        })
-        .then((data) => {
-
-          // dispatch({
-          //   type: userConstants.GET_REALTIME_MESSAGES
-          // })
         })
         .catch(error => console.log(error))
   }
@@ -76,17 +59,6 @@ export const getRealtimeConversations = (user) => {
               conversations.push(doc.data())
             }
 
-            // if (conversations.length > 0) {
-            //   dispatch({
-            //     type: userConstants.GET_REALTIME_MESSAGES,
-            //     payload: {conversations}
-            //   })
-            // } else {
-            //   dispatch({
-            //     type: `${userConstants.GET_REALTIME_MESSAGES}_FAILURE`,
-            //     payload: {conversations}
-            //   })
-            // }
             dispatch({
               type: userConstants.GET_REALTIME_MESSAGES,
               payload: {conversations}
@@ -94,7 +66,6 @@ export const getRealtimeConversations = (user) => {
 
           })
           dispatch({type: userConstants.GET_REALTIME_MESSAGES_REQUEST, payload: false})
-
         })
   }
 }

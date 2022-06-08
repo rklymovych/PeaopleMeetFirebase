@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect } from 'react';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
@@ -6,7 +6,7 @@ import IconButton from '@material-ui/core/IconButton';
 import MenuIcon from '@material-ui/icons/Menu';
 import MailIcon from '@material-ui/icons/Mail';
 import { useHistory } from "react-router-dom";
-import { database, db } from "../firebase";
+import { database } from "../firebase";
 import { useDispatch, useSelector } from "react-redux";
 import { Badge, MenuItem } from "@material-ui/core";
 import firebase from "firebase";
@@ -15,9 +15,9 @@ import { makeStyles } from "@material-ui/core/styles";
 import { useAuth } from "../context/AuthContext";
 import Switch from "@material-ui/core/Switch";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
-import { getCurrentPosition, toggleStatusOnLineRealTime } from "../utils/utils";
+import { getCurrentPosition, toggleStatusOnlineRealTime } from "../utils/utils";
 
-const TopBar = ({ setState }) => {
+const TopBar = ({ setDrawerState }) => {
   // export const TopBar  = ({setState}) =>{
   const auth = useSelector(state => state.auth)
   const localStorageDarkMode = JSON.parse(localStorage.getItem('darkMode'))
@@ -41,30 +41,20 @@ const TopBar = ({ setState }) => {
   const classes = useStyles();
   const history = useHistory();
   const dispatch = useDispatch();
-  const { getUid, myAccount, getUserRealTimeDatabase } = useAuth()
+  const { getUserRealTimeDatabase } = useAuth()
   const {
     getWroteUsersIds,
     wroteUsersIds,
   } = useContext(FirebaseContext)
   const handleDrawerOpen = () => {
-    setState({ 'left': true });
+    setDrawerState({ 'left': true });
   };
 
-
-
   //  make offline Users/
-
-  // myAccount().get()
-  //     .then((r) => {
-  //       // console.log(58, r.data());
-  //     })
-
-
-
   const onlineHandler = ({ target: { checked } }) => {
     if (checked) {
       getCurrentPosition((position) => {
-        toggleStatusOnLineRealTime({ 
+        toggleStatusOnlineRealTime({
           isOnline: true,
           location: { lat: position.coords.latitude, lng: position.coords.longitude }
         })
@@ -77,7 +67,7 @@ const TopBar = ({ setState }) => {
         })
       })
     } else {
-      toggleStatusOnLineRealTime( {
+      toggleStatusOnlineRealTime({
         isOnline: false,
         location: { lat: null, lng: null }
       })
@@ -92,7 +82,6 @@ const TopBar = ({ setState }) => {
   }
 
   useEffect(() => {
-
     if (auth.uid) {
       database.ref('.info/connected').on('value', function (snapshot) {
         if (snapshot.val() === true) {
@@ -104,35 +93,6 @@ const TopBar = ({ setState }) => {
 
         } else {
           getUserRealTimeDatabase().onDisconnect().remove()
-        
-          // ТУТ КАКАЯ-ТО ДИЧЬ
-          // userStatusDatabaseRef.set();
-          // myAccount().update({
-          //   location: {
-          //     lat: null,
-          //     lng: null,
-          //   },
-          //   isOnline: false
-          // });
-          // не получается надо сделать что бы не удалялось поле из реалтайм, а делалось оффлайн
-          // userStatusDatabaseRef.onDisconnect().remove(()=>{
-          //   firebase.database().ref(`status/${getUid()}/`).update({
-          //     leaved: true
-          //   })
-          // // })
-          // // firebase.database().goOffline();
-          // console.log('что за чепуха')
-          //
-          //
-          // userStatusDatabaseRef.onDisconnect().set({
-          //   leaved: true
-          // })
-          // .then(()=>{
-          //
-          //   myAccount().update({
-          //     location: false
-          //   })
-          // })
         }
       });
     }

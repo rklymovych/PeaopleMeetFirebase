@@ -1,32 +1,6 @@
 import { auth, database, db } from '../firebase'
 import { authConstant } from "./constants";
 import firebase from "firebase";
-import { useAuth } from "../context/AuthContext";
-
-
-// export const signup =(user)=>{
-//
-//   return async (dispatch) => {
-//
-//      auth.createUserWithEmailAndPassword(user.email, user.password)
-//       .then(cred =>  {
-//         return db.collection('users').doc(cred?.user?.uid).set({
-//           id: cred?.user?.uid,
-//           name: user.name,
-//           isOnline: false,
-//           description: '',
-//           sex:'',
-//           avatar:'',
-//           email: '',
-//           age:''
-//         })
-//       }
-//       )
-//       .then(() => console.log('success'))
-//       .catch(error => console.log(error.message))
-//   }
-// }
-
 
 export const signup = (user) => {
   return async (dispatch) => {
@@ -51,7 +25,7 @@ export const signup = (user) => {
                 description: '',
                 sex: '',
                 avatar: '',
-                email: '',
+                email: user.email,
                 age: '',
                 location: { lat: null, lng: null },
                 createdAt: new Date(),
@@ -139,7 +113,6 @@ export const signin = (user) => {
 // After reloading page we set user data in redux
 export const isLoggedInUser = () => {
   return async dispatch => {
-    // const user = localStorage.getItem('user') ? JSON.parse(localStorage.getItem('user')) : null;
     if(auth.currentUser){
       db.collection('users').doc(auth.currentUser.uid).get()
           .then(snapshot => {
@@ -147,14 +120,9 @@ export const isLoggedInUser = () => {
               type: `${authConstant.USER_LOGIN}_SUCCESS`,
               payload: { user: snapshot.data() }
             })
-            // } else {
-            // dispatch({
-            //   type: `${authConstant.USER_LOGIN}_FAILURE`,
-            //   payload: {error: 'Login again please'}
-            // })
-            // }
-          }).catch((e) => {
-        console.error('isLoggedInUser', e.message);
+          })
+          .catch((err) => {
+            console.error('isLoggedInUser', err.message);
       })
     }
   }
@@ -164,13 +132,6 @@ export const isLoggedInUser = () => {
 export const logout = (uid) => {
   return async dispatch => {
     dispatch({ type: `${authConstant.USER_LOGOUT}_REQUEST` })
-    // await database.ref('status/' + uid)
-    //     // .onDisconnect()
-    //     .remove((err) => {
-    //       if (err) {
-    //         console.error("could not establish onDisconnect event", err);
-    //       }
-    //     });
     db.collection('users')
       .doc(uid)
       .update({ isOnline: false, location: { lat: null, lng: null } })
@@ -182,10 +143,6 @@ export const logout = (uid) => {
               console.error("could not establish onDisconnect event", err);
             }
           });
-        // .set({
-        //   state: 'offline',
-        //   last_changed: firebase.database.ServerValue.TIMESTAMP,
-        // })
         auth
           .signOut()
           .then(() => {

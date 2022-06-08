@@ -22,7 +22,7 @@ export const setDataToLocalStorage = (data) => {
 
 export const setDataToRedux = (data) => {
   const { isOnline, location } = data;
-  const id = auth.currentUser.uid;
+  const id = auth?.currentUser?.uid;
   const myAcc = db.collection('users').doc(id);
   myAcc.update({
     location: {
@@ -33,9 +33,9 @@ export const setDataToRedux = (data) => {
   })
 }
 
-export const toggleStatusOnLineRealTime = (data) => {
-  const { isOnline, location } = data;
-  const id = auth.currentUser.uid;
+export const toggleStatusOnlineRealTime = (data) => {
+  const { isOnline } = data;
+  const id = auth?.currentUser?.uid;
   const myAcc = database.ref('/status/' + id);
   myAcc.update({
     visible: isOnline

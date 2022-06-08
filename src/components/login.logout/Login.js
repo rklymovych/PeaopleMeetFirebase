@@ -2,10 +2,8 @@ import React, {useRef, useState, useEffect} from 'react'
 import {Card, Button, Form, Alert, Container} from "react-bootstrap";
 
 import {Link, useHistory} from "react-router-dom";
-import {useDispatch} from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
 import {signin} from "../../actions";
-import {useSelector} from 'react-redux'
-import {db} from "../../firebase";
 import {useAuth} from "../../context/AuthContext";
 
 export function Login() {
@@ -27,7 +25,7 @@ export function Login() {
       setLoading(true)
       const email = emailRef.current.value
       const password = passwordRef.current.value
-      // await login(emailRef.current.value, passwordRef.current.value)
+
       dispatch(signin({email, password}))
       history.push('/')
     } catch (e) {

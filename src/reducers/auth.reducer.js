@@ -1,6 +1,5 @@
 import { authConstant, userConstants } from "../actions/constants";
-import { setDataToLocalStorage, setDataToRedux, toggleStatusOnLineRealTime } from '../utils/utils';
-import {db} from '../firebase';
+import { setDataToLocalStorage, setDataToRedux } from '../utils/utils';
 
 const initialState = {
   name: '',
@@ -9,6 +8,7 @@ const initialState = {
   authenticated: false,
   error: null,
   isOnline: false,
+  location: {lat: null, lng: null},
   sex: ''
 }
 

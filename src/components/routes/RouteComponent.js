@@ -2,10 +2,7 @@ import React, {useEffect} from 'react'
 import {Redirect, Route, Switch} from "react-router-dom";
 import {useAuth} from "../../context/AuthContext";
 import PrivateRoute from "./PrivateRoute";
-import {UpdateProfile} from "../login.logout";
-import Signup from "../login.logout/Signup";
-import {Login} from "../login.logout/Login";
-import {ForgotPassword} from "../login.logout";
+import {Signup, UpdateProfile, Login, ForgotPassword} from "../login.logout";
 import Account from "../../AccountView";
 import {Map} from "../maps";
 import {Users} from "../users";
@@ -17,7 +14,7 @@ import Drawer from "../Drawer";
 import TopBar from "../TopBar";
 import {makeStyles} from "@material-ui/core/styles";
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles(() => ({
   drawerWrapper: {
     width: '250px',
     height: '100%',
@@ -31,15 +28,15 @@ function RouteComponent() {
   const auth = useSelector(state => state.auth);
   const dispatch = useDispatch()
   const {currentUser} = useAuth()
-  const [state, setState] = React.useState({'left': false});
+  const [drawerState, setDrawerState] = React.useState({'left': false});
 
 
-  const toggleDrawer = (anchor, open) => (event) => {
+  const toggleDrawer = (_, open) => (event) => {
     if (event && event.type === 'keydown' && (event.key === 'Tab' || event.key === 'Shift')) {
       return;
     }
 
-    setState({...state, 'left': open});
+    setDrawerState({...drawerState, 'left': open});
   }
 
   useEffect(() => {
@@ -52,20 +49,20 @@ function RouteComponent() {
   if (currentUser) {
     return (
         <>
-          <TopBar setState={setState}/>
+          <TopBar setDrawerState={setDrawerState}/>
           <div style={{height: '60px'}}/>
           <Switch>
             <PrivateRoute exact path="/" component={Account}/>
             <PrivateRoute path="/map" component={Map}/>
             <PrivateRoute exact path="/users" component={Users}/>
-            <PrivateRoute exact path="/update-profile" component={UpdateProfile}/>
+            {/*<PrivateRoute exact path="/update-profile" component={UpdateProfile}/> */}
             {/*<PrivateRoute exact path='/chat/:id' component={ChatPage}/>*/}
             {/*<PrivateRoute exact path='/map/chat/:id' component={ChatPage}/>*/}
             <PrivateRoute exact path='/join' component={Join}/>
             <Redirect to="/"/>
           </Switch>
           <SwipeableDrawer
-              open={state['left']}
+              open={drawerState['left']}
               onClose={toggleDrawer('left', false)}
               onOpen={toggleDrawer('left', true)}
           >

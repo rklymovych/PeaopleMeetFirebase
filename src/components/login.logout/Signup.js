@@ -6,7 +6,7 @@ import 'firebase/app'
 import {useDispatch, useSelector} from "react-redux";
 import {signup} from "../../actions";
 
-const Signup = () => {
+export const Signup = () => {
   const emailRef = useRef()
   const nameRef = useRef()
   const passwordRef = useRef()
@@ -36,7 +36,7 @@ const Signup = () => {
       const user = {email, password, name}
       dispatch(signup(user))
       history.push('/')
-    } catch (e) {
+    } catch (err) {
       setError('Failed to create an account')
     }
     setLoading(false)
