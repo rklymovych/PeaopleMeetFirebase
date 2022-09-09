@@ -163,7 +163,7 @@ export const ThemeWrapper = ({children}) => {
         },
         userPageWrapper: {
             minHeight: 'calc(100vh - 60px)',
-            background: '#000',
+            background: '#323435',
             overflow: 'hidden'
         },
         listItem: {

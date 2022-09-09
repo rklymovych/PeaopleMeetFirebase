@@ -256,19 +256,19 @@ const Map = () => {
                       <Divider/>
 
                     </CardContent>
-                  </CardActionArea>
-                  <CardActions
-                      style={justifyCenter(selectedUser.uid === authFromState.uid)}
-                  >
-                    <Button
-                        onClick={openDrawerHandler}
-                        size="small"
-                        color="primary"
-                        disabled={selectedUser.uid === authFromState.uid}
+                    <CardActions
+                        style={justifyCenter(selectedUser.uid === authFromState.uid)}
                     >
-                      {selectedUser.uid === authFromState.uid ? 'That\'s like people see your account' : 'Write'}
-                    </Button>
-                  </CardActions>
+                      <Button
+                          onClick={openDrawerHandler}
+                          size="small"
+                          color="primary"
+                          disabled={selectedUser.uid === authFromState.uid}
+                      >
+                        {selectedUser.uid === authFromState.uid ? 'That\'s like people see your account' : 'Write'}
+                      </Button>
+                    </CardActions>
+                  </CardActionArea>
                 </Card>
 
               </InfoWindow>)}
