@@ -114,37 +114,37 @@ const TopBar = ({ setDrawerState }) => {
     })
   }, [darkMode])
 
-  useEffect(() => {
-    let interval;
-
-    const listener = document.addEventListener('visibilitychange', () => {
-
-      if (document.hidden) {
-
-        interval = setTimeout(() => {
-          getUserRealTimeDatabase().update({ isOnline: false, visible: false })
-          dispatch({
-            type: 'GET_STATUS_CURRENT_USER',
-            payload: {
-              location: {
-                lat: null,
-                lng: null,
-              },
-              isOnline: false
-            }
-          })
-          // firebase.database().goOffline();
-        }, 60000)
-      } else {
-        clearInterval(interval)
-        getUserRealTimeDatabase().update({ isOnline: true })
-        // firebase.database().goOnline(); // todo 1
-      }
-    })
-    return () => {
-      document.removeEventListener('visibilitychange', listener); //todo сдесь гдето зарыта правда )) надо пробовать
-    }
-  }, [auth.uid, auth.isOnline])
+  // useEffect(() => {
+  //   let interval;
+  //
+  //   const listener = document.addEventListener('visibilitychange', () => {
+  //
+  //     if (document.hidden) {
+  //
+  //       interval = setTimeout(() => {
+  //         getUserRealTimeDatabase().update({ isOnline: false, visible: false })
+  //         dispatch({
+  //           type: 'GET_STATUS_CURRENT_USER',
+  //           payload: {
+  //             location: {
+  //               lat: null,
+  //               lng: null,
+  //             },
+  //             isOnline: false
+  //           }
+  //         })
+  //         // firebase.database().goOffline();
+  //       }, 60000)
+  //     } else {
+  //       clearInterval(interval)
+  //       getUserRealTimeDatabase().update({ isOnline: true })
+  //       // firebase.database().goOnline(); // todo 1
+  //     }
+  //   })
+  //   return () => {
+  //     document.removeEventListener('visibilitychange', listener); //todo сдесь гдето зарыта правда )) надо пробовать
+  //   }
+  // }, [auth.uid, auth.isOnline])
 
   return (
     <AppBar className={classes.topAndButtons}>

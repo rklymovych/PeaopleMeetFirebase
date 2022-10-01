@@ -220,7 +220,7 @@ const Map = () => {
                   onCloseClick={() => setSelectedUser(null)}
               >
                 <Card>
-                  <CardActionArea>
+
                     <CardMedia
                         // className={classes.cardMedia}
                         style={{
@@ -268,7 +268,7 @@ const Map = () => {
                         {selectedUser.uid === authFromState.uid ? 'That\'s like people see your account' : 'Write'}
                       </Button>
                     </CardActions>
-                  </CardActionArea>
+
                 </Card>
 
               </InfoWindow>)}

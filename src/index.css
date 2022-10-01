@@ -79,6 +79,26 @@ code {
     top: -17px;
     /*display: none;*/
 }
+.leaflet-marker-pane img {
+    border-radius: 50%
+}
+.leaflet-popup {
+    bottom: 18px !important;
+}
+.leaflet-popup-content {
+    min-width: 250px;
+    max-width: 255px;
+    margin: 0 !important;
+}
+.leaflet-popup-content p {
+    margin: 0 !important;
+}
+.leaflet-popup-content-wrapper {
+    padding: 0 !important;
+}
+.leaflet-marker-icon {
+    object-fit: cover;
+}
 .gm-style-iw-c {
     padding:0!important;
     max-width: 345px!important;

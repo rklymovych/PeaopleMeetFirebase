@@ -90,6 +90,14 @@ const Drawer = () => {
             <ListItemIcon><MailIcon/></ListItemIcon>
             <ListItemText primary={'Join'}/>
           </ListItem>
+          {/*<ListItem button onClick={() => history.push('/Maptiler')}>*/}
+          {/*  <ListItemIcon><RoomIcon/></ListItemIcon>*/}
+          {/*  <ListItemText primary={'MapTiler (test)'}/>*/}
+          {/*</ListItem>*/}
+          <ListItem button onClick={() => history.push('/leaflet')}>
+            <ListItemIcon><RoomIcon/></ListItemIcon>
+            <ListItemText primary={'Leaflet map (test)'}/>
+          </ListItem>
           <ListItem button
                     onClick={() => setDarkMode(!darkMode)}
           >
