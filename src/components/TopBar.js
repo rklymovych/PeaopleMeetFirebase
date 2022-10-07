@@ -134,7 +134,7 @@ const TopBar = ({ setDrawerState }) => {
             }
           })
           // firebase.database().goOffline();
-        }, 6000)
+        }, 60000)
       } else {
         clearInterval(interval)
         getUserRealTimeDatabase().update({ isOnline: true })
