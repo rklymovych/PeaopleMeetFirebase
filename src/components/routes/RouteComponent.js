@@ -8,7 +8,6 @@ import {Map} from "../maps";
 import {Users} from "../users";
 import Join from "../Join/Join";
 import Leaflet from "../Leaflet/Leaflet";
-// import Maptiler from "../maptiler/Maptiler";
 import {isLoggedInUser} from "../../actions";
 import {useDispatch, useSelector} from "react-redux";
 import SwipeableDrawer from "@material-ui/core/SwipeableDrawer";
