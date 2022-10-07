@@ -87,13 +87,6 @@ const Leaflet = () => {
     return unsubscribe;
   }, []);
 
-  // const openDrawerHandler = () => {
-  //   removeIdFromWroteUsers(selectedUser, wroteUsersIds)
-  //   makeReadMessages(selectedUser.uid)
-  //   history.push(`/map/chat/${selectedUser.uid}`)
-  //   setOpenDrawer(!openDrawer)
-  //   setChatStarted(prev => !prev)
-  // }
   const justifyCenter = (truly) => {
     if (truly) return {justifyContent: 'center'}
     return {justifyContent: 'flex-end'}

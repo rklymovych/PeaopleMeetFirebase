@@ -20,7 +20,7 @@ import InputIcon from "@material-ui/icons/Input";
 import {useDispatch, useSelector} from "react-redux";
 import Brightness4Icon from "@material-ui/icons/Brightness4";
 import Brightness7Icon from "@material-ui/icons/Brightness7";
-
+import SettingsEthernetIcon from '@material-ui/icons/SettingsEthernet';
 
 const useStyles = makeStyles((theme) => ({
   drawerHeader: {
@@ -82,18 +82,11 @@ const Drawer = () => {
         </div>
         <Divider/>
         <List>
-          {/*<ListItem button onClick={() => history.push('/map')}>*/}
-          {/*  <ListItemIcon><RoomIcon/></ListItemIcon>*/}
-          {/*  <ListItemText primary={'Map'}/>*/}
-          {/*</ListItem>*/}
-          <ListItem button onClick={() => history.push('/join')}>
-            <ListItemIcon><MailIcon/></ListItemIcon>
-            <ListItemText primary={'Join'}/>
-          </ListItem>
           <ListItem button onClick={() => history.push('/map-leaflet')}>
             <ListItemIcon><RoomIcon/></ListItemIcon>
-            <ListItemText primary={'Map Leaflet'}/>
+            <ListItemText primary={'Map'}/>
           </ListItem>
+
           <ListItem button
                     onClick={() => setDarkMode(!darkMode)}
           >
@@ -103,6 +96,10 @@ const Drawer = () => {
           <ListItem button onClick={() => history.push('/users')}>
             <ListItemIcon><SupervisorAccountRoundedIcon/></ListItemIcon>
             <ListItemText primary={'Users'}/>
+          </ListItem>
+          <ListItem button onClick={() => history.push('/join')}>
+            <ListItemIcon><SettingsEthernetIcon/></ListItemIcon>
+            <ListItemText primary={'Check'}/>
           </ListItem>
         </List>
         <Divider/>
