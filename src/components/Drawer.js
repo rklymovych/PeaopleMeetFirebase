@@ -82,21 +82,17 @@ const Drawer = () => {
         </div>
         <Divider/>
         <List>
-          <ListItem button onClick={() => history.push('/map')}>
-            <ListItemIcon><RoomIcon/></ListItemIcon>
-            <ListItemText primary={'Map'}/>
-          </ListItem>
+          {/*<ListItem button onClick={() => history.push('/map')}>*/}
+          {/*  <ListItemIcon><RoomIcon/></ListItemIcon>*/}
+          {/*  <ListItemText primary={'Map'}/>*/}
+          {/*</ListItem>*/}
           <ListItem button onClick={() => history.push('/join')}>
             <ListItemIcon><MailIcon/></ListItemIcon>
             <ListItemText primary={'Join'}/>
           </ListItem>
-          {/*<ListItem button onClick={() => history.push('/Maptiler')}>*/}
-          {/*  <ListItemIcon><RoomIcon/></ListItemIcon>*/}
-          {/*  <ListItemText primary={'MapTiler (test)'}/>*/}
-          {/*</ListItem>*/}
-          <ListItem button onClick={() => history.push('/leaflet')}>
+          <ListItem button onClick={() => history.push('/map-leaflet')}>
             <ListItemIcon><RoomIcon/></ListItemIcon>
-            <ListItemText primary={'Leaflet map (test)'}/>
+            <ListItemText primary={'Map Leaflet'}/>
           </ListItem>
           <ListItem button
                     onClick={() => setDarkMode(!darkMode)}
@@ -132,7 +128,7 @@ const Drawer = () => {
 
           <ListItem button >
             <ListItemIcon><FeedbackIcon/></ListItemIcon>
-            <ListItemText primary={'v: 2.202.90.90'}/>
+            <ListItemText primary={'v: 2.202.01.70'}/>
           </ListItem>
         </List>
 

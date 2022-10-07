@@ -1,15 +1,18 @@
 import React, {useContext, useEffect, useState} from 'react'
-import {MapContainer, TileLayer, useMap, Marker, Popup} from 'react-leaflet'
+import {MapContainer, TileLayer, Marker, Popup} from 'react-leaflet'
 import 'leaflet/dist/leaflet.css';
 import {makeStyles} from "@material-ui/core/styles";
 import {Icon} from "leaflet";
 import {FirebaseContext} from "../../context/firebaseContext/firebaseContext";
-import {Card, CardActionArea, CardActions, CardContent, CardMedia} from "@material-ui/core";
+import {Card, CardActions, CardContent, CardMedia, Drawer, Grid} from "@material-ui/core";
 import defUser from "../../assets/def-user.jpg";
 import Typography from "@material-ui/core/Typography";
 import Divider from "@material-ui/core/Divider";
 import Button from "@material-ui/core/Button";
 import {useSelector} from "react-redux";
+import {useHistory} from "react-router-dom";
+import {ChatPage} from "../chatroom";
+import chatBackground from "../../assets/chatBachground.jpg";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -28,10 +31,32 @@ const useStyles = makeStyles((theme) => ({
   paddingForDescription: {
     padding: 0
   },
+  drawer: {
+    height: '50vh',
+    padding: '0.5rem',
+    position: 'relative',
+    '&::before': {
+      content: '""',
+      position: 'absolute',
+      opacity: '0.3',
+      left: 0,
+      top: 0,
+      bottom: 0,
+      right: 0,
+      backgroundImage: `url(${chatBackground})`,
+      backgroundSize: 'cover',
+      backgroundRepeat: 'no-repeat',
+    }
+  }
 }));
 
 
 const Leaflet = () => {
+  const history = useHistory();
+
+  const [chatStarted, setChatStarted] = useState(false)
+  const [openDrawer, setOpenDrawer] = useState(false)
+
   const storageUser = JSON.parse(localStorage.getItem('user'))
   const isOnline = storageUser?.isOnline
   const [location, setLocation] = useState();
@@ -90,6 +115,22 @@ const Leaflet = () => {
         </>
     )
   }
+
+  const openDrawerHandler = () => {
+    removeIdFromWroteUsers(selectedUser, wroteUsersIds)
+    makeReadMessages(selectedUser.uid)
+    history.push(`/map-leaflet/chat/${selectedUser.uid}`)
+    setOpenDrawer(!openDrawer)
+    setChatStarted(prev => !prev)
+  }
+
+  useEffect(() => {
+    if (Object.keys(selectedUserState).length !== 0) {
+      setSelectedUser(selectedUserState)
+      setOpenDrawer(true)
+      setChatStarted(true)
+    }
+  }, [selectedUserState])
 
   return (
       <div>
@@ -160,8 +201,7 @@ const Leaflet = () => {
                           style={justifyCenter(user.uid === authFromState.uid)}
                       >
                         <Button
-                            // onClick={openDrawerHandler}
-                            onClick={()=> console.log(user.name)}
+                            onClick={openDrawerHandler}
                             size="small"
                             color="primary"
                             disabled={user.uid === authFromState.uid}
@@ -183,6 +223,25 @@ const Leaflet = () => {
           </MapContainer>
       ) : 'Waiting for get geolocation'}
 
+        <Drawer
+            anchor='bottom'
+            open={openDrawer}
+            onClose={() => {
+              setOpenDrawer(false)
+              setChatStarted(false)
+              makeSelectedUserNull()
+              history.push('/map-leaflet')
+            }}
+        >
+          <Grid container>
+            <Grid item className={classes.drawer} xs={12}>
+              <ChatPage
+                  selected={selectedUser}
+                  chatStarted={chatStarted}
+              />
+            </Grid>
+          </Grid>
+        </Drawer>
       </div>
   )
 

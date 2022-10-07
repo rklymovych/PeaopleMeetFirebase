@@ -61,8 +61,7 @@ function RouteComponent() {
             {/*<PrivateRoute exact path='/chat/:id' component={ChatPage}/>*/}
             {/*<PrivateRoute exact path='/map/chat/:id' component={ChatPage}/>*/}
             <PrivateRoute exact path='/join' component={Join}/>
-            {/*<PrivateRoute exact path='/maptiler' component={Maptiler}/>*/}
-            <PrivateRoute exact path='/leaflet' component={Leaflet}/>
+            <PrivateRoute path='/map-leaflet' component={Leaflet}/>
             <Redirect to="/"/>
           </Switch>
           <SwipeableDrawer

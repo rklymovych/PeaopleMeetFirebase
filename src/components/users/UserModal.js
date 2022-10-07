@@ -96,7 +96,7 @@ const UserModal = ({selectedUser, openModal, setOpenModal}) => {
 
     removeIdFromWroteUsers(selectedUser, wroteUsersIds)
     showSelectedUser(selectedUser)
-    history.push(`map/chat/${selectedUser.uid}`)
+    history.push(`map-leaflet/chat/${selectedUser.uid}`)
   }
 
   useEffect(() => {
