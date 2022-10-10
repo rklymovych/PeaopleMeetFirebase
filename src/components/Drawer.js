@@ -91,7 +91,7 @@ const Drawer = () => {
                     onClick={() => setDarkMode(!darkMode)}
           >
             <ListItemIcon>{!darkMode ? <Brightness4Icon/> : <Brightness7Icon/>}</ListItemIcon>
-            <ListItemText primary={'Dark Theme'}/>
+            <ListItemText primary={!darkMode ? 'Dark Theme' : 'White Theme'}/>
           </ListItem>
           <ListItem button onClick={() => history.push('/users')}>
             <ListItemIcon><SupervisorAccountRoundedIcon/></ListItemIcon>

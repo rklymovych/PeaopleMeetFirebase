@@ -108,83 +108,29 @@ const Join = () => {
   }
 
   //    Firestore Database
-  const createCollection = async () => {
-    if (!collection.collectionName && !collection.name && !collection.doc) {
-      console.log(114, 'no collection!');
-    } else {
-      const collectionName = db.collection(collection.collectionName).get();
-      console.log(117, collectionName)
-      db.collection(collection.collectionName)
-          .get().then((queryS)=>{
-        queryS.forEach(query => {
-          return new Promise((res, rej)=>{
-            res (console.log(121, query.data()))
-            rej(console.log('no'))
-
+	const createCollection = async () => {
+		if (!collection.collectionName || !collection.name || !collection.doc) {
+			console.log("no collection!");
+		} else {
+      for (const key in collection) {
+        if (Object.hasOwnProperty.call(collection, key)) {
+          db.collection(collection.collectionName)
+          .doc(collection.doc)
+          .set({
+            key : collection.name,
           })
-
-        })
-      })
-
-
-      return;
-      return new Promise((res, rej) => {
-        res(db.collection(collection.collectionName).get().then((querySnapshot) => {
-          querySnapshot.forEach((doc) => {
-            console.log(123123)
-            if(doc.exists) {
-              console.log(doc.id, " => ", doc.data());
-            } else {
-              console.log('collection dont exist')
-            }
-            // doc.data() is never undefined for query doc snapshots
-
+          .then(() => {
+            console.log("Collection successfuly created");
+          })
+          .catch((e) => {
+            console.log(e);
           });
-        }))
-        rej(console.log('no collection'))
-      })
-
-
-      return
-      db.collection(collection.collectionName).doc(collection.doc).set({
-        name: collection.name,
-      }).then((res) => {
-        console.log(`${collection} collection has been created!`);
-      }).then(() => {
-        setCollection({...collection, collectionName: '', name: '', doc: ''})
-      }).catch((error) => {
-        console.error("Error writing document: ", error);
-      });
+        }
+      }
     }
-
-
-  }
-
-  const changeCollection = async (e) => {
-    const collection = db.collection('ccc').get();
-    collection.then((querySnapshot) => {
-      querySnapshot.forEach((col) => {
-        console.log(col.data())
-      })
-    })
-
-
-    // db.listCollections()
-    //     .then(snapshot=>{
-    //       snapshot.forEach(snaps => {
-    //         console.log(snaps["_queryOptions"].collectionId); // LIST OF ALL COLLECTIONS
-    //       })
-    //     })
-    //     .catch(error => console.error(error));
-  }
-
-  const showCollection = () => {
-    // console.log('show Collections')
   }
 
   const setCollectionHandler = (e) => {
-    console.log(e.target.value)
-
     setCollection({
       ...collection,
       [e.target.name]: e.target.value
@@ -195,7 +141,7 @@ const Join = () => {
   return (
       <div className={classes.root}>
         <Grid container spacing={3} style={{width: '100%', margin: 0}}>
-          <Grid item xs={12} sm={6}>
+          {/* <Grid item xs={12} sm={6}>
             <Paper className={classes.paper}>
               <Typography variant={"h4"}>Realtime Database</Typography>
               <hr/>
@@ -208,7 +154,7 @@ const Join = () => {
                   putLastStatus
                 </Button>
 
-                {/*<button onClick={putLastStatus}>putLastStatus</button>*/}
+  
                 <br/>
                 <Button onClick={deleteLastStatus}>deleteLastStatus</Button>
                 <br/>
@@ -217,7 +163,7 @@ const Join = () => {
                 <Button onClick={getRequest}>getRequest</Button>
               </div>
             </Paper>
-          </Grid>
+          </Grid> */}
 
 
           <Grid item xs={12} sm={6} style={{display: 'flex', flexWrap: 'wrap', width: '100%'}}>
@@ -241,7 +187,7 @@ const Join = () => {
 
                 <Button target="_blank"
                         href="https://console.firebase.google.com/u/0/project/radio-aba5d/firestore/data/~2Fusers~2F5x3Ip2M7EzbR9oee2rC16SP247N2"
-                        onClick={showCollection}>Show Collections</Button>
+                        >Show Collections</Button>
               </div>
             </Paper>
           </Grid>
