@@ -6,7 +6,7 @@ export const getCurrentPosition = (successCb) => {
       if (typeof successCb === "function") {
         successCb(position);
       }
-    })
+    }, (e) => console.log('error with geolocation', e), {timeout:10000})
   }
 }
 

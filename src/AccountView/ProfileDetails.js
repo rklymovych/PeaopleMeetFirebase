@@ -121,7 +121,7 @@ const ProfileDetails = ({className, auth, ...rest}) => {
       location: {lat: values.location.lat, lng: values.location.lng}
     }
     localStorage.setItem('user', JSON.stringify(loggedInUSer))
-    history.push('/map')
+    history.push('/map-leaflet')
   }
 
   const formik = useFormik({

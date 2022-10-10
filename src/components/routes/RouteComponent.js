@@ -7,6 +7,7 @@ import Account from "../../AccountView";
 import {Map} from "../maps";
 import {Users} from "../users";
 import Join from "../Join/Join";
+import Leaflet from "../Leaflet/Leaflet";
 import {isLoggedInUser} from "../../actions";
 import {useDispatch, useSelector} from "react-redux";
 import SwipeableDrawer from "@material-ui/core/SwipeableDrawer";
@@ -59,6 +60,7 @@ function RouteComponent() {
             {/*<PrivateRoute exact path='/chat/:id' component={ChatPage}/>*/}
             {/*<PrivateRoute exact path='/map/chat/:id' component={ChatPage}/>*/}
             <PrivateRoute exact path='/join' component={Join}/>
+            <PrivateRoute path='/map-leaflet' component={Leaflet}/>
             <Redirect to="/"/>
           </Switch>
           <SwipeableDrawer
