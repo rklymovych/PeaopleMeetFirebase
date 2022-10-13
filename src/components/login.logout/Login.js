@@ -5,6 +5,7 @@ import {Link, useHistory} from "react-router-dom";
 import {useDispatch, useSelector} from "react-redux";
 import {signin} from "../../actions";
 import {useAuth} from "../../context/AuthContext";
+import {Typography} from "@material-ui/core";
 
 export function Login() {
   const {getUid, myAccount} = useAuth()
@@ -49,6 +50,9 @@ export function Login() {
           style={{minHeight: '100vh'}}
       >
         <div className="w-100" style={{maxWidth: '400px'}}>
+          <Typography variant="h4" gutterBottom={true} style={{textAlign: 'center'}}>
+            People Meet
+          </Typography>
           <Card>
             <Card.Body>
               <h2 className="text-center mb-4">Log In</h2>
