@@ -5,7 +5,9 @@ import 'firebase/auth'
 import 'firebase/app'
 import {useDispatch, useSelector} from "react-redux";
 import {signup} from "../../actions";
-
+import {
+  Typography
+} from '@material-ui/core';
 export const Signup = () => {
   const emailRef = useRef()
   const nameRef = useRef()
@@ -48,46 +50,52 @@ export const Signup = () => {
           className='d-flex align-items-center justify-content-center'
           style={{minHeight: '100vh'}}
       >
-        <div className="w-100" style={{maxWidth: '400px'}}>
-          <Card>
-            <Card.Body>
-              <h2 className="text-center mb-4">Signup</h2>
-              {auth?.error && <Alert variant="danger">{auth.error}</Alert>}
-              {error && <Alert variant="danger">{error}</Alert>}
-              <Form onSubmit={handleSubmit}>
-                <Form.Group id="email">
-                  <Form.Label>Email</Form.Label>
-                  <Form.Control type="email" ref={emailRef} required/>
-                </Form.Group>
+        <div style={{minWidth: '400px'}}>
+          <Typography variant="h4" gutterBottom={true} style={{textAlign: 'center'}}>
+            People Meet
+          </Typography>
+          <div className="w-100" style={{maxWidth: '400px'}}>
+            <Card>
+              <Card.Body>
+                <h2 className="text-center mb-4">Signup</h2>
+                {auth?.error && <Alert variant="danger">{auth.error}</Alert>}
+                {error && <Alert variant="danger">{error}</Alert>}
+                <Form onSubmit={handleSubmit}>
+                  <Form.Group id="email">
+                    <Form.Label>Email</Form.Label>
+                    <Form.Control type="email" ref={emailRef} required/>
+                  </Form.Group>
 
-                <Form.Group id="name">
-                  <Form.Label>Name</Form.Label>
-                  <Form.Control
-                      type="text"
-                      ref={nameRef}
-                      required
-                  />
-                </Form.Group>
+                  <Form.Group id="name">
+                    <Form.Label>Name</Form.Label>
+                    <Form.Control
+                        type="text"
+                        ref={nameRef}
+                        required
+                    />
+                  </Form.Group>
 
-                <Form.Group id="password">
-                  <Form.Label>Password</Form.Label>
-                  <Form.Control type="password" ref={passwordRef} required/>
-                </Form.Group>
+                  <Form.Group id="password">
+                    <Form.Label>Password</Form.Label>
+                    <Form.Control type="password" ref={passwordRef} required/>
+                  </Form.Group>
 
-                <Form.Group id="password-confirm">
-                  <Form.Label>Password Confirmation</Form.Label>
-                  <Form.Control type="password" ref={passwordConfirmRef} required/>
-                </Form.Group>
+                  <Form.Group id="password-confirm">
+                    <Form.Label>Password Confirmation</Form.Label>
+                    <Form.Control type="password" ref={passwordConfirmRef} required/>
+                  </Form.Group>
 
-                <Button disabled={loading} type="submit" className="w-100">Sign up</Button>
+                  <Button disabled={loading} type="submit" className="w-100">Sign up</Button>
 
-              </Form>
-            </Card.Body>
-          </Card>
-          <div className="w-100 text-center mt-2">
-            Or <Link to='/login'>Sign In</Link>
+                </Form>
+              </Card.Body>
+            </Card>
+            <div className="w-100 text-center mt-2">
+              Or <Link to='/login'>Sign In</Link>
+            </div>
           </div>
         </div>
+
       </Container>
 
 
